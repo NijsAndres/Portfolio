@@ -4,15 +4,81 @@
 /*---------------------------------------/*
  # GENERIC - BOOTSTRAP
 /*---------------------------------------*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 /*---------------------------------------/*
  # ELEMENTS
 /*---------------------------------------*/
+body {
+  font-family: "Bai Jamjuree", sans-serif;
+  background-color: #F2F1EF;
+  color: #161513;
+}
+
 /*---------------------------------------/*
  # OBJECTS
 /*---------------------------------------*/
+.o-container__flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 /*---------------------------------------/*
  # COMPONENTS
 /*---------------------------------------*/
+.c-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+.c-nav__logo {
+  font-size: 1.5rem;
+  color: #161513;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+.c-nav__logo:hover .c-nav__logoimg {
+  animation: spin 5s linear infinite;
+}
+.c-nav__logoimg {
+  transition: all 0.5s ease-in-out;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.c-nav__list {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+.c-nav__link {
+  font-size: 1rem;
+  color: #161513;
+  text-decoration: none;
+}
+.c-nav__link:hover {
+  color: #E94E35;
+}
+
 /*---------------------------------------/*
  # UTILITIES
 /*---------------------------------------*/

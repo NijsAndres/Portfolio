@@ -71,12 +71,29 @@ body {
   padding: 0;
 }
 .c-nav__link {
+  position: relative;
   font-size: 1rem;
   color: #161513;
   text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+.c-nav__link::before {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  height: 2px;
+  width: 0;
+  border-radius: 0 1px 0 1px;
+  background-color: #E94E35;
+  transition: all 0.3s ease-in-out;
 }
 .c-nav__link:hover {
-  color: #E94E35;
+  color: #000000;
+  text-decoration: none;
+}
+.c-nav__link:hover::before {
+  width: 100%;
 }
 
 /*---------------------------------------/*

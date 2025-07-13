@@ -23,8 +23,35 @@
 /*---------------------------------------*/
 body {
   font-family: "Bai Jamjuree", sans-serif;
-  background-color: #F2F1EF;
+  background-color: #f2f1ef;
   color: #161513;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Bai Jamjuree", sans-serif;
+  color: #161513;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 /*---------------------------------------/*
@@ -35,6 +62,15 @@ body {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+
+.o-container__row {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 /*---------------------------------------/*
@@ -53,7 +89,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 .c-nav__logo:hover .c-nav__logoimg {
   animation: spin 5s linear infinite;
@@ -74,6 +110,7 @@ body {
   position: relative;
   font-size: 1rem;
   color: #161513;
+  font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease-in-out;
 }
@@ -85,7 +122,7 @@ body {
   height: 2px;
   width: 0;
   border-radius: 0 1px 0 1px;
-  background-color: #E94E35;
+  background-color: #e94e35;
   transition: all 0.3s ease-in-out;
 }
 .c-nav__link:hover {
@@ -96,6 +133,73 @@ body {
   width: 100%;
 }
 
+.c-hero {
+  margin: 10rem 0;
+}
+.c-hero__titlecontainer {
+  text-transform: uppercase;
+  padding: 0;
+  margin: 0;
+  line-height: 1.2;
+}
+.c-hero__title-star {
+  display: inline-block;
+  height: 100%;
+  max-width: 100%;
+  vertical-align: auto;
+}
+.c-hero__detailcontainer {
+  display: flex;
+  width: 100%;
+  gap: 2rem;
+  margin: 1rem 0 2rem;
+}
+.c-hero__detailitem {
+  text-transform: uppercase;
+}
+.c-hero__buttoncontainer {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.c-hero h1 {
+  margin: 0;
+}
+
+.c-btn {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 2px solid #e94e35;
+  color: #e94e35;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease-in-out;
+}
+.c-btn--primary:hover {
+  background-color: #e94e35;
+  color: #ffffff;
+}
+.c-btn--social {
+  padding: 0.5rem 0.5rem;
+  border-radius: 50%;
+  max-height: 100%;
+  line-height: 0;
+  font-size: 1.5rem;
+}
+.c-btn--social:hover {
+  background-color: #e94e35;
+  color: #ffffff;
+}
+
 /*---------------------------------------/*
  # UTILITIES
 /*---------------------------------------*/
+.u-primary {
+  color: #e94e35;
+}

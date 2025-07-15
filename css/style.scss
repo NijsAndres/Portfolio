@@ -23,6 +23,10 @@ $fw-bold: 700;
   box-sizing: border-box;
 }
 
+/*---------------------------------------/*
+  # ANIMATIONS
+/*---------------------------------------*/
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -35,6 +39,28 @@ $fw-bold: 700;
 @keyframes scrollToRight {
   to {
     transform: translateX(-100%);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -286,3 +312,12 @@ h4 {
 .u-primary {
   color: $primary-color;
 }
+
+.u-fade-in-right {
+  animation: fadeInRight 1s ease-in-out;
+}
+
+.u-fade-in-left {
+  animation: fadeInLeft 1s ease-in-out;
+}
+

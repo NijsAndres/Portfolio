@@ -103,6 +103,10 @@ h1 {
 h2 {
   font-size: 2.5rem;
   font-weight: $fw-bold;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
 }
 
 h4 {
@@ -161,6 +165,7 @@ h4 {
     align-items: center;
     gap: 0.5rem;
     font-weight: $fw-semibold;
+    transition: all 0.3s ease-in-out;
 
     &:hover {
       .c-nav__logoimg {
@@ -408,14 +413,38 @@ h4 {
 }
 
 .c-slider {
-  margin: 10rem 0 6rem;
-  background-color: $secondary-color;
+  position: relative;
+  margin: 10rem 0 10rem;
   padding: 2rem 0;
   display: flex;
-  overflow: hidden;
   transform: rotate(-3deg);
   scale: 1.1;
   width: 100%;
+  z-index: 10;
+  background-color: transparent; // <- transparent background
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $secondary-color; // moved main bg here
+    z-index: -2;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(3deg);
+    background-color: $primary-color;
+    z-index: -3;
+  }
 
   &__wrapper {
     display: flex;
@@ -427,10 +456,9 @@ h4 {
     animation: scrollToRight 20s linear infinite;
 
     @media (max-width: 768px) {
-       gap: 1rem;
-       padding: 0 0.5rem;
+      gap: 1rem;
+      padding: 0 0.5rem;
     }
-    
   }
 
   &__item {
@@ -441,8 +469,61 @@ h4 {
     @media (max-width: 768px) {
       font-size: 1rem;
     }
-    
   }
+}
+
+.c-about {
+  margin: 2rem 0;
+  position: relative;
+
+  &__text {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    color: $secondary-color;
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 992px) {
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 576px) {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+  }
+
+  &__infocontainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+  }
+
+  &__infolabel {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    color: $primary-color;
+    text-transform: uppercase;
+    font-weight: $fw-semibold;
+  }
+
+  &::after {
+    content: url(../assets/asterisk-hollow.svg);
+    position: absolute;
+    bottom: -10rem;
+    left: 0;
+    transform: translate(-50%, 50%);
+    width: 20rem;
+  }
+
+  @media (max-width: 992px) {
+    &::after {
+      display: none;
+    }
+  }
+}
+
+.c-footer {
+  margin-top: 10rem;
 }
 
 /*---------------------------------------/*
@@ -451,6 +532,20 @@ h4 {
 
 .u-primary {
   color: $primary-color;
+}
+
+.u-uppercase {
+  text-transform: uppercase;
+}
+
+.u-bold {
+  font-weight: $fw-bold;
+}
+
+.u-text-with-deco {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .u-fade-in-right {

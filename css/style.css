@@ -53,6 +53,7 @@ body {
   font-family: "Bai Jamjuree", sans-serif;
   background-color: #f2f1ef;
   color: #161513;
+  width: 100%;
 }
 
 h1,
@@ -71,6 +72,16 @@ h1 {
   font-size: 3.5rem;
   font-weight: 700;
 }
+@media (max-width: 1200px) {
+  h1 {
+    font-size: 3rem;
+  }
+}
+@media (max-width: 576px) {
+  h1 {
+    font-size: 2rem;
+  }
+}
 
 h2 {
   font-size: 2.5rem;
@@ -80,6 +91,16 @@ h2 {
 h4 {
   font-size: 1.5rem;
   font-weight: 700;
+}
+@media (max-width: 768px) {
+  h4 {
+    font-size: 1.25rem;
+  }
+}
+@media (max-width: 576px) {
+  h4 {
+    font-size: 1rem;
+  }
 }
 
 /*---------------------------------------/*
@@ -99,6 +120,11 @@ h4 {
   justify-content: flex-start;
   align-items: center;
   gap: 0.75rem;
+}
+@media (max-width: 576px) {
+  .o-container__row {
+    gap: 0.5rem;
+  }
 }
 
 /*---------------------------------------/*
@@ -252,11 +278,22 @@ h4 {
   max-width: 100%;
   vertical-align: auto;
 }
+@media (max-width: 576px) {
+  .c-hero__title-star {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}
 .c-hero__detailcontainer {
   display: flex;
   width: 100%;
   gap: 2rem;
   margin: 1rem 0 2rem;
+}
+@media (max-width: 576px) {
+  .c-hero__detailcontainer {
+    gap: 1rem;
+  }
 }
 .c-hero__detailitem {
   text-transform: uppercase;
@@ -268,6 +305,12 @@ h4 {
 }
 .c-hero__imgcontainer {
   width: 100%;
+}
+@media (max-width: 992px) {
+  .c-hero__imgcontainer {
+    width: 80%;
+    margin: 4rem auto 0;
+  }
 }
 .c-hero__img {
   width: 100%;
@@ -305,6 +348,13 @@ h4 {
   max-height: 100%;
   line-height: 0;
   font-size: 1.5rem;
+  aspect-ratio: 1;
+}
+@media (max-width: 576px) {
+  .c-btn--social {
+    padding: 0.5rem 0.75rem;
+    font-size: 1.25rem;
+  }
 }
 .c-btn--social:hover {
   background-color: #e94e35;
@@ -319,6 +369,7 @@ h4 {
   overflow: hidden;
   transform: rotate(-3deg);
   scale: 1.1;
+  width: 100%;
 }
 .c-slider__wrapper {
   display: flex;
@@ -328,10 +379,21 @@ h4 {
   padding: 0 1rem;
   animation: scrollToRight 20s linear infinite;
 }
+@media (max-width: 768px) {
+  .c-slider__wrapper {
+    gap: 1rem;
+    padding: 0 0.5rem;
+  }
+}
 .c-slider__item {
   color: #ffffff;
   font-size: 1.2rem;
   font-weight: 700;
+}
+@media (max-width: 768px) {
+  .c-slider__item {
+    font-size: 1rem;
+  }
 }
 
 /*---------------------------------------/*

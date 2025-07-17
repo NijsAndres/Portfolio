@@ -8,6 +8,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 /*---------------------------------------/*
@@ -130,6 +131,12 @@ h4 {
   .o-container__row {
     gap: 0.5rem;
   }
+}
+
+.o-titlecontainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /*---------------------------------------/*
@@ -469,6 +476,95 @@ h4 {
   .c-about::after {
     display: none;
   }
+}
+
+.c-projects {
+  margin: 15rem 0;
+}
+.c-projects__title {
+  text-align: center;
+  margin-top: 2rem;
+}
+.c-projects__subtitle {
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+.c-projects__filtercontainer {
+  display: flex;
+  margin-bottom: 3rem;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  gap: 0.25rem;
+}
+.c-projects__filter {
+  background-color: transparent;
+  border: none;
+  color: #161513;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  border-radius: 0.5rem;
+}
+.c-projects__filter--active {
+  background-color: #e94e35;
+  color: #ffffff;
+}
+.c-projects__card {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: #161513;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  overflow-x: hidden;
+  transition: all 0.3s ease-in-out;
+}
+.c-projects__card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #161513;
+  color: #ffffff;
+}
+.c-projects__card:hover .c-projects__cardtitle {
+  color: #ffffff;
+}
+.c-projects__cardtitle {
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease-in-out;
+}
+.c-projects__cardtext {
+  transition: all 0.3s ease-in-out;
+  margin: 0;
+}
+.c-projects__cardimgcontainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+.c-projects__cardimg {
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.c-projects__cardcontent {
+  padding: 1.5rem 1rem;
+}
+.c-projects__badge {
+  position: absolute;
+  bottom: 0;
+  transform: translateY(50%);
+  right: 0;
+  background-color: #e94e35;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  border-radius: 0.5rem 0 0 0.5rem;
+  text-transform: uppercase;
 }
 
 .c-footer {

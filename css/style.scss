@@ -21,6 +21,7 @@ $fw-bold: 700;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 /*---------------------------------------/*
@@ -144,6 +145,12 @@ h4 {
   @media (max-width: 576px) {
     gap: 0.5rem;
   }
+}
+
+.o-titlecontainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /*---------------------------------------/*
@@ -519,6 +526,108 @@ h4 {
     &::after {
       display: none;
     }
+  }
+}
+
+.c-projects {
+  margin: 15rem 0;
+
+  &__title {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  &__subtitle {
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  &__filtercontainer {
+    display: flex;
+    margin-bottom: 3rem;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+    background-color: $white-color;
+    gap: 0.25rem;
+  }
+
+  &__filter {
+    background-color: transparent;
+    border: none;
+    color: $secondary-color;
+    font-weight: $fw-semibold;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    border-radius: 0.5rem;
+
+    &--active {
+      background-color: $primary-color;
+      color: $white-color;
+    }
+  }
+
+  &__card {
+    position: relative;
+    display: block;
+    text-decoration: none;
+    color: $secondary-color;
+    background-color: $white-color;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    overflow-x: hidden;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: $secondary-color;
+      color: $white-color;
+
+      .c-projects__cardtitle {
+        color: $white-color;
+      }
+    }
+  }
+
+  &__cardtitle {
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease-in-out;
+  }
+
+  &__cardtext {
+    transition: all 0.3s ease-in-out;
+    margin: 0;
+  }
+
+  &__cardimgcontainer {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  &__cardimg {
+    width: 100%;
+    object-fit: cover;
+  }
+
+  &__cardcontent {
+    padding: 1.5rem 1rem;
+  }
+
+  &__badge {
+    position: absolute;
+    bottom: 0;
+    transform: translateY(50%);
+    right: 0;
+    background-color: $primary-color;
+    color: $white-color;
+    padding: 0.5rem 1rem;
+    font-weight: $fw-semibold;
+    border-radius: 0.5rem 0 0 0.5rem;
+    text-transform: uppercase;
   }
 }
 

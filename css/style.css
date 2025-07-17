@@ -508,9 +508,15 @@ h4 {
   transition: all 0.3s ease-in-out;
   border-radius: 0.5rem;
 }
+.c-projects__filter:hover {
+  background-color: #f2f1ef;
+}
 .c-projects__filter--active {
   background-color: #e94e35;
   color: #ffffff;
+}
+.c-projects__filter--active:hover {
+  background-color: #e94e35;
 }
 .c-projects__card {
   position: relative;
@@ -569,6 +575,55 @@ h4 {
 
 .c-footer {
   margin-top: 10rem;
+  padding: 4rem 0 0;
+  background-color: #161513;
+  color: #ffffff;
+}
+.c-footer__logo {
+  z-index: 1000;
+  font-size: 1.5rem;
+  color: #ffffff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+}
+.c-footer__logo:hover .c-nav__logoimg {
+  animation: spin 5s linear infinite;
+}
+.c-footer__logoimg {
+  transition: all 0.5s ease-in-out;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.c-footer__nav {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+.c-footer__navlink {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+}
+.c-footer__navlink:hover {
+  color: #e94e35;
+}
+.c-footer__text {
+  margin: 0;
+}
+.c-footer__bottom {
+  margin-top: 4rem;
+  border-top: #f2f1ef 1px solid;
+  text-align: center;
+  padding: 1rem 0;
 }
 
 /*---------------------------------------/*

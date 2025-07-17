@@ -562,9 +562,17 @@ h4 {
     transition: all 0.3s ease-in-out;
     border-radius: 0.5rem;
 
+    &:hover {
+      background-color: $bg-color;
+    }
+
     &--active {
       background-color: $primary-color;
       color: $white-color;
+
+      &:hover {
+        background-color: $primary-color;
+      }
     }
   }
 
@@ -633,6 +641,65 @@ h4 {
 
 .c-footer {
   margin-top: 10rem;
+  padding: 4rem 0 0;
+  background-color: $secondary-color;
+  color: $white-color;
+
+  &__logo {
+    z-index: 1000;
+    font-size: 1.5rem;
+    color: $white-color;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: $fw-semibold;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      .c-nav__logoimg {
+        animation: spin 5s linear infinite;
+      }
+    }
+
+    &img {
+      transition: all 0.5s ease-in-out;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  &__nav {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  &__navlink {
+    color: $white-color;
+    text-decoration: none;
+    font-weight: $fw-semibold;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+
+  &__text {
+    margin: 0;
+  }
+
+  &__bottom {
+    margin-top: 4rem;
+    border-top: $bg-color 1px solid;
+    text-align: center;
+    padding: 1rem 0;
+  }
 }
 
 /*---------------------------------------/*

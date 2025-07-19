@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*---------------------------------------/*
  # SETTINGS
 /*---------------------------------------*/
@@ -81,7 +82,7 @@ h1 {
 }
 @media (max-width: 576px) {
   h1 {
-    font-size: 2rem;
+    font-size: calc(2rem + 3vw);
   }
 }
 
@@ -143,6 +144,46 @@ h4 {
 /*---------------------------------------/*
  # COMPONENTS
 /*---------------------------------------*/
+.c-backtotop {
+  display: flex;
+  opacity: 0;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  background-color: #e94e35;
+  color: #161513;
+  border: none;
+  border-radius: 50%;
+  width: 4rem;
+  height: 4rem;
+  text-decoration: none;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+.c-backtotop--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.c-backtotop:hover {
+  transform: translateY(-5px);
+}
+.c-backtotop::before {
+  content: "↑";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  background-color: #f2f1ef;
+  border-radius: 50%;
+  width: 3.5rem;
+  height: 3.5rem;
+  border: #e94e35 1px solid;
+}
+
 .c-nav {
   display: flex;
   justify-content: space-between;

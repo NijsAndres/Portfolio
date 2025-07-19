@@ -98,7 +98,7 @@ h1 {
   }
 
   @media (max-width: 576px) {
-    font-size: 2rem;
+    font-size: calc(2rem + 3vw);
   }
 }
 
@@ -157,6 +157,49 @@ h4 {
 /*---------------------------------------/*
  # COMPONENTS
 /*---------------------------------------*/
+
+.c-backtotop {
+  display: flex;
+  opacity: 0;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  background-color: $primary-color;
+  color: $secondary-color;
+  border: none;
+  border-radius: 50%;
+  width: 4rem;
+  height: 4rem;
+  text-decoration: none;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+
+  &--visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  &::before {
+    content: "↑";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    font-weight: $fw-semibold;
+    background-color: $bg-color;
+    border-radius: 50%;
+    width: 3.5rem;
+    height: 3.5rem;
+    border: $primary-color 1px solid;
+  }
+}
 
 .c-nav {
   display: flex;

@@ -2,6 +2,12 @@
 // #endregion
 
 // #region ***  Callback-Visualisation - show___         ***********
+
+const showYear = () => {
+  const year = new Date().getFullYear();
+  document.querySelector(".js-year").innerHTML = year;
+}
+
 // #endregion
 
 // #region ***  Callback-No Visualisation - callback___  ***********
@@ -25,6 +31,7 @@ const listenToNav = () => {
 const init = () => {
     console.log('DOM loaded');
     listenToNav();
+    showYear();
 }
 
 document.addEventListener('DOMContentLoaded',init);

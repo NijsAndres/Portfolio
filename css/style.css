@@ -598,9 +598,11 @@ h4 {
   width: 100%;
   -o-object-fit: cover;
      object-fit: cover;
+  aspect-ratio: 16/9;
 }
 .c-projects__cardcontent {
   padding: 1.5rem 1rem;
+  height: 8rem;
 }
 .c-projects__badge {
   position: absolute;

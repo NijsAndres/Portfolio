@@ -663,10 +663,12 @@ h4 {
   &__cardimg {
     width: 100%;
     object-fit: cover;
+    aspect-ratio: 16 / 9;
   }
 
   &__cardcontent {
     padding: 1.5rem 1rem;
+    height: 8rem;
   }
 
   &__badge {

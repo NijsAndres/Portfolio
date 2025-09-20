@@ -111,6 +111,10 @@ h4 {
   }
 }
 
+p {
+  margin: 0;
+}
+
 /*---------------------------------------/*
  # OBJECTS
 /*---------------------------------------*/
@@ -521,7 +525,7 @@ h4 {
 }
 
 .c-projects {
-  margin: 15rem 0;
+  margin: 15rem 0 10rem;
 }
 .c-projects__title {
   text-align: center;
@@ -615,6 +619,46 @@ h4 {
   font-weight: 600;
   border-radius: 0.5rem 0 0 0.5rem;
   text-transform: uppercase;
+}
+
+.c-edu {
+  margin: 10rem 0;
+}
+.c-edu__title {
+  text-align: center;
+  margin-top: 2rem;
+}
+.c-edu__subtitle {
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 4rem;
+}
+.c-edu__card {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: #161513;
+  border-radius: 0.5rem;
+  border: #e94e35 2px solid;
+  background: rgba(233, 78, 53, 0.1);
+  margin-bottom: 1rem;
+  overflow-x: hidden;
+  transition: all 0.3s ease-in-out;
+}
+.c-edu__card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #e94e35;
+  color: #ffffff;
+}
+.c-edu__card:hover .c-edu__cardtitle {
+  color: #ffffff;
+}
+.c-edu__cardtitle {
+  margin-bottom: 0.25rem;
+  transition: all 0.3s ease-in-out;
+}
+.c-edu__cardcontent {
+  padding: 1rem;
 }
 
 .c-footer {

@@ -105,11 +105,6 @@ h4 {
     font-size: 1.25rem;
   }
 }
-@media (max-width: 576px) {
-  h4 {
-    font-size: 1rem;
-  }
-}
 
 p {
   margin: 0;
@@ -622,7 +617,8 @@ p {
 }
 
 .c-edu {
-  margin: 10rem 0;
+  position: relative;
+  margin: 10rem 0 15rem;
 }
 .c-edu__title {
   text-align: center;
@@ -640,7 +636,7 @@ p {
   color: #161513;
   border-radius: 0.5rem;
   border: #e94e35 2px solid;
-  background: rgba(233, 78, 53, 0.1);
+  background-color: #f2f1ef;
   margin-bottom: 1rem;
   overflow-x: hidden;
   transition: all 0.3s ease-in-out;
@@ -659,6 +655,63 @@ p {
 }
 .c-edu__cardcontent {
   padding: 1rem;
+}
+.c-edu::after {
+  content: url(../assets/asterisk-hollow.svg);
+  position: absolute;
+  bottom: -10rem;
+  right: 0;
+  transform: translate(50%, 50%);
+  width: 20rem;
+}
+@media (max-width: 1440px) {
+  .c-edu::after {
+    display: none;
+  }
+}
+
+.c-contact {
+  margin: 2rem 0;
+  position: relative;
+}
+.c-contact__text {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  color: #161513;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 992px) {
+  .c-contact__text {
+    margin-top: 2rem;
+  }
+}
+@media (max-width: 576px) {
+  .c-contact__text {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+}
+.c-contact__infocontainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+.c-contact__infolabel {
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  color: #e94e35;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.c-contact__link {
+  text-decoration: none;
+  color: inherit;
+}
+.c-contact__link h4 {
+  transition: all 0.3s ease-in-out;
+}
+.c-contact__link:hover h4 {
+  color: #e94e35;
 }
 
 .c-footer {

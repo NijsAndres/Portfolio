@@ -118,10 +118,6 @@ h4 {
   @media (max-width: 768px) {
     font-size: 1.25rem;
   }
-
-  @media (max-width: 576px) {
-    font-size: 1rem;
-  }
 }
 
 p {
@@ -476,7 +472,7 @@ p {
   scale: 1.1;
   width: 100%;
   z-index: 10;
-  background-color: transparent; // <- transparent background
+  background-color: transparent;
 
   &::after {
     content: "";
@@ -485,7 +481,7 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: $secondary-color; // moved main bg here
+    background-color: $secondary-color;
     z-index: -2;
   }
 
@@ -690,7 +686,8 @@ p {
 }
 
 .c-edu {
-  margin: 10rem 0;
+  position: relative;
+  margin: 10rem 0 15rem;
 
   &__title {
     text-align: center;
@@ -710,14 +707,14 @@ p {
     color: $secondary-color;
     border-radius: 0.5rem;
     border: $primary-color 2px solid;
-    background: rgba($color: $primary-color, $alpha: 0.1);
+    background-color: $bg-color;
     margin-bottom: 1rem;
     overflow-x: hidden;
     transition: all 0.3s ease-in-out;
 
     &:hover {
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      background-color: rgba($color: $primary-color, $alpha: 1.0);
+      background-color: rgba($color: $primary-color, $alpha: 1);
       color: $white-color;
 
       .c-edu__cardtitle {
@@ -733,6 +730,71 @@ p {
 
   &__cardcontent {
     padding: 1rem;
+  }
+
+  &::after {
+    content: url(../assets/asterisk-hollow.svg);
+    position: absolute;
+    bottom: -10rem;
+    right: 0;
+    transform: translate(50%, 50%);
+    width: 20rem;
+  }
+
+  @media (max-width: 1440px) {
+    &::after {
+      display: none;
+    }
+  }
+}
+
+.c-contact {
+  margin: 2rem 0;
+  position: relative;
+
+  &__text {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    color: $secondary-color;
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 992px) {
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 576px) {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+  }
+
+  &__infocontainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+  }
+
+  &__infolabel {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    color: $primary-color;
+    text-transform: uppercase;
+    font-weight: $fw-semibold;
+  }
+
+  &__link {
+    text-decoration: none;
+    color: inherit;
+
+    h4 {
+      transition: all 0.3s ease-in-out;
+    }
+
+    &:hover {
+      h4 {
+        color: $primary-color;
+      }
+    }
   }
 }
 

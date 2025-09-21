@@ -57,6 +57,7 @@ body {
   background-color: #f2f1ef;
   color: #161513;
   width: 100%;
+  overflow-x: hidden;
 }
 
 h1,

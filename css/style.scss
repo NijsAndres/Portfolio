@@ -70,6 +70,11 @@ $fw-bold: 700;
  # ELEMENTS
 /*---------------------------------------*/
 
+html {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: "Bai Jamjuree", sans-serif;
   background-color: $bg-color;
@@ -99,7 +104,7 @@ h1 {
   }
 
   @media (max-width: 576px) {
-    font-size: calc(2rem + 3vw);
+    font-size: calc(1.5rem + 3vw);
   }
 }
 
@@ -549,6 +554,11 @@ p {
     display: flex;
     justify-content: space-between;
     margin-top: 2rem;
+
+    @media (max-width: 576px) {
+      flex-direction: column;
+      gap: 2rem;
+    }
   }
 
   &__infolabel {
@@ -774,6 +784,11 @@ p {
     display: flex;
     justify-content: space-between;
     margin-top: 2rem;
+
+    @media (max-width: 576px) {
+      flex-direction: column;
+      gap: 2rem;
+    }
   }
 
   &__infolabel {
@@ -818,9 +833,8 @@ p {
     transition: all 0.3s ease-in-out;
 
     @media (max-width: 768px) {
-       justify-content: center;
+      justify-content: center;
     }
-    
 
     &:hover {
       .c-footer__logoimg {
@@ -867,9 +881,8 @@ p {
     color: $white-color;
 
     @media (max-width: 768px) {
-       text-align: center;
+      text-align: center;
     }
-    
   }
 
   &__text {

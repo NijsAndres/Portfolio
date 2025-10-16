@@ -52,6 +52,11 @@
 /*---------------------------------------/*
  # ELEMENTS
 /*---------------------------------------*/
+html {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: "Bai Jamjuree", sans-serif;
   background-color: #f2f1ef;
@@ -83,7 +88,7 @@ h1 {
 }
 @media (max-width: 576px) {
   h1 {
-    font-size: calc(2rem + 3vw);
+    font-size: calc(1.5rem + 3vw);
   }
 }
 
@@ -500,6 +505,12 @@ p {
   justify-content: space-between;
   margin-top: 2rem;
 }
+@media (max-width: 576px) {
+  .c-about__infocontainer {
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
 .c-about__infolabel {
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
@@ -697,6 +708,12 @@ p {
   display: flex;
   justify-content: space-between;
   margin-top: 2rem;
+}
+@media (max-width: 576px) {
+  .c-contact__infocontainer {
+    flex-direction: column;
+    gap: 2rem;
+  }
 }
 .c-contact__infolabel {
   font-size: 0.875rem;

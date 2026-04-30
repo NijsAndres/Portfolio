@@ -475,11 +475,16 @@ p {
   margin: 10rem 0 10rem;
   padding: 2rem 0;
   display: flex;
+  gap: 2rem;
   transform: rotate(-3deg);
   scale: 1.1;
   width: 100%;
   z-index: 10;
   background-color: transparent;
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
 
   &::after {
     content: "";

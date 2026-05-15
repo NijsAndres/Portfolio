@@ -488,6 +488,7 @@ p {
 .c-about {
   margin: 2rem 0;
   position: relative;
+  scroll-margin-top: 2rem;
 }
 .c-about__text {
   font-size: 1.125rem;
@@ -540,6 +541,7 @@ p {
 
 .c-projects {
   margin: 15rem 0 10rem;
+  scroll-margin-top: 2rem;
 }
 .c-projects__title {
   text-align: center;
@@ -637,7 +639,8 @@ p {
 
 .c-edu {
   position: relative;
-  margin: 10rem 0 15rem;
+  margin: 10rem 0 5rem;
+  scroll-margin-top: 2rem;
 }
 .c-edu__title {
   text-align: center;
@@ -675,7 +678,49 @@ p {
 .c-edu__cardcontent {
   padding: 1rem;
 }
-.c-edu::after {
+
+.c-exp {
+  position: relative;
+  margin: 0 0 15rem;
+  scroll-margin-top: 2rem;
+}
+.c-exp__title {
+  text-align: center;
+  margin-top: 2rem;
+}
+.c-exp__subtitle {
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 4rem;
+}
+.c-exp__card {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: #161513;
+  border-radius: 0.5rem;
+  border: #e94e35 2px solid;
+  background-color: #f2f1ef;
+  margin-bottom: 1rem;
+  overflow-x: hidden;
+  transition: all 0.3s ease-in-out;
+}
+.c-exp__card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #e94e35;
+  color: #ffffff;
+}
+.c-exp__card:hover .c-exp__cardtitle {
+  color: #ffffff;
+}
+.c-exp__cardtitle {
+  margin-bottom: 0.25rem;
+  transition: all 0.3s ease-in-out;
+}
+.c-exp__cardcontent {
+  padding: 1rem;
+}
+.c-exp::after {
   content: url(../assets/asterisk-hollow.svg);
   position: absolute;
   bottom: -10rem;
@@ -684,7 +729,7 @@ p {
   width: 20rem;
 }
 @media (max-width: 1440px) {
-  .c-edu::after {
+  .c-exp::after {
     display: none;
   }
 }
@@ -692,6 +737,7 @@ p {
 .c-contact {
   margin: 2rem 0;
   position: relative;
+  scroll-margin-top: 2rem;
 }
 .c-contact__text {
   font-size: 1.125rem;

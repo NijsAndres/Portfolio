@@ -538,6 +538,7 @@ p {
 .c-about {
   margin: 2rem 0;
   position: relative;
+  scroll-margin-top: 2rem;
 
   &__text {
     font-size: 1.125rem;
@@ -592,6 +593,7 @@ p {
 
 .c-projects {
   margin: 15rem 0 10rem;
+  scroll-margin-top: 2rem;
 
   &__title {
     text-align: center;
@@ -704,7 +706,8 @@ p {
 
 .c-edu {
   position: relative;
-  margin: 10rem 0 15rem;
+  margin: 10rem 0 5rem;
+  scroll-margin-top: 2rem;
 
   &__title {
     text-align: center;
@@ -748,6 +751,55 @@ p {
   &__cardcontent {
     padding: 1rem;
   }
+}
+
+.c-exp {
+  position: relative;
+  margin: 0 0 15rem;
+  scroll-margin-top: 2rem;
+
+  &__title {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  &__subtitle {
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 4rem;
+  }
+
+  &__card {
+    position: relative;
+    display: block;
+    text-decoration: none;
+    color: $secondary-color;
+    border-radius: 0.5rem;
+    border: $primary-color 2px solid;
+    background-color: $bg-color;
+    margin-bottom: 1rem;
+    overflow-x: hidden;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: rgba($color: $primary-color, $alpha: 1);
+      color: $white-color;
+
+      .c-exp__cardtitle {
+        color: $white-color;
+      }
+    }
+  }
+
+  &__cardtitle {
+    margin-bottom: 0.25rem;
+    transition: all 0.3s ease-in-out;
+  }
+
+  &__cardcontent {
+    padding: 1rem;
+  }
 
   &::after {
     content: url(../assets/asterisk-hollow.svg);
@@ -768,6 +820,7 @@ p {
 .c-contact {
   margin: 2rem 0;
   position: relative;
+  scroll-margin-top: 2rem;
 
   &__text {
     font-size: 1.125rem;

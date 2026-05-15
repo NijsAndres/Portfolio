@@ -396,7 +396,13 @@ p {
   }
 
   &__detailitem {
+    font-size: 1.5rem;
+    font-weight: 700;
     text-transform: uppercase;
+
+    @media (max-width: 768px) {
+      font-size: 1.25rem;
+    }
   }
 
   &__buttoncontainer {
@@ -575,6 +581,15 @@ p {
     font-weight: $fw-semibold;
   }
 
+  &__infotext {
+    font-size: 1.5rem;
+    font-weight: 700;
+
+    @media (max-width: 768px) {
+      font-size: 1.25rem;
+    }
+  }
+
   &::after {
     content: url(../assets/asterisk-hollow.svg);
     position: absolute;
@@ -601,6 +616,8 @@ p {
   }
 
   &__subtitle {
+    font-size: 0.83em;
+    font-weight: 700;
     text-align: center;
     margin-top: 1rem;
     margin-bottom: 2rem;
@@ -664,8 +681,14 @@ p {
   }
 
   &__cardtitle {
+    font-size: 1.5rem;
+    font-weight: 700;
     margin-bottom: 0.5rem;
     transition: all 0.3s ease-in-out;
+
+    @media (max-width: 768px) {
+      font-size: 1.25rem;
+    }
   }
 
   &__cardtext {
@@ -715,6 +738,8 @@ p {
   }
 
   &__subtitle {
+    font-size: 0.83em;
+    font-weight: 700;
     text-align: center;
     margin-top: 1rem;
     margin-bottom: 4rem;
@@ -744,8 +769,14 @@ p {
   }
 
   &__cardtitle {
+    font-size: 1.5rem;
+    font-weight: 700;
     margin-bottom: 0.25rem;
     transition: all 0.3s ease-in-out;
+
+    @media (max-width: 768px) {
+      font-size: 1.25rem;
+    }
   }
 
   &__cardcontent {
@@ -764,6 +795,8 @@ p {
   }
 
   &__subtitle {
+    font-size: 0.83em;
+    font-weight: 700;
     text-align: center;
     margin-top: 1rem;
     margin-bottom: 4rem;
@@ -793,8 +826,14 @@ p {
   }
 
   &__cardtitle {
+    font-size: 1.5rem;
+    font-weight: 700;
     margin-bottom: 0.25rem;
     transition: all 0.3s ease-in-out;
+
+    @media (max-width: 768px) {
+      font-size: 1.25rem;
+    }
   }
 
   &__cardcontent {
@@ -861,14 +900,23 @@ p {
     text-decoration: none;
     color: inherit;
 
-    h4 {
+    .c-contact__infotext {
       transition: all 0.3s ease-in-out;
     }
 
     &:hover {
-      h4 {
+      .c-contact__infotext {
         color: $primary-color;
       }
+    }
+  }
+
+  &__infotext {
+    font-size: 1.5rem;
+    font-weight: 700;
+
+    @media (max-width: 768px) {
+      font-size: 1.25rem;
     }
   }
 }
@@ -936,9 +984,11 @@ p {
 
   &__title {
     font-size: 1.5rem;
+    font-weight: 700;
     color: $white-color;
 
     @media (max-width: 768px) {
+      font-size: 1.25rem;
       text-align: center;
     }
   }
@@ -975,6 +1025,12 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+  }
 }
 
 .u-fade-in-right {

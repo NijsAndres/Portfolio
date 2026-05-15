@@ -51,7 +51,7 @@ const showProjects = (filter) => {
                                     <span class="c-projects__badge">${project.tags.join(" / ")}</span>
                                 </div>
                                 <div class="c-projects__cardcontent">
-                                    <h4 class="c-projects__cardtitle">${project.title}</h4>
+                                    <p class="c-projects__cardtitle">${project.title}</p>
                                     <p class="c-projects__cardtext">${project.description}</p>
                                 </div>
                             </a>

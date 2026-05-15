@@ -356,7 +356,14 @@ p {
   }
 }
 .c-hero__detailitem {
+  font-size: 1.5rem;
+  font-weight: 700;
   text-transform: uppercase;
+}
+@media (max-width: 768px) {
+  .c-hero__detailitem {
+    font-size: 1.25rem;
+  }
 }
 .c-hero__buttoncontainer {
   display: flex;
@@ -525,6 +532,15 @@ p {
   text-transform: uppercase;
   font-weight: 600;
 }
+.c-about__infotext {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+@media (max-width: 768px) {
+  .c-about__infotext {
+    font-size: 1.25rem;
+  }
+}
 .c-about::after {
   content: url(../assets/asterisk-hollow.svg);
   position: absolute;
@@ -548,6 +564,8 @@ p {
   margin-top: 2rem;
 }
 .c-projects__subtitle {
+  font-size: 0.83em;
+  font-weight: 700;
   text-align: center;
   margin-top: 1rem;
   margin-bottom: 2rem;
@@ -602,8 +620,15 @@ p {
   color: #ffffff;
 }
 .c-projects__cardtitle {
+  font-size: 1.5rem;
+  font-weight: 700;
   margin-bottom: 0.5rem;
   transition: all 0.3s ease-in-out;
+}
+@media (max-width: 768px) {
+  .c-projects__cardtitle {
+    font-size: 1.25rem;
+  }
 }
 .c-projects__cardtext {
   transition: all 0.3s ease-in-out;
@@ -647,6 +672,8 @@ p {
   margin-top: 2rem;
 }
 .c-edu__subtitle {
+  font-size: 0.83em;
+  font-weight: 700;
   text-align: center;
   margin-top: 1rem;
   margin-bottom: 4rem;
@@ -672,8 +699,15 @@ p {
   color: #ffffff;
 }
 .c-edu__cardtitle {
+  font-size: 1.5rem;
+  font-weight: 700;
   margin-bottom: 0.25rem;
   transition: all 0.3s ease-in-out;
+}
+@media (max-width: 768px) {
+  .c-edu__cardtitle {
+    font-size: 1.25rem;
+  }
 }
 .c-edu__cardcontent {
   padding: 1rem;
@@ -689,6 +723,8 @@ p {
   margin-top: 2rem;
 }
 .c-exp__subtitle {
+  font-size: 0.83em;
+  font-weight: 700;
   text-align: center;
   margin-top: 1rem;
   margin-bottom: 4rem;
@@ -714,8 +750,15 @@ p {
   color: #ffffff;
 }
 .c-exp__cardtitle {
+  font-size: 1.5rem;
+  font-weight: 700;
   margin-bottom: 0.25rem;
   transition: all 0.3s ease-in-out;
+}
+@media (max-width: 768px) {
+  .c-exp__cardtitle {
+    font-size: 1.25rem;
+  }
 }
 .c-exp__cardcontent {
   padding: 1rem;
@@ -778,11 +821,20 @@ p {
   text-decoration: none;
   color: inherit;
 }
-.c-contact__link h4 {
+.c-contact__link .c-contact__infotext {
   transition: all 0.3s ease-in-out;
 }
-.c-contact__link:hover h4 {
+.c-contact__link:hover .c-contact__infotext {
   color: #e94e35;
+}
+.c-contact__infotext {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+@media (max-width: 768px) {
+  .c-contact__infotext {
+    font-size: 1.25rem;
+  }
 }
 
 .c-footer {
@@ -842,10 +894,12 @@ p {
 }
 .c-footer__title {
   font-size: 1.5rem;
+  font-weight: 700;
   color: #ffffff;
 }
 @media (max-width: 768px) {
   .c-footer__title {
+    font-size: 1.25rem;
     text-align: center;
   }
 }
@@ -878,6 +932,13 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+@media (max-width: 768px) {
+  .u-text-with-deco {
+    font-size: 1.25rem;
+  }
 }
 
 .u-fade-in-right {

@@ -47,7 +47,7 @@ const showProjects = (filter) => {
     output += `<div class="col-lg-6">
                             <a href="${project.projectUrl}" target="_blank" class="c-projects__card">
                                 <div class="c-projects__cardimgcontainer">
-                                    <img class="c-projects__cardimg" src="${project.imageUrl}" alt="Mockup of ${project.title}">
+                                    <img class="c-projects__cardimg" src="${project.imageUrl}" alt="Mockup of ${project.title}" width="1920" height="1079" loading="lazy">
                                     <span class="c-projects__badge">${project.tags.join(" / ")}</span>
                                 </div>
                                 <div class="c-projects__cardcontent">

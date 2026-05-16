@@ -14,7 +14,7 @@ $fw-semibold: 600;
 $fw-bold: 700;
 
 /*---------------------------------------/*
- # GENERIC - BOOTSTRAP
+ # GENERIC
 /*---------------------------------------*/
 
 * {
@@ -24,6 +24,59 @@ $fw-bold: 700;
   scroll-behavior: smooth;
   scrollbar-color: $secondary-color $bg-color;
 }
+
+/*---------------------------------------/*
+ # GRID (replaces Bootstrap)
+/*---------------------------------------*/
+
+.container {
+  width: 100%;
+  padding-right: 0.75rem;
+  padding-left: 0.75rem;
+  margin-right: auto;
+  margin-left: auto;
+
+  @media (min-width: 576px) { max-width: 540px; }
+  @media (min-width: 768px) { max-width: 720px; }
+  @media (min-width: 992px) { max-width: 960px; }
+  @media (min-width: 1200px) { max-width: 1140px; }
+  @media (min-width: 1400px) { max-width: 1320px; }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -0.75rem;
+  margin-left: -0.75rem;
+
+  > * {
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+  }
+}
+
+.col-12 { flex: 0 0 auto; width: 100%; }
+
+@media (min-width: 768px) {
+  .col-md-4 { flex: 0 0 auto; width: 33.33333%; }
+  .offset-md-4 { margin-left: 33.33333%; }
+}
+
+@media (min-width: 992px) {
+  .col-lg-4 { flex: 0 0 auto; width: 33.33333%; }
+  .col-lg-5 { flex: 0 0 auto; width: 41.66667%; }
+  .col-lg-6 { flex: 0 0 auto; width: 50%; }
+  .col-lg-8 { flex: 0 0 auto; width: 66.66667%; }
+  .offset-lg-1 { margin-left: 8.33333%; }
+  .offset-lg-4 { margin-left: 33.33333%; }
+}
+
+@media (min-width: 1200px) {
+  .col-xl-4 { flex: 0 0 auto; width: 33.33333%; }
+}
+
+.mb-4 { margin-bottom: 1.5rem !important; }
 
 /*---------------------------------------/*
   # ANIMATIONS
@@ -703,9 +756,10 @@ p {
   }
 
   &__cardimg {
+    display: block;
     width: 100%;
+    height: 100%;
     object-fit: cover;
-    aspect-ratio: 16 / 9;
   }
 
   &__cardcontent {

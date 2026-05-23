@@ -712,7 +712,14 @@ p {
   &__card {
     position: relative;
     display: block;
-    text-decoration: none;
+    width: 100%;
+    appearance: none;
+    border: 0;
+    padding: 0;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
     color: $secondary-color;
     background-color: $white-color;
     border-radius: 0.5rem;
@@ -730,6 +737,11 @@ p {
       .c-projects__cardtitle {
         color: $white-color;
       }
+    }
+
+    &:focus-visible {
+      outline: 2px solid $primary-color;
+      outline-offset: 4px;
     }
   }
 
@@ -1059,12 +1071,243 @@ p {
   }
 }
 
+.c-modal {
+  padding: 0;
+  border: 0;
+  inset: 0;
+  margin: auto;
+  background-color: $bg-color;
+  color: $secondary-color;
+  border-radius: 0.75rem;
+  max-width: 900px;
+  width: calc(100% - 2rem);
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(12px) scale(0.97);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    overlay 0.3s ease allow-discrete,
+    display 0.3s ease allow-discrete;
+
+  &[open] {
+    opacity: 1;
+    transform: none;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(12px) scale(0.97);
+    }
+  }
+
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0);
+    transition:
+      background-color 0.3s ease,
+      overlay 0.3s ease allow-discrete,
+      display 0.3s ease allow-discrete;
+  }
+
+  &[open]::backdrop {
+    background-color: rgba(0, 0, 0, 0.55);
+
+    @starting-style {
+      background-color: rgba(0, 0, 0, 0);
+    }
+  }
+
+  &__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: $secondary-color;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.25rem;
+    transition: color 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    &:hover {
+      color: $primary-color;
+      transform: rotate(90deg);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $primary-color;
+      outline-offset: 2px;
+    }
+  }
+
+  &__header {
+    padding: 2rem 3.5rem 1.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    border-bottom: 1px solid rgba($secondary-color, 0.1);
+
+    @media (max-width: 768px) {
+      padding: 1.5rem 3.5rem 1rem 1.25rem;
+    }
+  }
+
+  &__typebadge {
+    align-self: flex-start;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: $fw-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 2px solid $secondary-color;
+    background-color: $secondary-color;
+    color: $white-color;
+
+    &--school {
+      background-color: $secondary-color;
+      color: $white-color;
+    }
+
+    &--concept {
+      background-color: $white-color;
+      color: $secondary-color;
+    }
+
+    &--internship {
+      background-color: $primary-color;
+      color: $white-color;
+      border-color: $primary-color;
+    }
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: $fw-bold;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  &__body {
+    padding: 1.5rem 2rem;
+    overflow-y: auto;
+    flex: 1 1 auto;
+
+    @media (max-width: 768px) {
+      padding: 1.25rem;
+    }
+  }
+
+  &__paragraph {
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 65ch;
+    margin: 0 0 1.25rem;
+  }
+
+  &__heading {
+    font-size: 1.25rem;
+    font-weight: $fw-bold;
+    margin: 2rem 0 0.75rem;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  &__media {
+    margin: 1.5rem 0;
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+    }
+  }
+
+  &__caption {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: rgba($secondary-color, 0.7);
+    text-align: center;
+  }
+
+  &__footer {
+    padding: 1rem 2rem 1.5rem;
+    border-top: 1px solid rgba($secondary-color, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      padding: 1rem 1.25rem 1.25rem;
+      flex-direction: column;
+      align-items: stretch;
+
+      .c-btn {
+        justify-content: center;
+      }
+    }
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__tag {
+    padding: 0.25rem 0.75rem;
+    background-color: $white-color;
+    color: $secondary-color;
+    border: 1px solid rgba($secondary-color, 0.15);
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: $fw-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+  }
+}
+
 /*---------------------------------------/*
  # UTILITIES
 /*---------------------------------------*/
 
 .u-primary {
   color: $primary-color;
+}
+
+.u-modal-open {
+  overflow: hidden;
 }
 
 .u-uppercase {

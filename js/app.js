@@ -134,7 +134,7 @@ const openProjectModal = (id) => {
   const tpl = document.querySelector(`#project-${id}`);
   if (tpl && "content" in tpl) body.appendChild(tpl.content.cloneNode(true));
 
-  document.body.classList.add("u-modal-open");
+  document.documentElement.classList.add("u-modal-open");
   dialog.showModal();
   body.scrollTop = 0;
 };
@@ -164,7 +164,7 @@ const listenToProjects = () => {
   });
 
   dialog.addEventListener("close", () => {
-    document.body.classList.remove("u-modal-open");
+    document.documentElement.classList.remove("u-modal-open");
     if (lastTrigger) {
       lastTrigger.focus();
       lastTrigger = null;

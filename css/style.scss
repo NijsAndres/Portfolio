@@ -1175,25 +1175,8 @@ p {
     font-weight: $fw-semibold;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border: 2px solid $secondary-color;
-    background-color: $secondary-color;
+    background-color: $primary-color;
     color: $white-color;
-
-    &--school {
-      background-color: $secondary-color;
-      color: $white-color;
-    }
-
-    &--concept {
-      background-color: $white-color;
-      color: $secondary-color;
-    }
-
-    &--internship {
-      background-color: $primary-color;
-      color: $white-color;
-      border-color: $primary-color;
-    }
   }
 
   &__title {

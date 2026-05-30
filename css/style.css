@@ -1111,22 +1111,8 @@ p {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border: 2px solid #161513;
-  background-color: #161513;
-  color: #ffffff;
-}
-.c-modal__typebadge--school {
-  background-color: #161513;
-  color: #ffffff;
-}
-.c-modal__typebadge--concept {
-  background-color: #ffffff;
-  color: #161513;
-}
-.c-modal__typebadge--internship {
   background-color: #e94e35;
   color: #ffffff;
-  border-color: #e94e35;
 }
 .c-modal__title {
   font-size: 2rem;

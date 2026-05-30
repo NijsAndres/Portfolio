@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Filter;
+use App\Models\Project;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -15,6 +17,9 @@ class DatabaseSeeder extends Seeder
         $now = now();
 
         // Clear existing rows so the seeder is safe to re-run.
+        // Pivot before its parents to respect foreign keys.
+        DB::table('filter_project')->delete();
+        DB::table('filters')->delete();
         DB::table('hero_content')->delete();
         DB::table('about_content')->delete();
         DB::table('projects')->delete();
@@ -149,6 +154,29 @@ class DatabaseSeeder extends Seeder
                 'updated_at'  => $now,
             ],
         ]);
+
+        // --- Filters -----------------------------------------------------
+        // Dashboard-managed filters, linked to projects via the filter_project
+        // pivot. Separate from the projects' free-text `tags` (the card badge).
+        DB::table('filters')->insert([
+            ['name' => 'HTML',  'slug' => 'html',  'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'JS',    'slug' => 'js',    'sort_order' => 2, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'PHP',   'slug' => 'php',   'sort_order' => 3, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Figma', 'slug' => 'figma', 'sort_order' => 4, 'created_at' => $now, 'updated_at' => $now],
+        ]);
+
+        // Link projects to filters (mirrors the current tag-based grouping).
+        $filterIds = Filter::pluck('id', 'slug');
+        $projectFilters = [
+            'Sinksen Kortrijk 2026'  => ['html', 'js', 'php'],
+            'Banksy Tribute'         => ['html'],
+            'TUI Travel Redesign'    => ['figma'],
+            'UrbanGear Product Page' => ['figma'],
+        ];
+        foreach ($projectFilters as $title => $slugs) {
+            $project = Project::where('title', $title)->first();
+            $project?->filters()->sync($filterIds->only($slugs)->values()->all());
+        }
 
         // --- Education ---------------------------------------------------
         DB::table('education')->insert([

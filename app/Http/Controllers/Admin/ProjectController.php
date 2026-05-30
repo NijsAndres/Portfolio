@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Filter;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
@@ -23,24 +24,32 @@ class ProjectController extends Controller
 
     public function create()
     {
-        return view('admin.projects.form', ['project' => new Project()]);
+        return view('admin.projects.form', [
+            'project' => new Project(),
+            'filters' => $this->filterOptions(),
+        ]);
     }
 
     public function store(Request $request)
     {
-        Project::create($this->validateData($request));
+        $project = Project::create($this->validateData($request));
+        $project->filters()->sync($this->validateFilters($request));
 
         return redirect()->route('admin.projects.index')->with('success', 'Project created.');
     }
 
     public function edit(Project $project)
     {
-        return view('admin.projects.form', compact('project'));
+        return view('admin.projects.form', [
+            'project' => $project,
+            'filters' => $this->filterOptions(),
+        ]);
     }
 
     public function update(Request $request, Project $project)
     {
         $project->update($this->validateData($request));
+        $project->filters()->sync($this->validateFilters($request));
 
         return redirect()->route('admin.projects.index')->with('success', 'Project updated.');
     }
@@ -71,5 +80,27 @@ class ProjectController extends Controller
             'body' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ]);
+    }
+
+    /**
+     * Validate the linked filter ids (handled separately so they don't reach
+     * Project::create/update, which has no filters column).
+     */
+    private function validateFilters(Request $request): array
+    {
+        $validated = $request->validate([
+            'filters' => ['nullable', 'array'],
+            'filters.*' => ['integer', 'exists:filters,id'],
+        ]);
+
+        return $validated['filters'] ?? [];
+    }
+
+    /**
+     * Filters available to link on the project form.
+     */
+    private function filterOptions()
+    {
+        return Filter::orderBy('sort_order')->orderBy('name')->get();
     }
 }

@@ -29,4 +29,5 @@ database/database.sqlite
 
 # Project
 .claude
+CLAUDE.md
 CMS_GUIDE.md

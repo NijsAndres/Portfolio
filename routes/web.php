@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\EducationController;
 use App\Http\Controllers\Admin\ExperienceController;
+use App\Http\Controllers\Admin\FilterController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,7 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     // CRUD entities. No detail pages in the admin, and the resource
     // controllers define no show() method, so exclude the show route.
     Route::resource('projects', ProjectController::class)->except('show');
+    Route::resource('filters', FilterController::class)->except('show');
     Route::resource('education', EducationController::class)->except('show');
     Route::resource('experience', ExperienceController::class)->except('show');
 });

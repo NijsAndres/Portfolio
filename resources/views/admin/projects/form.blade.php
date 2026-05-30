@@ -42,6 +42,24 @@
                         class="mt-1 text-sm font-medium text-indigo-600 hover:text-indigo-800">+ Add tag</button>
             </div>
 
+            {{-- Filters (many-to-many) — separate from the free-text tags above. --}}
+            @php $selectedFilters = old('filters', $project->filters->pluck('id')->all()); @endphp
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Filters</label>
+                @forelse ($filters as $filter)
+                    <label class="flex items-center gap-2 mb-1.5 text-sm text-gray-700">
+                        <input type="checkbox" name="filters[]" value="{{ $filter->id }}"
+                               @checked(in_array($filter->id, $selectedFilters))
+                               class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        {{ $filter->name }}
+                    </label>
+                @empty
+                    <p class="text-xs text-gray-400">
+                        No filters yet — <a href="{{ route('admin.filters.index') }}" class="text-indigo-600 hover:text-indigo-800">create one</a> to link projects.
+                    </p>
+                @endforelse
+            </div>
+
             <div>
                 <label for="url" class="block text-sm font-medium text-gray-700 mb-1">URL</label>
                 <input type="url" id="url" name="url"

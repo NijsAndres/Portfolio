@@ -21,6 +21,7 @@
             ['route' => 'admin.about.edit',       'pattern' => 'admin.about.*',      'label' => 'About'],
             ['route' => 'admin.contact.edit',     'pattern' => 'admin.contact.*',    'label' => 'Contact'],
             ['route' => 'admin.projects.index',   'pattern' => 'admin.projects.*',   'label' => 'Projects'],
+            ['route' => 'admin.filters.index',    'pattern' => 'admin.filters.*',    'label' => 'Filters'],
             ['route' => 'admin.education.index',  'pattern' => 'admin.education.*',   'label' => 'Education'],
             ['route' => 'admin.experience.index', 'pattern' => 'admin.experience.*', 'label' => 'Experience'],
         ];

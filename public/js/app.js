@@ -1,42 +1,3 @@
-const arrProjects = [
-  {
-    id: "sinksen-kortrijk-2026",
-    type: "school",
-    title: "Sinksen Kortrijk 2026",
-    description: "A website that guides people through the Sinksen activities in an Amazigh theme.",
-    imageUrl: "../assets/projects/sinksen-amazigh.webp",
-    projectUrl: "https://www.andresnijs.be/atelier2/",
-    tags: ["html", "scss","js", "php"],
-  },
-  {
-    id: "banksy-tribute",
-    type: "concept",
-    title: "Banksy Tribute",
-    description: "A tribute website to the famous street artist Banksy.",
-    imageUrl: "../assets/projects/banksy.webp",
-    projectUrl: "https://www.andresnijs.be/banksy",
-    tags: ["html", "scss"],
-  },
-  {
-    id: "tui-travel-redesign",
-    type: "school",
-    title: "TUI Travel Redesign",
-    description: "A redesign of the TUI Travel website focusing on user experience and modern design principles.",
-    imageUrl: "../assets/projects/TUI-redesign.webp",
-    projectUrl: "https://andresnijs.be/atelier1/",
-    tags: ["html", "scss", "js"],
-  },
-  {
-    id: "urbangear-productpage",
-    type: "concept",
-    title: "UrbanGear Productpage Design",
-    description: "A product page design for UrbanGear, a fictional outdoor gear brand.",
-    imageUrl: "../assets/projects/urbangear-product.webp",
-    projectUrl: "https://www.figma.com/design/TVjQeiyLXWO8Nngji5C49o/LABO-08-Opdracht?node-id=2001-2&t=kRhPiKOopsDWyB1G-1",
-    tags: ["figma", "UI"],
-  },
-];
-
 const TYPE_LABELS = { school: "School", concept: "Concept", internship: "Internship" };
 
 // #region ***  DOM references                           ***********
@@ -44,30 +5,16 @@ const TYPE_LABELS = { school: "School", concept: "Concept", internship: "Interns
 
 // #region ***  Callback-Visualisation - show___         ***********
 
-const showYear = () => {
-  const year = new Date().getFullYear();
-  document.querySelector(".js-year").innerHTML = year;
-};
-
+// Cards are rendered server-side by Blade. Filtering just toggles their
+// visibility based on the space-separated filter slugs in data-filters.
 const showProjects = (filter) => {
-  const HTMLProjects = document.querySelector(".js-projects");
-  let output = "";
-  const filteredProjects = arrProjects.filter((project) => project.tags.includes(filter) || filter === "all");
-  for (let project of filteredProjects) {
-    output += `<div class="col-lg-6">
-                            <button type="button" class="c-projects__card js-project-card" data-project-id="${project.id}" aria-haspopup="dialog" aria-controls="project-modal">
-                                <div class="c-projects__cardimgcontainer">
-                                    <img class="c-projects__cardimg" src="${project.imageUrl}" alt="Mockup of ${project.title}" width="1920" height="1079" loading="lazy">
-                                    <span class="c-projects__badge">${project.tags.join(" / ")}</span>
-                                </div>
-                                <div class="c-projects__cardcontent">
-                                    <p class="c-projects__cardtitle">${project.title}</p>
-                                    <p class="c-projects__cardtext">${project.description}</p>
-                                </div>
-                            </button>
-                        </div>`;
+  const cards = document.querySelectorAll(".js-project-card");
+  for (let card of cards) {
+    const slugs = (card.dataset.filters || "").split(" ").filter(Boolean);
+    const visible = filter === "all" || slugs.includes(filter);
+    // The card sits inside a .col-lg-6 wrapper; toggle that so the grid reflows.
+    card.closest(".col-lg-6").hidden = !visible;
   }
-  HTMLProjects.innerHTML = output;
 };
 
 const updateActiveFilter = (selectedFilter) => {
@@ -102,8 +49,7 @@ const listenToFilters = () => {
   for (let filter of filterButtons) {
     filter.addEventListener("click", (e) => {
       e.preventDefault();
-      const selectedFilter = e.target.dataset.filter;
-      console.log(selectedFilter);
+      const selectedFilter = e.currentTarget.dataset.filter;
       showProjects(selectedFilter);
       updateActiveFilter(selectedFilter);
     });
@@ -112,26 +58,36 @@ const listenToFilters = () => {
 
 let lastTrigger = null;
 
-const openProjectModal = (id) => {
-  const project = arrProjects.find((p) => p.id === id);
+const openProjectModal = (card) => {
   const dialog = document.querySelector("#project-modal");
-  if (!project || !dialog) return;
+  if (!card || !dialog) return;
 
-  dialog.querySelector(".js-modal-title").textContent = project.title;
+  const { projectId, type, title, url, tags } = card.dataset;
+
+  dialog.querySelector(".js-modal-title").textContent = title;
 
   const typeEl = dialog.querySelector(".js-modal-type");
-  typeEl.textContent = TYPE_LABELS[project.type];
-  typeEl.className = `c-modal__typebadge c-modal__typebadge--${project.type} js-modal-type`;
+  typeEl.textContent = TYPE_LABELS[type] || type;
+  typeEl.className = `c-modal__typebadge c-modal__typebadge--${type} js-modal-type`;
 
-  dialog.querySelector(".js-modal-tags").innerHTML = project.tags
+  dialog.querySelector(".js-modal-tags").innerHTML = (tags || "")
+    .split(",")
+    .filter(Boolean)
     .map((t) => `<span class="c-modal__tag">${t}</span>`)
     .join("");
 
-  dialog.querySelector(".js-modal-visit").href = project.projectUrl;
+  const visit = dialog.querySelector(".js-modal-visit");
+  if (url) {
+    visit.href = url;
+    visit.hidden = false;
+  } else {
+    visit.removeAttribute("href");
+    visit.hidden = true;
+  }
 
   const body = dialog.querySelector(".js-modal-body");
   body.innerHTML = "";
-  const tpl = document.querySelector(`#project-${id}`);
+  const tpl = document.querySelector(`#project-${projectId}`);
   if (tpl && "content" in tpl) body.appendChild(tpl.content.cloneNode(true));
 
   document.documentElement.classList.add("u-modal-open");
@@ -154,7 +110,7 @@ const listenToProjects = () => {
     const card = e.target.closest(".js-project-card");
     if (!card) return;
     lastTrigger = card;
-    openProjectModal(card.dataset.projectId);
+    openProjectModal(card);
   });
 
   dialog.querySelector(".js-modal-close").addEventListener("click", closeProjectModal);
@@ -177,9 +133,7 @@ const listenToProjects = () => {
 // #region ***  Init / DOMContentLoaded                  ***********
 
 const init = () => {
-  console.log("DOM loaded");
   listenToNav();
-  showYear();
   showProjects("all");
   listenToFilters();
   listenToProjects();

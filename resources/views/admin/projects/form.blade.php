@@ -7,6 +7,7 @@
 @section('content')
     <form method="POST"
           action="{{ $exists ? route('admin.projects.update', $project) : route('admin.projects.store') }}"
+          enctype="multipart/form-data"
           class="max-w-2xl space-y-6">
         @csrf
         @if ($exists)
@@ -69,11 +70,14 @@
             </div>
 
             <div>
-                <label for="image_path" class="block text-sm font-medium text-gray-700 mb-1">Image path</label>
-                <input type="text" id="image_path" name="image_path"
-                       value="{{ old('image_path', $project->image_path) }}"
-                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                <p class="mt-1 text-xs text-gray-400">Plain path for now — real uploads come in Step 8.</p>
+                <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                @if ($exists && $project->image_url)
+                    <img src="{{ $project->image_url }}" alt="Current image for {{ $project->title }}"
+                         class="mb-2 h-32 w-auto rounded-md border border-gray-200 object-cover">
+                @endif
+                <input type="file" id="image" name="image" accept="image/*"
+                       class="w-full text-sm text-gray-700 file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100">
+                <p class="mt-1 text-xs text-gray-400">JPG, PNG or WebP, up to 4 MB.@if ($exists) Leave empty to keep the current image.@endif</p>
             </div>
 
             <div>

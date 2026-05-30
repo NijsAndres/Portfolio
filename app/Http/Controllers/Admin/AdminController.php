@@ -11,6 +11,7 @@ use App\Models\HeroContent;
 use App\Models\Project;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Handles the "singleton" admin sections (hero, about, contact), the dashboard
@@ -62,11 +63,24 @@ class AdminController extends Controller
             'skills.*' => ['string', 'max:255'],
             'disciplines' => ['nullable', 'array'],
             'disciplines.*' => ['string', 'max:255'],
-            'image_path' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
         ]);
 
         // first() ?? new — the row is seeded, but this also handles a fresh DB.
         $hero = HeroContent::first() ?? new HeroContent();
+
+        // A new upload replaces the stored image; delete the previous file when
+        // it lives on the public disk (leave legacy public/assets paths alone).
+        if ($request->hasFile('image')) {
+            if ($hero->image_path && Storage::disk('public')->exists($hero->image_path)) {
+                Storage::disk('public')->delete($hero->image_path);
+            }
+
+            $validated['image_path'] = $request->file('image')->store('hero', 'public');
+        }
+
+        unset($validated['image']);
+
         $hero->fill($validated)->save();
 
         return back()->with('success', 'Hero section updated.');
@@ -130,12 +144,9 @@ class AdminController extends Controller
      * ------------------------------------------------------------------- */
 
     /**
-     * Accept a new CV PDF.
-     *
-     * NOTE: Real storage (moving the file into storage/app/public/cv, deleting
-     * the previous file, and storage:link) is intentionally deferred to Step 8.
-     * For now we validate the upload and only record the filename in
-     * site_settings under cv_path so the rest of the app can resolve it.
+     * Accept a new CV PDF, store it on the public disk and record its relative
+     * path in site_settings under cv_path. The previous file is removed when it
+     * lives in storage; legacy public/assets references are left untouched.
      */
     public function uploadCv(Request $request)
     {
@@ -143,9 +154,15 @@ class AdminController extends Controller
             'cv' => ['required', 'file', 'mimes:pdf', 'max:10240'], // max 10 MB
         ]);
 
-        $filename = $request->file('cv')->getClientOriginalName();
-        SiteSetting::set('cv_path', $filename);
+        // Delete the previous CV only when it was a stored upload.
+        $previous = SiteSetting::get('cv_path');
+        if ($previous && Storage::disk('public')->exists($previous)) {
+            Storage::disk('public')->delete($previous);
+        }
 
-        return back()->with('success', 'CV reference updated. File storage is wired up in Step 8.');
+        $path = $request->file('cv')->store('cv', 'public');
+        SiteSetting::set('cv_path', $path);
+
+        return back()->with('success', 'CV updated.');
     }
 }

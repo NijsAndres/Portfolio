@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class HeroContent extends Model
 {
@@ -29,4 +30,22 @@ class HeroContent extends Model
         'skills' => 'array',
         'disciplines' => 'array',
     ];
+
+    /**
+     * Resolve image_path to a usable URL, bridging Step 8 uploads and the
+     * legacy seeded asset. A new upload lives on the public disk and resolves
+     * to /storage/...; the seeded path falls back to public/assets/.
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        if (! $this->image_path) {
+            return null;
+        }
+
+        if (Storage::disk('public')->exists($this->image_path)) {
+            return Storage::disk('public')->url($this->image_path);
+        }
+
+        return asset('assets/'.$this->image_path);
+    }
 }

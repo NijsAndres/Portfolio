@@ -27,7 +27,7 @@ class FrontendController extends Controller
         $education  = Education::orderBy('sort_order')->orderBy('id')->get();
         $experience = Experience::orderBy('sort_order')->orderBy('id')->get();
         $contact    = ContactInfo::first();
-        $cvPath     = SiteSetting::get('cv_path');
+        $cvUrl      = SiteSetting::cvUrl();
 
         return view('index', compact(
             'hero',
@@ -37,7 +37,7 @@ class FrontendController extends Controller
             'education',
             'experience',
             'contact',
-            'cvPath',
+            'cvUrl',
         ));
     }
 }

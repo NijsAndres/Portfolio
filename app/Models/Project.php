@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 
 class Project extends Model
 {
@@ -34,5 +35,24 @@ class Project extends Model
     public function filters(): BelongsToMany
     {
         return $this->belongsToMany(Filter::class);
+    }
+
+    /**
+     * Resolve image_path to a usable URL, bridging Step 8 uploads and the
+     * legacy seeded assets. New uploads live on the public disk and resolve to
+     * /storage/...; seeded paths (e.g. 'projects/x.webp') fall back to the
+     * files shipped in public/assets/.
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        if (! $this->image_path) {
+            return null;
+        }
+
+        if (Storage::disk('public')->exists($this->image_path)) {
+            return Storage::disk('public')->url($this->image_path);
+        }
+
+        return asset('assets/'.$this->image_path);
     }
 }

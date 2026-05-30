@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class SiteSetting extends Model
 {
@@ -36,5 +37,26 @@ class SiteSetting extends Model
             ['key' => $key],
             ['value' => $value]
         );
+    }
+
+    /**
+     * Resolve the stored cv_path to a usable URL, bridging Step 8 uploads and
+     * the legacy seeded file. A new upload lives on the public disk and
+     * resolves to /storage/...; the seeded filename falls back to
+     * public/assets/. Returns null when no CV is set.
+     */
+    public static function cvUrl(): ?string
+    {
+        $path = static::get('cv_path');
+
+        if (! $path) {
+            return null;
+        }
+
+        if (Storage::disk('public')->exists($path)) {
+            return Storage::disk('public')->url($path);
+        }
+
+        return asset('assets/'.$path);
     }
 }

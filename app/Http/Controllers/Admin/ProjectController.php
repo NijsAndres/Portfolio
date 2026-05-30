@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Filter;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Resource controller for portfolio projects.
@@ -32,7 +33,14 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
-        $project = Project::create($this->validateData($request));
+        $data = $this->validateData($request);
+
+        // A new upload sets image_path; otherwise it stays null on create.
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('projects', 'public');
+        }
+
+        $project = Project::create($data);
         $project->filters()->sync($this->validateFilters($request));
 
         return redirect()->route('admin.projects.index')->with('success', 'Project created.');
@@ -48,7 +56,19 @@ class ProjectController extends Controller
 
     public function update(Request $request, Project $project)
     {
-        $project->update($this->validateData($request));
+        $data = $this->validateData($request);
+
+        // A new upload replaces the stored image; delete the previous file when
+        // it lives on the public disk. With no new upload, keep image_path as-is.
+        if ($request->hasFile('image')) {
+            if ($project->image_path && Storage::disk('public')->exists($project->image_path)) {
+                Storage::disk('public')->delete($project->image_path);
+            }
+
+            $data['image_path'] = $request->file('image')->store('projects', 'public');
+        }
+
+        $project->update($data);
         $project->filters()->sync($this->validateFilters($request));
 
         return redirect()->route('admin.projects.index')->with('success', 'Project updated.');
@@ -64,22 +84,27 @@ class ProjectController extends Controller
     /**
      * Shared validation for store and update.
      *
-     * image_path is validated as a plain string for now; the real image upload
-     * handling is added in Step 8.
+     * The uploaded `image` is validated here but handled in store/update (it is
+     * stored on the public disk, with image_path holding the returned path).
      */
     private function validateData(Request $request): array
     {
-        return $request->validate([
+        $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:255'],
             'url' => ['nullable', 'url', 'max:255'],
-            'image_path' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'type' => ['nullable', 'string', 'max:255'],
             'body' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ]);
+
+        // `image` is the upload field, not a column — it is handled separately.
+        unset($validated['image']);
+
+        return $validated;
     }
 
     /**

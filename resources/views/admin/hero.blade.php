@@ -7,72 +7,72 @@
         @csrf
         @method('PUT')
 
-        <div class="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
+        <div class="card p-6 space-y-5">
             <div>
-                <label for="headline" class="block text-sm font-medium text-gray-700 mb-1">Headline <span class="text-red-500">*</span></label>
+                <label for="headline" class="form-label">Headline <span class="text-brand-500">*</span></label>
                 <input type="text" id="headline" name="headline" required
                        value="{{ old('headline', $hero->headline) }}"
-                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                       class="form-input">
             </div>
 
             <div>
-                <label for="subheadline" class="block text-sm font-medium text-gray-700 mb-1">Subheadline</label>
+                <label for="subheadline" class="form-label">Subheadline</label>
                 <input type="text" id="subheadline" name="subheadline"
                        value="{{ old('subheadline', $hero->subheadline) }}"
-                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                       class="form-input">
             </div>
 
             <div>
-                <label for="tagline" class="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
+                <label for="tagline" class="form-label">Tagline</label>
                 <input type="text" id="tagline" name="tagline"
                        value="{{ old('tagline', $hero->tagline) }}"
-                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                       class="form-input">
             </div>
 
             {{-- Skills repeater (skills[]) --}}
             <div x-data="{ items: @js(array_values(old('skills', $hero->skills ?? []))) }">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Skills</label>
+                <label class="form-label">Skills</label>
                 <template x-for="(item, idx) in items" :key="idx">
                     <div class="flex gap-2 mb-2">
                         <input type="text" name="skills[]" x-model="items[idx]"
-                               class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                               class="form-input flex-1">
                         <button type="button" @click="items.splice(idx, 1)"
-                                class="px-3 text-sm text-red-600 hover:text-red-800">Remove</button>
+                                class="px-3 text-sm font-semibold text-red-600 hover:text-red-700">Remove</button>
                     </div>
                 </template>
                 <button type="button" @click="items.push('')"
-                        class="mt-1 text-sm font-medium text-indigo-600 hover:text-indigo-800">+ Add skill</button>
+                        class="mt-1 text-sm font-semibold text-brand-700 hover:text-brand-800">+ Add skill</button>
             </div>
 
             {{-- Disciplines repeater (disciplines[]) --}}
             <div x-data="{ items: @js(array_values(old('disciplines', $hero->disciplines ?? []))) }">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Disciplines</label>
+                <label class="form-label">Disciplines</label>
                 <template x-for="(item, idx) in items" :key="idx">
                     <div class="flex gap-2 mb-2">
                         <input type="text" name="disciplines[]" x-model="items[idx]"
-                               class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                               class="form-input flex-1">
                         <button type="button" @click="items.splice(idx, 1)"
-                                class="px-3 text-sm text-red-600 hover:text-red-800">Remove</button>
+                                class="px-3 text-sm font-semibold text-red-600 hover:text-red-700">Remove</button>
                     </div>
                 </template>
                 <button type="button" @click="items.push('')"
-                        class="mt-1 text-sm font-medium text-indigo-600 hover:text-indigo-800">+ Add discipline</button>
+                        class="mt-1 text-sm font-semibold text-brand-700 hover:text-brand-800">+ Add discipline</button>
             </div>
 
             <div>
-                <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                <label for="image" class="form-label">Image</label>
                 @if ($hero->image_url)
                     <img src="{{ $hero->image_url }}" alt="Current hero image"
-                         class="mb-2 h-32 w-auto rounded-md border border-gray-200 object-cover">
+                         class="mb-2 h-32 w-auto rounded-lg border border-ink/10 object-cover">
                 @endif
                 <input type="file" id="image" name="image" accept="image/*"
-                       class="w-full text-sm text-gray-700 file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100">
-                <p class="mt-1 text-xs text-gray-400">JPG, PNG or WebP, up to 4 MB. Leave empty to keep the current image.</p>
+                       class="w-full text-sm text-ink/70 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100">
+                <p class="mt-1 text-xs text-ink/40">JPG, PNG or WebP, up to 4 MB. Leave empty to keep the current image.</p>
             </div>
         </div>
 
         <div class="flex justify-end">
-            <button type="submit" class="bg-indigo-600 text-white text-sm font-medium px-5 py-2 rounded-md hover:bg-indigo-700 transition">
+            <button type="submit" class="btn-primary">
                 Save changes
             </button>
         </div>

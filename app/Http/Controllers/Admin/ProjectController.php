@@ -20,7 +20,13 @@ class ProjectController extends Controller
     {
         $projects = Project::orderBy('sort_order')->orderBy('id')->get();
 
-        return view('admin.projects.index', compact('projects'));
+        // Filters share this page (managed in a section below the projects).
+        $filters = Filter::withCount('projects')
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
+        return view('admin.projects.index', compact('projects', 'filters'));
     }
 
     public function create()

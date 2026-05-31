@@ -4,46 +4,42 @@
 
 @section('content')
     <div class="flex justify-end mb-4">
-        <a href="{{ route('admin.experience.create') }}"
-           class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition">
-            + New entry
-        </a>
+        <a href="{{ route('admin.experience.create') }}" class="btn-outline">+ New entry</a>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <table class="w-full text-sm">
+    <div class="card overflow-hidden">
+        <table class="data-table">
             <thead>
-                <tr class="text-left text-gray-500 border-b border-gray-200">
-                    <th class="px-6 py-3 font-medium">Company</th>
-                    <th class="px-6 py-3 font-medium">Role</th>
-                    <th class="px-6 py-3 font-medium">Period</th>
-                    <th class="px-6 py-3 font-medium">Sort</th>
-                    <th class="px-6 py-3 font-medium text-right">Actions</th>
+                <tr>
+                    <th>Company</th>
+                    <th>Role</th>
+                    <th>Period</th>
+                    <th>Sort</th>
+                    <th class="text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody>
                 @forelse ($experience as $entry)
                     <tr>
-                        <td class="px-6 py-3 font-medium text-gray-900">{{ $entry->company }}</td>
-                        <td class="px-6 py-3 text-gray-600">{{ $entry->role ?? '—' }}</td>
-                        <td class="px-6 py-3 text-gray-600">{{ $entry->period ?? '—' }}</td>
-                        <td class="px-6 py-3 text-gray-600">{{ $entry->sort_order }}</td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-3">
-                                <a href="{{ route('admin.experience.edit', $entry) }}"
-                                   class="text-indigo-600 hover:text-indigo-800 font-medium">Edit</a>
+                        <td class="cell-strong">{{ $entry->company }}</td>
+                        <td>{{ $entry->role ?? '—' }}</td>
+                        <td>{{ $entry->period ?? '—' }}</td>
+                        <td>{{ $entry->sort_order }}</td>
+                        <td>
+                            <div class="flex items-center justify-end gap-4">
+                                <a href="{{ route('admin.experience.edit', $entry) }}" class="link-accent">Edit</a>
                                 <form method="POST" action="{{ route('admin.experience.destroy', $entry) }}"
                                       onsubmit="return confirm('Delete this entry?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
+                                    <button type="submit" class="font-semibold text-red-600 hover:text-red-700 transition-colors">Delete</button>
                                 </form>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-8 text-center text-gray-400">No experience entries yet.</td>
+                        <td colspan="5" class="px-6 py-8 text-center text-ink/40">No experience entries yet.</td>
                     </tr>
                 @endforelse
             </tbody>

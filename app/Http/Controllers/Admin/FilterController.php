@@ -17,15 +17,8 @@ use Illuminate\Validation\Rule;
  */
 class FilterController extends Controller
 {
-    public function index()
-    {
-        $filters = Filter::withCount('projects')
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get();
-
-        return view('admin.filters.index', compact('filters'));
-    }
+    // Filters no longer have a standalone index — they are listed on the
+    // projects page (admin.projects.index). Create/edit/delete still live here.
 
     public function create()
     {
@@ -36,7 +29,7 @@ class FilterController extends Controller
     {
         Filter::create($this->validateData($request));
 
-        return redirect()->route('admin.filters.index')->with('success', 'Filter created.');
+        return redirect()->route('admin.projects.index')->with('success', 'Filter created.');
     }
 
     public function edit(Filter $filter)
@@ -48,7 +41,7 @@ class FilterController extends Controller
     {
         $filter->update($this->validateData($request, $filter));
 
-        return redirect()->route('admin.filters.index')->with('success', 'Filter updated.');
+        return redirect()->route('admin.projects.index')->with('success', 'Filter updated.');
     }
 
     public function destroy(Filter $filter)
@@ -56,7 +49,7 @@ class FilterController extends Controller
         // Pivot rows are removed automatically (cascadeOnDelete); projects stay.
         $filter->delete();
 
-        return redirect()->route('admin.filters.index')->with('success', 'Filter deleted.');
+        return redirect()->route('admin.projects.index')->with('success', 'Filter deleted.');
     }
 
     /**

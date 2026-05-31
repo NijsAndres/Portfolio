@@ -1,3 +1,157 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * Admin brand components.
+ * Centralises the frontend look (coral / cream / ink, Bai Jamjuree) for the
+ * /admin CMS. The public frontend uses its own public/css/style.css with
+ * `c-`-prefixed classes, so these never collide with it.
+ */
+@layer components {
+    /* ---- Buttons ---------------------------------------------------- */
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2
+               text-sm font-semibold transition-all duration-300
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream;
+    }
+
+    /* Solid coral — primary actions (save, upload). */
+    .btn-primary {
+        @apply btn bg-brand-500 text-white border-2 border-brand-500
+               hover:bg-brand-600 hover:border-brand-600 focus:ring-brand-500;
+    }
+
+    /* Outlined coral that fills on hover — mirrors the frontend .c-btn--primary. */
+    .btn-outline {
+        @apply btn bg-transparent text-brand-700 border-2 border-brand-500
+               hover:bg-brand-500 hover:text-white focus:ring-brand-500;
+    }
+
+    /* Destructive — semantic red is intentionally kept. */
+    .btn-danger {
+        @apply btn bg-transparent text-red-600 border-2 border-red-500
+               hover:bg-red-600 hover:text-white focus:ring-red-500;
+    }
+
+    /* Subtle text button — cancel / dismiss. */
+    .btn-ghost {
+        @apply btn bg-transparent border-2 border-transparent text-ink/60
+               hover:text-ink hover:bg-ink/5 focus:ring-ink/20;
+    }
+
+    /* ---- Surfaces --------------------------------------------------- */
+    .card {
+        @apply bg-white rounded-lg border border-ink/10 shadow-card;
+    }
+
+    /* Stat card with a gentle hover-lift + coral accent (no dark invert). */
+    .card-stat {
+        @apply card p-6 transition-all duration-300
+               hover:-translate-y-1 hover:shadow-card-hover hover:border-brand-500;
+    }
+
+    .card-header {
+        @apply px-6 py-4 border-b border-ink/10;
+    }
+
+    .card-title {
+        @apply font-bold text-ink;
+    }
+
+    /* ---- Forms ------------------------------------------------------ */
+    .form-label {
+        @apply block text-sm font-semibold text-ink mb-1;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+        @apply w-full rounded-lg border-ink/20 bg-white text-ink text-sm shadow-sm
+               focus:border-brand-500 focus:ring-brand-500;
+    }
+
+    .form-checkbox {
+        @apply rounded border-ink/30 text-brand-500 focus:ring-brand-500;
+    }
+
+    /* ---- Data tables ------------------------------------------------ */
+    .data-table {
+        @apply w-full text-sm;
+    }
+
+    .data-table thead tr {
+        @apply text-left text-ink/50 border-b border-ink/10;
+    }
+
+    .data-table th {
+        @apply px-6 py-3 font-semibold uppercase tracking-wide text-xs;
+    }
+
+    .data-table tbody {
+        @apply divide-y divide-ink/10;
+    }
+
+    .data-table tbody tr {
+        @apply transition-colors hover:bg-cream/60;
+    }
+
+    .data-table td {
+        @apply px-6 py-3 text-ink/70;
+    }
+
+    .data-table td.cell-strong {
+        @apply font-semibold text-ink;
+    }
+
+    /* ---- Drag-and-drop reordering ----------------------------------- */
+    .js-drag-handle {
+        @apply cursor-grab select-none text-lg leading-none text-ink/30
+               hover:text-ink/60;
+    }
+
+    .js-drag-handle:active {
+        @apply cursor-grabbing;
+    }
+
+    .js-row-link {
+        @apply cursor-pointer;
+    }
+
+    /* SortableJS placeholder while dragging. */
+    .drag-ghost {
+        @apply opacity-40 bg-cream;
+    }
+
+    /* ---- Badges ----------------------------------------------------- */
+    .badge {
+        @apply inline-flex items-center rounded-full px-2.5 py-0.5
+               text-xs font-semibold;
+    }
+
+    .badge-accent {
+        @apply badge bg-brand-50 text-brand-700;
+    }
+
+    .badge-muted {
+        @apply badge bg-ink/5 text-ink/50;
+    }
+
+    /* ---- Alerts ----------------------------------------------------- */
+    .alert {
+        @apply mb-6 rounded-lg border px-4 py-3 text-sm;
+    }
+
+    .alert-success {
+        @apply alert bg-green-50 border-green-200 text-green-800;
+    }
+
+    .alert-error {
+        @apply alert bg-red-50 border-red-200 text-red-800;
+    }
+
+    /* Inline text links inside content (edit, etc.) — darker coral for AA. */
+    .link-accent {
+        @apply font-semibold text-brand-700 hover:text-brand-800 transition-colors;
+    }
+}

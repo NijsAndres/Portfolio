@@ -50,10 +50,16 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     // CV upload
     Route::post('cv', [AdminController::class, 'uploadCv'])->name('cv.update');
 
+    // Drag-and-drop reordering — registered before the resource routes so the
+    // fixed sub-path wins. Both lists live on the projects index page.
+    Route::post('projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
+    Route::post('filters/reorder', [FilterController::class, 'reorder'])->name('filters.reorder');
+
     // CRUD entities. No detail pages in the admin, and the resource
     // controllers define no show() method, so exclude the show route.
     Route::resource('projects', ProjectController::class)->except('show');
-    Route::resource('filters', FilterController::class)->except('show');
+    // Filters are listed on the projects page; only their CRUD forms live here.
+    Route::resource('filters', FilterController::class)->except(['show', 'index']);
     Route::resource('education', EducationController::class)->except('show');
     Route::resource('experience', ExperienceController::class)->except('show');
 });

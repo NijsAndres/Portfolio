@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Filter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -19,6 +20,26 @@ class FilterController extends Controller
 {
     // Filters no longer have a standalone index — they are listed on the
     // projects page (admin.projects.index). Create/edit/delete still live here.
+
+    /**
+     * Persist a new drag-and-drop order. Accepts an array of filter IDs in the
+     * desired order and rewrites each row's sort_order to its index.
+     */
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'exists:filters,id'],
+        ]);
+
+        DB::transaction(function () use ($validated) {
+            foreach ($validated['order'] as $position => $id) {
+                Filter::where('id', $id)->update(['sort_order' => $position]);
+            }
+        });
+
+        return response()->json(['status' => 'ok']);
+    }
 
     public function create()
     {

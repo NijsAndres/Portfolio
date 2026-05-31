@@ -104,6 +104,25 @@
         @apply font-semibold text-ink;
     }
 
+    /* ---- Drag-and-drop reordering ----------------------------------- */
+    .js-drag-handle {
+        @apply cursor-grab select-none text-lg leading-none text-ink/30
+               hover:text-ink/60;
+    }
+
+    .js-drag-handle:active {
+        @apply cursor-grabbing;
+    }
+
+    .js-row-link {
+        @apply cursor-pointer;
+    }
+
+    /* SortableJS placeholder while dragging. */
+    .drag-ghost {
+        @apply opacity-40 bg-cream;
+    }
+
     /* ---- Badges ----------------------------------------------------- */
     .badge {
         @apply inline-flex items-center rounded-full px-2.5 py-0.5

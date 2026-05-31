@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Filter;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -27,6 +28,26 @@ class ProjectController extends Controller
             ->get();
 
         return view('admin.projects.index', compact('projects', 'filters'));
+    }
+
+    /**
+     * Persist a new drag-and-drop order. Accepts an array of project IDs in the
+     * desired order and rewrites each row's sort_order to its index.
+     */
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'exists:projects,id'],
+        ]);
+
+        DB::transaction(function () use ($validated) {
+            foreach ($validated['order'] as $position => $id) {
+                Project::where('id', $id)->update(['sort_order' => $position]);
+            }
+        });
+
+        return response()->json(['status' => 'ok']);
     }
 
     public function create()

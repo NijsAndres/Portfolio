@@ -8,7 +8,7 @@
     <form method="POST"
           action="{{ $exists ? route('admin.projects.update', $project) : route('admin.projects.store') }}"
           enctype="multipart/form-data"
-          class="max-w-2xl space-y-6">
+          class="max-w-4xl space-y-6">
         @csrf
         @if ($exists)
             @method('PUT')
@@ -61,12 +61,21 @@
                 @endforelse
             </div>
 
-            <div>
-                <label for="url" class="form-label">URL</label>
-                <input type="url" id="url" name="url"
-                       value="{{ old('url', $project->url) }}"
-                       placeholder="https://..."
-                       class="form-input">
+            <div class="grid gap-x-5 gap-y-5 sm:grid-cols-2">
+                <div>
+                    <label for="url" class="form-label">URL</label>
+                    <input type="url" id="url" name="url"
+                           value="{{ old('url', $project->url) }}"
+                           placeholder="https://..."
+                           class="form-input">
+                </div>
+
+                <div>
+                    <label for="type" class="form-label">Type</label>
+                    <input type="text" id="type" name="type"
+                           value="{{ old('type', $project->type) }}"
+                           class="form-input">
+                </div>
             </div>
 
             <div>
@@ -78,13 +87,6 @@
                 <input type="file" id="image" name="image" accept="image/*"
                        class="w-full text-sm text-ink/70 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100">
                 <p class="mt-1 text-xs text-ink/40">JPG, PNG or WebP, up to 4 MB.@if ($exists) Leave empty to keep the current image.@endif</p>
-            </div>
-
-            <div>
-                <label for="type" class="form-label">Type</label>
-                <input type="text" id="type" name="type"
-                       value="{{ old('type', $project->type) }}"
-                       class="form-input">
             </div>
 
             <div>

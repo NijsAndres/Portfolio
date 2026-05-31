@@ -7,7 +7,7 @@
 @section('content')
     <form method="POST"
           action="{{ $exists ? route('admin.experience.update', $experience) : route('admin.experience.store') }}"
-          class="max-w-2xl space-y-6">
+          class="max-w-4xl space-y-6">
         @csrf
         @if ($exists)
             @method('PUT')
@@ -21,19 +21,21 @@
                        class="form-input">
             </div>
 
-            <div>
-                <label for="role" class="form-label">Role</label>
-                <input type="text" id="role" name="role"
-                       value="{{ old('role', $experience->role) }}"
-                       class="form-input">
-            </div>
+            <div class="grid gap-x-5 gap-y-5 sm:grid-cols-2">
+                <div>
+                    <label for="role" class="form-label">Role</label>
+                    <input type="text" id="role" name="role"
+                           value="{{ old('role', $experience->role) }}"
+                           class="form-input">
+                </div>
 
-            <div>
-                <label for="period" class="form-label">Period</label>
-                <input type="text" id="period" name="period"
-                       value="{{ old('period', $experience->period) }}"
-                       placeholder="2023 – present"
-                       class="form-input">
+                <div>
+                    <label for="period" class="form-label">Period</label>
+                    <input type="text" id="period" name="period"
+                           value="{{ old('period', $experience->period) }}"
+                           placeholder="2023 – present"
+                           class="form-input">
+                </div>
             </div>
 
             <div>

@@ -17,23 +17,24 @@
             <table class="data-table">
                 <thead>
                     <tr>
+                        <th class="w-10"></th>
                         <th>Title</th>
                         <th>Type</th>
-                        <th>Sort</th>
                         <th>Updated</th>
                         <th class="text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody data-reorder="{{ route('admin.projects.reorder') }}">
                     @forelse ($projects as $project)
-                        <tr>
-                            <td class="cell-strong">{{ $project->title }}</td>
+                        <tr class="js-row-link" data-id="{{ $project->id }}" data-edit-url="{{ route('admin.projects.edit', $project) }}">
+                            <td class="js-drag-handle text-center" title="Drag to reorder" aria-label="Drag to reorder">⠿</td>
+                            <td class="cell-strong">
+                                <a href="{{ route('admin.projects.edit', $project) }}" class="hover:text-brand-700 transition-colors">{{ $project->title }}</a>
+                            </td>
                             <td>{{ $project->type ?? '—' }}</td>
-                            <td>{{ $project->sort_order }}</td>
                             <td>{{ $project->updated_at?->diffForHumans() ?? '—' }}</td>
-                            <td>
+                            <td class="js-row-actions">
                                 <div class="flex items-center justify-end gap-4">
-                                    <a href="{{ route('admin.projects.edit', $project) }}" class="link-accent">Edit</a>
                                     <form method="POST" action="{{ route('admin.projects.destroy', $project) }}"
                                           onsubmit="return confirm('Delete this project?');">
                                         @csrf
@@ -68,25 +69,26 @@
             <table class="data-table">
                 <thead>
                     <tr>
+                        <th class="w-10"></th>
                         <th>Name</th>
                         <th>Slug</th>
                         <th>Projects</th>
-                        <th>Sort</th>
                         <th>Updated</th>
                         <th class="text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody data-reorder="{{ route('admin.filters.reorder') }}">
                     @forelse ($filters as $filter)
-                        <tr>
-                            <td class="cell-strong">{{ $filter->name }}</td>
+                        <tr class="js-row-link" data-id="{{ $filter->id }}" data-edit-url="{{ route('admin.filters.edit', $filter) }}">
+                            <td class="js-drag-handle text-center" title="Drag to reorder" aria-label="Drag to reorder">⠿</td>
+                            <td class="cell-strong">
+                                <a href="{{ route('admin.filters.edit', $filter) }}" class="hover:text-brand-700 transition-colors">{{ $filter->name }}</a>
+                            </td>
                             <td>{{ $filter->slug }}</td>
                             <td>{{ $filter->projects_count }}</td>
-                            <td>{{ $filter->sort_order }}</td>
                             <td>{{ $filter->updated_at?->diffForHumans() ?? '—' }}</td>
-                            <td>
+                            <td class="js-row-actions">
                                 <div class="flex items-center justify-end gap-4">
-                                    <a href="{{ route('admin.filters.edit', $filter) }}" class="link-accent">Edit</a>
                                     <form method="POST" action="{{ route('admin.filters.destroy', $filter) }}"
                                           onsubmit="return confirm('Delete this filter? Projects keep their data — only the links are removed.');">
                                         @csrf

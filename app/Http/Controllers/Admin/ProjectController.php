@@ -8,6 +8,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * Resource controller for portfolio projects.
@@ -106,6 +107,33 @@ class ProjectController extends Controller
         $project->delete();
 
         return redirect()->route('admin.projects.index')->with('success', 'Project deleted.');
+    }
+
+    /**
+     * Clone an existing project as a starting point for a new one. All fields,
+     * the linked filters, and the uploaded image are copied. The image is
+     * duplicated into its own file so editing/deleting one project's image never
+     * touches the other; legacy public/assets paths stay shared (consistent with
+     * how the rest of this controller treats seeded images).
+     *
+     * replicate() keeps the original sort_order, so the copy (a higher id) sorts
+     * directly below the original on the index (orderBy sort_order, then id).
+     */
+    public function duplicate(Project $project)
+    {
+        $copy = $project->replicate();
+        $copy->title = $project->title.' (Copy)';
+
+        if ($project->image_path && Storage::disk('public')->exists($project->image_path)) {
+            $newPath = 'projects/'.Str::random(40).'.'.pathinfo($project->image_path, PATHINFO_EXTENSION);
+            Storage::disk('public')->copy($project->image_path, $newPath);
+            $copy->image_path = $newPath;
+        }
+
+        $copy->save();
+        $copy->filters()->sync($project->filters->pluck('id'));
+
+        return redirect()->route('admin.projects.index')->with('success', 'Project duplicated.');
     }
 
     /**

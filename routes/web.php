@@ -55,6 +55,10 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::post('projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
     Route::post('filters/reorder', [FilterController::class, 'reorder'])->name('filters.reorder');
 
+    // Clone an existing project (fields, linked filters, and a fresh copy of the
+    // uploaded image). Registered before the resource routes so it isn't shadowed.
+    Route::post('projects/{project}/duplicate', [ProjectController::class, 'duplicate'])->name('projects.duplicate');
+
     // CRUD entities. No detail pages in the admin, and the resource
     // controllers define no show() method, so exclude the show route.
     Route::resource('projects', ProjectController::class)->except('show');

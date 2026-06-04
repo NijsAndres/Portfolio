@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Filter;
+use App\Models\Media;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 /**
  * Resource controller for portfolio projects.
@@ -56,17 +55,13 @@ class ProjectController extends Controller
         return view('admin.projects.form', [
             'project' => new Project(),
             'filters' => $this->filterOptions(),
+            'media' => Media::latest()->get(),
         ]);
     }
 
     public function store(Request $request)
     {
         $data = $this->validateData($request);
-
-        // A new upload sets image_path; otherwise it stays null on create.
-        if ($request->hasFile('image')) {
-            $data['image_path'] = $request->file('image')->store('projects', 'public');
-        }
 
         $project = Project::create($data);
         $project->filters()->sync($this->validateFilters($request));
@@ -79,22 +74,13 @@ class ProjectController extends Controller
         return view('admin.projects.form', [
             'project' => $project,
             'filters' => $this->filterOptions(),
+            'media' => Media::latest()->get(),
         ]);
     }
 
     public function update(Request $request, Project $project)
     {
         $data = $this->validateData($request);
-
-        // A new upload replaces the stored image; delete the previous file when
-        // it lives on the public disk. With no new upload, keep image_path as-is.
-        if ($request->hasFile('image')) {
-            if ($project->image_path && Storage::disk('public')->exists($project->image_path)) {
-                Storage::disk('public')->delete($project->image_path);
-            }
-
-            $data['image_path'] = $request->file('image')->store('projects', 'public');
-        }
 
         $project->update($data);
         $project->filters()->sync($this->validateFilters($request));
@@ -110,11 +96,9 @@ class ProjectController extends Controller
     }
 
     /**
-     * Clone an existing project as a starting point for a new one. All fields,
-     * the linked filters, and the uploaded image are copied. The image is
-     * duplicated into its own file so editing/deleting one project's image never
-     * touches the other; legacy public/assets paths stay shared (consistent with
-     * how the rest of this controller treats seeded images).
+     * Clone an existing project as a starting point for a new one. All fields and
+     * the linked filters are copied; the media reference (media_id) is shared, as
+     * the media library is built around reusing the same image across entities.
      *
      * replicate() keeps the original sort_order, so the copy (a higher id) sorts
      * directly below the original on the index (orderBy sort_order, then id).
@@ -123,13 +107,6 @@ class ProjectController extends Controller
     {
         $copy = $project->replicate();
         $copy->title = $project->title.' (Copy)';
-
-        if ($project->image_path && Storage::disk('public')->exists($project->image_path)) {
-            $newPath = 'projects/'.Str::random(40).'.'.pathinfo($project->image_path, PATHINFO_EXTENSION);
-            Storage::disk('public')->copy($project->image_path, $newPath);
-            $copy->image_path = $newPath;
-        }
-
         $copy->save();
         $copy->filters()->sync($project->filters->pluck('id'));
 
@@ -137,10 +114,8 @@ class ProjectController extends Controller
     }
 
     /**
-     * Shared validation for store and update.
-     *
-     * The uploaded `image` is validated here but handled in store/update (it is
-     * stored on the public disk, with image_path holding the returned path).
+     * Shared validation for store and update. The project image is chosen from
+     * the media library (media_id); there is no direct file upload here anymore.
      */
     private function validateData(Request $request): array
     {
@@ -150,14 +125,11 @@ class ProjectController extends Controller
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:255'],
             'url' => ['nullable', 'url', 'max:255'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'media_id' => ['nullable', 'integer', 'exists:media,id'],
             'type' => ['nullable', 'string', 'max:255'],
             'body' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ]);
-
-        // `image` is the upload field, not a column — it is handled separately.
-        unset($validated['image']);
 
         // When left blank, default to the lowest unused sort_order so the
         // project slots in at the front instead of failing the NOT NULL column.

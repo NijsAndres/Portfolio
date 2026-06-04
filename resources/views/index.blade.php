@@ -62,7 +62,7 @@
                 </div>
                 <div class="col-xl-4 offset-lg-1 col-lg-5 u-fade-in-right">
                     <div class="c-hero__imgcontainer">
-                        <img class="c-hero__img" src="{{ $hero->image_url }}" alt="Background image" width="1920" height="1920" fetchpriority="high">
+                        <img class="c-hero__img" src="{{ $hero->image_url }}" alt="{{ $hero->image_alt }}" width="1920" height="1920" fetchpriority="high">
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
                                 data-tags="{{ implode(',', $project->tags ?? []) }}"
                                 aria-haspopup="dialog" aria-controls="project-modal">
                                 <div class="c-projects__cardimgcontainer">
-                                    <img class="c-projects__cardimg" src="{{ $project->image_url }}" alt="Mockup of {{ $project->title }}" width="1920" height="1079" loading="lazy">
+                                    <img class="c-projects__cardimg" src="{{ $project->image_url }}" alt="{{ $project->image_alt }}" width="1920" height="1079" loading="lazy">
                                     <span class="c-projects__badge">{{ implode(' / ', $project->tags ?? []) }}</span>
                                 </div>
                                 <div class="c-projects__cardcontent">

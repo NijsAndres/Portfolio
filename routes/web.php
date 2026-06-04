@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\EducationController;
 use App\Http\Controllers\Admin\ExperienceController;
 use App\Http\Controllers\Admin\FilterController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\ProfileController;
@@ -49,6 +50,12 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
 
     // CV upload
     Route::post('cv', [AdminController::class, 'uploadCv'])->name('cv.update');
+
+    // Media library — modal-driven, so no create/edit pages.
+    Route::get('media', [MediaController::class, 'index'])->name('media.index');
+    Route::post('media', [MediaController::class, 'store'])->name('media.store');
+    Route::put('media/{media}', [MediaController::class, 'update'])->name('media.update');
+    Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
     // Drag-and-drop reordering — registered before the resource routes so the
     // fixed sub-path wins. Both lists live on the projects index page.

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,6 +19,7 @@ class Project extends Model
         'tags',
         'url',
         'image_path',
+        'media_id',
         'type',
         'body',
         'sort_order',
@@ -38,13 +40,26 @@ class Project extends Model
     }
 
     /**
-     * Resolve image_path to a usable URL, bridging Step 8 uploads and the
-     * legacy seeded assets. New uploads live on the public disk and resolve to
-     * /storage/...; seeded paths (e.g. 'projects/x.webp') fall back to the
-     * files shipped in public/assets/.
+     * The library image this project points at (Step: media library). Preferred
+     * over the legacy image_path, which stays as a fallback for un-migrated rows.
+     */
+    public function media(): BelongsTo
+    {
+        return $this->belongsTo(Media::class);
+    }
+
+    /**
+     * Resolve the project image to a usable URL. Prefers the linked media record;
+     * otherwise bridges Step 8 uploads and legacy seeded assets via image_path:
+     * uploads live on the public disk (/storage/...); seeded paths fall back to
+     * the files shipped in public/assets/.
      */
     public function getImageUrlAttribute(): ?string
     {
+        if ($this->media) {
+            return $this->media->url;
+        }
+
         if (! $this->image_path) {
             return null;
         }
@@ -54,5 +69,14 @@ class Project extends Model
         }
 
         return asset('assets/'.$this->image_path);
+    }
+
+    /**
+     * Alt text for the project image — the linked media's alt, falling back to
+     * the project title so frontend images always carry a sensible alt.
+     */
+    public function getImageAltAttribute(): string
+    {
+        return $this->media?->alt ?: $this->title;
     }
 }

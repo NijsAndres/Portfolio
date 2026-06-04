@@ -22,6 +22,7 @@
         $navGroups = [
             ['title' => null, 'links' => [
                 ['route' => 'admin.dashboard', 'pattern' => ['admin.dashboard'], 'label' => 'Dashboard'],
+                ['route' => 'admin.media.index', 'pattern' => ['admin.media.*'], 'label' => 'Media'],
             ]],
             ['title' => 'Site content', 'links' => [
                 ['route' => 'admin.hero.edit',    'pattern' => ['admin.hero.*'],    'label' => 'Hero'],

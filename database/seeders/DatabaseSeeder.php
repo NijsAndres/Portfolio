@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Filter;
 use App\Models\Project;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
@@ -229,5 +230,11 @@ class DatabaseSeeder extends Seeder
             ['key' => 'cv_path'],
             ['value' => 'AndresNijs-CV-2025.pdf'],
         );
+
+        // --- Media library -----------------------------------------------
+        // Register the seeded images (and any earlier uploads) into the media
+        // library and link the projects/hero just inserted above.
+        DB::table('media')->delete();
+        Artisan::call('media:import');
     }
 }

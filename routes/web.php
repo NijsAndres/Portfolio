@@ -54,6 +54,8 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     // fixed sub-path wins. Both lists live on the projects index page.
     Route::post('projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
     Route::post('filters/reorder', [FilterController::class, 'reorder'])->name('filters.reorder');
+    Route::post('education/reorder', [EducationController::class, 'reorder'])->name('education.reorder');
+    Route::post('experience/reorder', [ExperienceController::class, 'reorder'])->name('experience.reorder');
 
     // Clone an existing project (fields, linked filters, and a fresh copy of the
     // uploaded image). Registered before the resource routes so it isn't shadowed.

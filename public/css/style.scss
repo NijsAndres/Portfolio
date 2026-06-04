@@ -492,6 +492,7 @@ p {
   gap: 0.5rem;
   align-items: center;
   justify-content: center;
+  font-family: inherit;
   font-size: 1rem;
   padding: 0.5rem 1rem;
   background-color: transparent;
@@ -689,6 +690,8 @@ p {
     background-color: transparent;
     border: none;
     color: $secondary-color;
+    font-family: inherit;
+    font-size: 0.875rem;
     font-weight: $fw-semibold;
     padding: 0.5rem 1rem;
     cursor: pointer;
@@ -705,6 +708,20 @@ p {
 
       &:hover {
         background-color: $primary-color;
+      }
+    }
+  }
+
+  &__loadmorecontainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+
+    .js-load-more {
+      cursor: pointer;
+
+      &[hidden] {
+        display: none;
       }
     }
   }

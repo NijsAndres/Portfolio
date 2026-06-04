@@ -146,6 +146,9 @@
                         </div>
                         @endforeach
                     </div>
+                    <div class="col-12 c-projects__loadmorecontainer">
+                        <button type="button" class="c-btn c-btn--primary js-load-more" hidden>Load more</button>
+                    </div>
                 </div>
             </div>
         </section>

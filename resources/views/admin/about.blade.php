@@ -10,6 +10,14 @@
         <div class="card p-6 space-y-5">
             <div>
                 <label for="bio_text" class="form-label">Bio</label>
+                <div class="mb-2 flex items-center gap-3">
+                    <button type="button" data-bold-target="bio_text_editor"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-ink/15 font-bold text-ink/70 hover:bg-ink/5 hover:text-ink transition-colors"
+                            title="Bold (⌘/Ctrl+B)" aria-label="Toggle bold">B</button>
+                    <p class="text-xs text-ink/40">Select text and click <strong>B</strong> (or ⌘/Ctrl+B) to toggle bold.</p>
+                </div>
+                <div id="bio_text_editor" data-rich-field="bio_text" contenteditable="true"
+                     class="form-input hidden border px-3 py-2 min-h-36 leading-relaxed focus:outline-none"></div>
                 <textarea id="bio_text" name="bio_text" rows="6"
                           class="form-input">{{ old('bio_text', $about->bio_text) }}</textarea>
             </div>

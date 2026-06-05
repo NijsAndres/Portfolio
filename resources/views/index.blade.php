@@ -87,9 +87,7 @@
                         <h2>Get To Know Me.</h2>
                     </div>
                     <div class="col-lg-8">
-                        @foreach (preg_split('/\n\s*\n/', trim($about->bio_text)) as $paragraph)
-                        <p class="c-about__text">{{ trim($paragraph) }}</p>
-                        @endforeach
+                        <x-rich-text :text="$about->bio_text" class="c-about__text" />
 
                         <div class="c-about__infocontainer">
                             <div class="c-about__infoitem">
@@ -202,9 +200,7 @@
                         <h2>Feel Free to Reach Out!</h2>
                     </div>
                     <div class="col-lg-8">
-                        @foreach (preg_split('/\n\s*\n/', trim($contact->intro_text)) as $paragraph)
-                        <p class="c-contact__text">{{ trim($paragraph) }}</p>
-                        @endforeach
+                        <x-rich-text :text="$contact->intro_text" class="c-contact__text" />
                         <div class="c-contact__infocontainer">
                             <div class="c-contact__infoitem">
                                 <p class="c-contact__infolabel">Mail Me</p>

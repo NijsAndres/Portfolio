@@ -78,7 +78,12 @@
                 </div>
             </div>
 
-            @include('admin.media._picker', ['selected' => old('media_id', $project->media_id), 'media' => $media])
+            <div>
+                @include('admin.media._picker', ['selected' => old('media_id', $project->media_id), 'media' => $media])
+                @error('media_id')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
 
             <div>
                 <label for="body" class="form-label">Body</label>

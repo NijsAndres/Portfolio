@@ -125,10 +125,13 @@ class ProjectController extends Controller
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:255'],
             'url' => ['nullable', 'url', 'max:255'],
-            'media_id' => ['nullable', 'integer', 'exists:media,id'],
+            'media_id' => ['required', 'integer', 'exists:media,id'],
             'type' => ['nullable', 'string', 'max:255'],
             'body' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
+        ], [
+            'media_id.required' => 'An image is required.',
+            'media_id.exists' => 'The selected image is invalid.',
         ]);
 
         // When left blank, default to the lowest unused sort_order so the

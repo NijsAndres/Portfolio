@@ -503,6 +503,9 @@ p {
   border-radius: 0.5rem;
   transition: all 0.3s ease-in-out;
 }
+.c-btn[hidden] {
+  display: none;
+}
 .c-btn--primary:hover {
   background-color: #e94e35;
   color: #ffffff;
@@ -1128,6 +1131,9 @@ p {
   background-color: #e94e35;
   color: #ffffff;
 }
+.c-modal__typebadge[hidden] {
+  display: none;
+}
 .c-modal__title {
   font-size: 2rem;
   font-weight: 700;
@@ -1200,6 +1206,9 @@ p {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+.c-modal__tags[hidden] {
+  display: none;
 }
 .c-modal__tag {
   padding: 0.25rem 0.75rem;

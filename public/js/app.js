@@ -92,14 +92,16 @@ const openProjectModal = (card) => {
   dialog.querySelector(".js-modal-title").textContent = title;
 
   const typeEl = dialog.querySelector(".js-modal-type");
-  typeEl.textContent = TYPE_LABELS[type] || type;
+  typeEl.textContent = TYPE_LABELS[type] || type || "";
   typeEl.className = `c-modal__typebadge c-modal__typebadge--${type} js-modal-type`;
+  typeEl.hidden = !type;
 
-  dialog.querySelector(".js-modal-tags").innerHTML = (tags || "")
-    .split(",")
-    .filter(Boolean)
+  const tagList = (tags || "").split(",").filter(Boolean);
+  const tagsEl = dialog.querySelector(".js-modal-tags");
+  tagsEl.innerHTML = tagList
     .map((t) => `<span class="c-modal__tag">${t}</span>`)
     .join("");
+  tagsEl.hidden = tagList.length === 0;
 
   const visit = dialog.querySelector(".js-modal-visit");
   if (url) {

@@ -134,7 +134,9 @@
                                 aria-haspopup="dialog" aria-controls="project-modal">
                                 <div class="c-projects__cardimgcontainer">
                                     <img class="c-projects__cardimg" src="{{ $project->image_url }}" alt="{{ $project->image_alt }}" width="1920" height="1079" loading="lazy">
-                                    <span class="c-projects__badge">{{ implode(' / ', $project->tags ?? []) }}</span>
+                                    @if (!empty($project->tags))
+                                    <span class="c-projects__badge">{{ implode(' / ', $project->tags) }}</span>
+                                    @endif
                                 </div>
                                 <div class="c-projects__cardcontent">
                                     <p class="c-projects__cardtitle">{{ $project->title }}</p>

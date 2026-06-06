@@ -503,6 +503,10 @@ p {
   border-radius: 0.5rem;
   transition: all 0.3s ease-in-out;
 
+  &[hidden] {
+    display: none;
+  }
+
   &--primary {
     &:hover {
       background-color: $primary-color;
@@ -1194,6 +1198,10 @@ p {
     letter-spacing: 0.05em;
     background-color: $primary-color;
     color: $white-color;
+
+    &[hidden] {
+      display: none;
+    }
   }
 
   &__title {
@@ -1275,6 +1283,10 @@ p {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+
+    &[hidden] {
+      display: none;
+    }
   }
 
   &__tag {

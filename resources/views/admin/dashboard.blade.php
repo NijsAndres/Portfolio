@@ -6,11 +6,11 @@
     @php $cvPath = \App\Models\SiteSetting::get('cv_path'); @endphp
 
     {{-- Stat cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-3 gap-3 sm:gap-6 mb-8">
         @foreach (['projects' => 'Projects', 'education' => 'Education', 'experience' => 'Experience'] as $key => $label)
             <div class="card-stat">
-                <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">{{ $label }}</p>
-                <p class="mt-2 text-3xl sm:text-4xl font-bold text-ink">{{ $stats[$key] ?? 0 }}</p>
+                <p class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-ink/50">{{ $label }}</p>
+                <p class="mt-2 text-2xl sm:text-4xl font-bold text-ink">{{ $stats[$key] ?? 0 }}</p>
             </div>
         @endforeach
     </div>
@@ -30,24 +30,24 @@
     <h2 class="text-lg font-bold text-ink mb-4">Analytics</h2>
 
     {{-- Headline numbers --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6">
         <div class="card-stat">
-            <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">Page views</p>
-            <p class="mt-2 text-3xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['viewsTotal']) }}</p>
+            <p class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-ink/50">Page views</p>
+            <p class="mt-2 text-2xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['viewsTotal']) }}</p>
             <p class="mt-1 text-xs text-ink/40">{{ number_format($analytics['viewsThisMonth']) }} this month</p>
         </div>
         <div class="card-stat">
-            <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">CV downloads</p>
-            <p class="mt-2 text-3xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['cvTotal']) }}</p>
+            <p class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-ink/50">CV downloads</p>
+            <p class="mt-2 text-2xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['cvTotal']) }}</p>
             <p class="mt-1 text-xs text-ink/40">{{ number_format($analytics['cvThisMonth']) }} this month</p>
         </div>
         <div class="card-stat">
-            <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">Email clicks</p>
-            <p class="mt-2 text-3xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['contactBreakdown']['email']) }}</p>
+            <p class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-ink/50">Email clicks</p>
+            <p class="mt-2 text-2xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['contactBreakdown']['email']) }}</p>
         </div>
         <div class="card-stat">
-            <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">Social clicks</p>
-            <p class="mt-2 text-3xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['contactBreakdown']['linkedin'] + $analytics['contactBreakdown']['github']) }}</p>
+            <p class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-ink/50">Social clicks</p>
+            <p class="mt-2 text-2xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['contactBreakdown']['linkedin'] + $analytics['contactBreakdown']['github']) }}</p>
             <p class="mt-1 text-xs text-ink/40">{{ $analytics['contactBreakdown']['linkedin'] }} LinkedIn &middot; {{ $analytics['contactBreakdown']['github'] }} GitHub</p>
         </div>
     </div>

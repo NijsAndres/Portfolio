@@ -51,7 +51,7 @@
 
     /* Stat card with a gentle hover-lift + coral accent (no dark invert). */
     .card-stat {
-        @apply card p-6 transition-all duration-300
+        @apply card p-4 sm:p-6 transition-all duration-300
                hover:-translate-y-1 hover:shadow-card-hover hover:border-brand-500;
     }
 

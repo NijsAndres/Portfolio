@@ -15,48 +15,98 @@
         @endforeach
     </div>
 
-    {{-- Singletons overview --}}
-    <div class="card mb-8 overflow-hidden">
-        <div class="card-header">
-            <h2 class="card-title">Site content</h2>
+    {{-- Analytics (Step 11) --}}
+    @php
+        $eventLabels = [
+            'page_view' => 'Page view',
+            'cv_download' => 'CV download',
+            'project_click' => 'Project click',
+            'contact_email' => 'Email click',
+            'contact_linkedin' => 'LinkedIn click',
+            'contact_github' => 'GitHub click',
+        ];
+    @endphp
+
+    <h2 class="text-lg font-bold text-ink mb-4">Analytics</h2>
+
+    {{-- Headline numbers --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div class="card-stat">
+            <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">Page views</p>
+            <p class="mt-2 text-4xl font-bold text-ink">{{ number_format($analytics['viewsTotal']) }}</p>
+            <p class="mt-1 text-xs text-ink/40">{{ number_format($analytics['viewsThisMonth']) }} this month</p>
         </div>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Section</th>
-                    <th>Status</th>
-                    <th>Last updated</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @php
-                    $singletons = [
-                        ['label' => 'Hero',    'model' => $hero,    'route' => 'admin.hero.edit'],
-                        ['label' => 'About',   'model' => $about,   'route' => 'admin.about.edit'],
-                        ['label' => 'Contact', 'model' => $contact, 'route' => 'admin.contact.edit'],
-                    ];
-                @endphp
-                @foreach ($singletons as $row)
+        <div class="card-stat">
+            <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">CV downloads</p>
+            <p class="mt-2 text-4xl font-bold text-ink">{{ number_format($analytics['cvTotal']) }}</p>
+            <p class="mt-1 text-xs text-ink/40">{{ number_format($analytics['cvThisMonth']) }} this month</p>
+        </div>
+        <div class="card-stat">
+            <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">Email clicks</p>
+            <p class="mt-2 text-4xl font-bold text-ink">{{ number_format($analytics['contactBreakdown']['email']) }}</p>
+        </div>
+        <div class="card-stat">
+            <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">Social clicks</p>
+            <p class="mt-2 text-4xl font-bold text-ink">{{ number_format($analytics['contactBreakdown']['linkedin'] + $analytics['contactBreakdown']['github']) }}</p>
+            <p class="mt-1 text-xs text-ink/40">{{ $analytics['contactBreakdown']['linkedin'] }} LinkedIn &middot; {{ $analytics['contactBreakdown']['github'] }} GitHub</p>
+        </div>
+    </div>
+
+    {{-- 30-day page-view chart --}}
+    <div class="card mb-6">
+        <div class="card-header">
+            <h2 class="card-title">Page views &mdash; last 30 days</h2>
+        </div>
+        <div class="p-6">
+            <canvas id="analytics-chart" height="96" data-series='@json($analytics["chart"])'></canvas>
+        </div>
+    </div>
+
+    {{-- Top projects + recent events --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Top projects</h2>
+            </div>
+            <div class="p-6">
+                @forelse ($analytics['topProjects'] as $row)
+                    <div class="flex items-center justify-between py-2 {{ ! $loop->last ? 'border-b border-ink/5' : '' }}">
+                        <span class="text-sm font-semibold text-ink truncate pr-3">{{ $row->meta }}</span>
+                        <span class="badge-accent shrink-0">{{ number_format($row->total) }}</span>
+                    </div>
+                @empty
+                    <p class="text-sm text-ink/40">No project clicks yet.</p>
+                @endforelse
+            </div>
+        </div>
+
+        <div class="card lg:col-span-2 overflow-hidden">
+            <div class="card-header">
+                <h2 class="card-title">Recent activity</h2>
+            </div>
+            <table class="data-table">
+                <thead>
                     <tr>
-                        <td class="cell-strong">{{ $row['label'] }}</td>
-                        <td>
-                            @if ($row['model'])
-                                <span class="badge-accent">Configured</span>
-                            @else
-                                <span class="badge-muted">Not set</span>
-                            @endif
-                        </td>
-                        <td>
-                            {{ $row['model']?->updated_at?->diffForHumans() ?? '—' }}
-                        </td>
-                        <td class="text-right">
-                            <a href="{{ route($row['route']) }}" class="link-accent">Edit</a>
-                        </td>
+                        <th>Event</th>
+                        <th>Detail</th>
+                        <th>When</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse ($analytics['recentEvents'] as $event)
+                        <tr>
+                            <td class="cell-strong">{{ $eventLabels[$event->event] ?? $event->event }}</td>
+                            <td>{{ $event->meta ?? '—' }}</td>
+                            <td>{{ $event->created_at?->diffForHumans() ?? '—' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="text-ink/40">No events recorded yet.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 
     {{-- CV upload (no dedicated GET route; placed here per Step 6 decision) --}}

@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs';
 import Sortable from 'sortablejs';
+import Chart from 'chart.js/auto';
 
 window.Alpine = Alpine;
 
@@ -162,8 +163,49 @@ function initRichEditors() {
     });
 }
 
+/**
+ * Render the dashboard's 30-day page-view chart (Step 11). Only runs when the
+ * canvas is present, reading its { labels, data } series from data-series.
+ */
+function initAnalyticsChart() {
+    const canvas = document.getElementById('analytics-chart');
+    if (!canvas) return;
+
+    let series;
+    try {
+        series = JSON.parse(canvas.dataset.series);
+    } catch (e) {
+        return;
+    }
+
+    new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: series.labels,
+            datasets: [{
+                label: 'Page views',
+                data: series.data,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 2,
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { precision: 0 } },
+            },
+        },
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initReorderableTables();
     initRowLinks();
     initRichEditors();
+    initAnalyticsChart();
 });

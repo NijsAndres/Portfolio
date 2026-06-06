@@ -8,9 +8,14 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TrackController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontendController::class, 'index'])->name('home');
+
+// Public analytics endpoint (Step 11). No auth; rate limited and CSRF-exempt
+// (bootstrap/app.php) so the frontend's sendBeacon/fetch calls can reach it.
+Route::post('/track', TrackController::class)->middleware('throttle:30,1')->name('track');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

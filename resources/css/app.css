@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide Alpine-controlled elements (e.g. the mobile drawer backdrop) until
+   Alpine has initialised, so they don't flash on first paint. */
+[x-cloak] { display: none !important; }
+
 /*
  * Admin brand components.
  * Centralises the frontend look (coral / cream / ink, Bai Jamjuree) for the
@@ -47,7 +51,7 @@
 
     /* Stat card with a gentle hover-lift + coral accent (no dark invert). */
     .card-stat {
-        @apply card p-6 transition-all duration-300
+        @apply card p-4 sm:p-6 transition-all duration-300
                hover:-translate-y-1 hover:shadow-card-hover hover:border-brand-500;
     }
 
@@ -76,6 +80,12 @@
     }
 
     /* ---- Data tables ------------------------------------------------ */
+    /* Lets a wide table scroll sideways inside its card on small screens
+       instead of being clipped by the card's `overflow-hidden`. */
+    .table-scroll {
+        @apply overflow-x-auto;
+    }
+
     .data-table {
         @apply w-full text-sm;
     }
@@ -85,7 +95,7 @@
     }
 
     .data-table th {
-        @apply px-6 py-3 font-semibold uppercase tracking-wide text-xs;
+        @apply px-4 sm:px-6 py-3 font-semibold uppercase tracking-wide text-xs whitespace-nowrap;
     }
 
     .data-table tbody {
@@ -97,7 +107,7 @@
     }
 
     .data-table td {
-        @apply px-6 py-3 text-ink/70;
+        @apply px-4 sm:px-6 py-3 text-ink/70 whitespace-nowrap;
     }
 
     .data-table td.cell-strong {

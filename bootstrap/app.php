@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // The /track endpoint is hit via navigator.sendBeacon, which cannot
+        // attach the CSRF header, so it is exempt from CSRF verification.
+        $middleware->validateCsrfTokens(except: ['track']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

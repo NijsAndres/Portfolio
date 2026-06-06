@@ -14,6 +14,7 @@
         </div>
 
         <div class="card overflow-hidden">
+            <div class="table-scroll">
             <table class="data-table">
                 <thead>
                     <tr>
@@ -55,6 +56,7 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
     </section>
 
@@ -70,6 +72,7 @@
         </div>
 
         <div class="card overflow-hidden">
+            <div class="table-scroll">
             <table class="data-table">
                 <thead>
                     <tr>
@@ -109,6 +112,7 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
     </section>
 @endsection

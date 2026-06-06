@@ -8,6 +8,7 @@ use App\Models\ContactInfo;
 use App\Models\Education;
 use App\Models\Experience;
 use App\Models\HeroContent;
+use App\Models\Media;
 use App\Models\Project;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
@@ -49,8 +50,9 @@ class AdminController extends Controller
     public function editHero()
     {
         $hero = HeroContent::first() ?? new HeroContent();
+        $media = Media::latest()->get();
 
-        return view('admin.hero', compact('hero'));
+        return view('admin.hero', compact('hero', 'media'));
     }
 
     public function updateHero(Request $request)
@@ -63,24 +65,11 @@ class AdminController extends Controller
             'skills.*' => ['string', 'max:255'],
             'disciplines' => ['nullable', 'array'],
             'disciplines.*' => ['string', 'max:255'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'media_id' => ['nullable', 'integer', 'exists:media,id'],
         ]);
 
         // first() ?? new — the row is seeded, but this also handles a fresh DB.
         $hero = HeroContent::first() ?? new HeroContent();
-
-        // A new upload replaces the stored image; delete the previous file when
-        // it lives on the public disk (leave legacy public/assets paths alone).
-        if ($request->hasFile('image')) {
-            if ($hero->image_path && Storage::disk('public')->exists($hero->image_path)) {
-                Storage::disk('public')->delete($hero->image_path);
-            }
-
-            $validated['image_path'] = $request->file('image')->store('hero', 'public');
-        }
-
-        unset($validated['image']);
-
         $hero->fill($validated)->save();
 
         return back()->with('success', 'Hero section updated.');

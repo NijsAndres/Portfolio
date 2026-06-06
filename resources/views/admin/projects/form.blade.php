@@ -79,14 +79,10 @@
             </div>
 
             <div>
-                <label for="image" class="form-label">Image</label>
-                @if ($exists && $project->image_url)
-                    <img src="{{ $project->image_url }}" alt="Current image for {{ $project->title }}"
-                         class="mb-2 h-32 w-auto rounded-lg border border-ink/10 object-cover">
-                @endif
-                <input type="file" id="image" name="image" accept="image/*"
-                       class="w-full text-sm text-ink/70 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100">
-                <p class="mt-1 text-xs text-ink/40">JPG, PNG or WebP, up to 4 MB.@if ($exists) Leave empty to keep the current image.@endif</p>
+                @include('admin.media._picker', ['selected' => old('media_id', $project->media_id), 'media' => $media])
+                @error('media_id')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>

@@ -492,6 +492,7 @@ p {
   gap: 0.5rem;
   align-items: center;
   justify-content: center;
+  font-family: inherit;
   font-size: 1rem;
   padding: 0.5rem 1rem;
   background-color: transparent;
@@ -501,6 +502,9 @@ p {
   text-decoration: none;
   border-radius: 0.5rem;
   transition: all 0.3s ease-in-out;
+}
+.c-btn[hidden] {
+  display: none;
 }
 .c-btn--primary:hover {
   background-color: #e94e35;
@@ -678,6 +682,8 @@ p {
   background-color: transparent;
   border: none;
   color: #161513;
+  font-family: inherit;
+  font-size: 0.875rem;
   font-weight: 600;
   padding: 0.5rem 1rem;
   cursor: pointer;
@@ -693,6 +699,17 @@ p {
 }
 .c-projects__filter--active:hover {
   background-color: #e94e35;
+}
+.c-projects__loadmorecontainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+.c-projects__loadmorecontainer .js-load-more {
+  cursor: pointer;
+}
+.c-projects__loadmorecontainer .js-load-more[hidden] {
+  display: none;
 }
 .c-projects__card {
   position: relative;
@@ -1114,6 +1131,9 @@ p {
   background-color: #e94e35;
   color: #ffffff;
 }
+.c-modal__typebadge[hidden] {
+  display: none;
+}
 .c-modal__title {
   font-size: 2rem;
   font-weight: 700;
@@ -1186,6 +1206,9 @@ p {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+.c-modal__tags[hidden] {
+  display: none;
 }
 .c-modal__tag {
   padding: 0.25rem 0.75rem;

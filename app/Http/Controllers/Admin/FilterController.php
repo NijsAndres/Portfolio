@@ -94,6 +94,17 @@ class FilterController extends Controller
             'slug.unique' => 'A filter with that name already exists.',
         ]);
 
+        // When left blank, default to the lowest unused sort_order so the
+        // filter slots in at the front instead of failing the NOT NULL column.
+        if ($validated['sort_order'] === null) {
+            $used = Filter::pluck('sort_order')->all();
+            $next = 0;
+            while (in_array($next, $used, true)) {
+                $next++;
+            }
+            $validated['sort_order'] = $next;
+        }
+
         return $validated;
     }
 }

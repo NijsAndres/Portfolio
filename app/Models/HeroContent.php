@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
 class HeroContent extends Model
@@ -24,6 +25,7 @@ class HeroContent extends Model
         'skills',
         'disciplines',
         'image_path',
+        'media_id',
     ];
 
     protected $casts = [
@@ -32,12 +34,24 @@ class HeroContent extends Model
     ];
 
     /**
-     * Resolve image_path to a usable URL, bridging Step 8 uploads and the
-     * legacy seeded asset. A new upload lives on the public disk and resolves
-     * to /storage/...; the seeded path falls back to public/assets/.
+     * The library image the hero points at. Preferred over the legacy image_path.
+     */
+    public function media(): BelongsTo
+    {
+        return $this->belongsTo(Media::class);
+    }
+
+    /**
+     * Resolve the hero image to a usable URL. Prefers the linked media record;
+     * otherwise bridges Step 8 uploads (public disk → /storage/...) and the
+     * legacy seeded asset (falls back to public/assets/).
      */
     public function getImageUrlAttribute(): ?string
     {
+        if ($this->media) {
+            return $this->media->url;
+        }
+
         if (! $this->image_path) {
             return null;
         }
@@ -47,5 +61,14 @@ class HeroContent extends Model
         }
 
         return asset('assets/'.$this->image_path);
+    }
+
+    /**
+     * Alt text for the hero image — the linked media's alt, with a sensible
+     * default so the frontend always has an alt attribute.
+     */
+    public function getImageAltAttribute(): string
+    {
+        return $this->media?->alt ?: 'Background image';
     }
 }

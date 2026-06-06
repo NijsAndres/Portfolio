@@ -62,7 +62,7 @@
                 </div>
                 <div class="col-xl-4 offset-lg-1 col-lg-5 u-fade-in-right">
                     <div class="c-hero__imgcontainer">
-                        <img class="c-hero__img" src="{{ $hero->image_url }}" alt="Background image" width="1920" height="1920" fetchpriority="high">
+                        <img class="c-hero__img" src="{{ $hero->image_url }}" alt="{{ $hero->image_alt }}" width="1920" height="1920" fetchpriority="high">
                     </div>
                 </div>
             </div>
@@ -87,9 +87,7 @@
                         <h2>Get To Know Me.</h2>
                     </div>
                     <div class="col-lg-8">
-                        @foreach (preg_split('/\n\s*\n/', trim($about->bio_text)) as $paragraph)
-                        <p class="c-about__text">{{ trim($paragraph) }}</p>
-                        @endforeach
+                        <x-rich-text :text="$about->bio_text" class="c-about__text" />
 
                         <div class="c-about__infocontainer">
                             <div class="c-about__infoitem">
@@ -135,8 +133,10 @@
                                 data-tags="{{ implode(',', $project->tags ?? []) }}"
                                 aria-haspopup="dialog" aria-controls="project-modal">
                                 <div class="c-projects__cardimgcontainer">
-                                    <img class="c-projects__cardimg" src="{{ $project->image_url }}" alt="Mockup of {{ $project->title }}" width="1920" height="1079" loading="lazy">
-                                    <span class="c-projects__badge">{{ implode(' / ', $project->tags ?? []) }}</span>
+                                    <img class="c-projects__cardimg" src="{{ $project->image_url }}" alt="{{ $project->image_alt }}" width="1920" height="1079" loading="lazy">
+                                    @if (!empty($project->tags))
+                                    <span class="c-projects__badge">{{ implode(' / ', $project->tags) }}</span>
+                                    @endif
                                 </div>
                                 <div class="c-projects__cardcontent">
                                     <p class="c-projects__cardtitle">{{ $project->title }}</p>
@@ -145,6 +145,9 @@
                             </button>
                         </div>
                         @endforeach
+                    </div>
+                    <div class="col-12 c-projects__loadmorecontainer">
+                        <button type="button" class="c-btn c-btn--primary js-load-more" hidden>Load more</button>
                     </div>
                 </div>
             </div>
@@ -199,9 +202,7 @@
                         <h2>Feel Free to Reach Out!</h2>
                     </div>
                     <div class="col-lg-8">
-                        @foreach (preg_split('/\n\s*\n/', trim($contact->intro_text)) as $paragraph)
-                        <p class="c-contact__text">{{ trim($paragraph) }}</p>
-                        @endforeach
+                        <x-rich-text :text="$contact->intro_text" class="c-contact__text" />
                         <div class="c-contact__infocontainer">
                             <div class="c-contact__infoitem">
                                 <p class="c-contact__infolabel">Mail Me</p>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Education;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Resource controller for education entries.
@@ -19,6 +20,26 @@ class EducationController extends Controller
         $education = Education::orderBy('sort_order')->orderBy('id')->get();
 
         return view('admin.education.index', compact('education'));
+    }
+
+    /**
+     * Persist a new drag-and-drop order. Accepts an array of education IDs in
+     * the desired order and rewrites each row's sort_order to its index.
+     */
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'exists:education,id'],
+        ]);
+
+        DB::transaction(function () use ($validated) {
+            foreach ($validated['order'] as $position => $id) {
+                Education::where('id', $id)->update(['sort_order' => $position]);
+            }
+        });
+
+        return response()->json(['status' => 'ok']);
     }
 
     public function create()
@@ -54,11 +75,24 @@ class EducationController extends Controller
 
     private function validateData(Request $request): array
     {
-        return $request->validate([
+        $validated = $request->validate([
             'institution' => ['required', 'string', 'max:255'],
             'degree' => ['nullable', 'string', 'max:255'],
             'period' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer'],
         ]);
+
+        // When left blank, default to the lowest unused sort_order so the entry
+        // slots in at the front instead of failing the NOT NULL column.
+        if ($validated['sort_order'] === null) {
+            $used = Education::pluck('sort_order')->all();
+            $next = 0;
+            while (in_array($next, $used, true)) {
+                $next++;
+            }
+            $validated['sort_order'] = $next;
+        }
+
+        return $validated;
     }
 }

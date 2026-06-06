@@ -11,23 +11,24 @@
         <table class="data-table">
             <thead>
                 <tr>
+                    <th class="w-10"></th>
                     <th>Company</th>
                     <th>Role</th>
                     <th>Period</th>
-                    <th>Sort</th>
                     <th class="text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody data-reorder="{{ route('admin.experience.reorder') }}">
                 @forelse ($experience as $entry)
-                    <tr>
-                        <td class="cell-strong">{{ $entry->company }}</td>
+                    <tr class="js-row-link" data-id="{{ $entry->id }}" data-edit-url="{{ route('admin.experience.edit', $entry) }}">
+                        <td class="js-drag-handle text-center" title="Drag to reorder" aria-label="Drag to reorder">⠿</td>
+                        <td class="cell-strong">
+                            <a href="{{ route('admin.experience.edit', $entry) }}" class="hover:text-brand-700 transition-colors">{{ $entry->company }}</a>
+                        </td>
                         <td>{{ $entry->role ?? '—' }}</td>
                         <td>{{ $entry->period ?? '—' }}</td>
-                        <td>{{ $entry->sort_order }}</td>
-                        <td>
+                        <td class="js-row-actions">
                             <div class="flex items-center justify-end gap-4">
-                                <a href="{{ route('admin.experience.edit', $entry) }}" class="link-accent">Edit</a>
                                 <form method="POST" action="{{ route('admin.experience.destroy', $entry) }}"
                                       onsubmit="return confirm('Delete this entry?');">
                                     @csrf

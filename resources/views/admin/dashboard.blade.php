@@ -10,7 +10,7 @@
         @foreach (['projects' => 'Projects', 'education' => 'Education', 'experience' => 'Experience'] as $key => $label)
             <div class="card-stat">
                 <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">{{ $label }}</p>
-                <p class="mt-2 text-4xl font-bold text-ink">{{ $stats[$key] ?? 0 }}</p>
+                <p class="mt-2 text-3xl sm:text-4xl font-bold text-ink">{{ $stats[$key] ?? 0 }}</p>
             </div>
         @endforeach
     </div>
@@ -33,21 +33,21 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <div class="card-stat">
             <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">Page views</p>
-            <p class="mt-2 text-4xl font-bold text-ink">{{ number_format($analytics['viewsTotal']) }}</p>
+            <p class="mt-2 text-3xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['viewsTotal']) }}</p>
             <p class="mt-1 text-xs text-ink/40">{{ number_format($analytics['viewsThisMonth']) }} this month</p>
         </div>
         <div class="card-stat">
             <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">CV downloads</p>
-            <p class="mt-2 text-4xl font-bold text-ink">{{ number_format($analytics['cvTotal']) }}</p>
+            <p class="mt-2 text-3xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['cvTotal']) }}</p>
             <p class="mt-1 text-xs text-ink/40">{{ number_format($analytics['cvThisMonth']) }} this month</p>
         </div>
         <div class="card-stat">
             <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">Email clicks</p>
-            <p class="mt-2 text-4xl font-bold text-ink">{{ number_format($analytics['contactBreakdown']['email']) }}</p>
+            <p class="mt-2 text-3xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['contactBreakdown']['email']) }}</p>
         </div>
         <div class="card-stat">
             <p class="text-sm font-semibold uppercase tracking-wide text-ink/50">Social clicks</p>
-            <p class="mt-2 text-4xl font-bold text-ink">{{ number_format($analytics['contactBreakdown']['linkedin'] + $analytics['contactBreakdown']['github']) }}</p>
+            <p class="mt-2 text-3xl sm:text-4xl font-bold text-ink">{{ number_format($analytics['contactBreakdown']['linkedin'] + $analytics['contactBreakdown']['github']) }}</p>
             <p class="mt-1 text-xs text-ink/40">{{ $analytics['contactBreakdown']['linkedin'] }} LinkedIn &middot; {{ $analytics['contactBreakdown']['github'] }} GitHub</p>
         </div>
     </div>
@@ -84,28 +84,30 @@
             <div class="card-header">
                 <h2 class="card-title">Recent activity</h2>
             </div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Event</th>
-                        <th>Detail</th>
-                        <th>When</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($analytics['recentEvents'] as $event)
+            <div class="table-scroll">
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td class="cell-strong">{{ $eventLabels[$event->event] ?? $event->event }}</td>
-                            <td>{{ $event->meta ?? '—' }}</td>
-                            <td>{{ $event->created_at?->diffForHumans() ?? '—' }}</td>
+                            <th>Event</th>
+                            <th>Detail</th>
+                            <th>When</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="text-ink/40">No events recorded yet.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse ($analytics['recentEvents'] as $event)
+                            <tr>
+                                <td class="cell-strong">{{ $eventLabels[$event->event] ?? $event->event }}</td>
+                                <td>{{ $event->meta ?? '—' }}</td>
+                                <td>{{ $event->created_at?->diffForHumans() ?? '—' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-ink/40">No events recorded yet.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -124,11 +126,11 @@
                 @endif
             </p>
 
-            <form method="POST" action="{{ route('admin.cv.update') }}" enctype="multipart/form-data" class="flex items-center gap-4">
+            <form method="POST" action="{{ route('admin.cv.update') }}" enctype="multipart/form-data" class="flex flex-col sm:flex-row sm:items-center gap-4">
                 @csrf
                 <input type="file" name="cv" accept=".pdf"
-                       class="block text-sm text-ink/70 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100" />
-                <button type="submit" class="btn-primary">Upload CV</button>
+                       class="block w-full text-sm text-ink/70 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100" />
+                <button type="submit" class="btn-primary w-full sm:w-auto">Upload CV</button>
             </form>
             <p class="mt-3 text-xs text-ink/40">PDF only, max 10&nbsp;MB. File storage is wired up in Step 8.</p>
         </div>

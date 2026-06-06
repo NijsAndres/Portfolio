@@ -185,8 +185,8 @@ function initAnalyticsChart() {
             datasets: [{
                 label: 'Page views',
                 data: series.data,
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderColor: '#f97316',
+                backgroundColor: 'rgba(249, 115, 22, 0.1)',
                 fill: true,
                 tension: 0.3,
                 pointRadius: 2,

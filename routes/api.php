@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\CmsController;
 use App\Http\Controllers\Api\EducationController;
+use App\Http\Controllers\Api\ExperienceController;
+use App\Http\Controllers\Api\FilterController;
 use App\Http\Controllers\Api\ProjectController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +32,12 @@ Route::prefix('cms')->middleware('cms.token')->name('cms.')->group(function () {
     // Analytics
     Route::get('analytics/summary', [CmsController::class, 'analyticsSummary'])->name('analytics.summary');
 
+    // Media library (read-only) — discover the media_id for hero/project images.
+    Route::get('media', [CmsController::class, 'media'])->name('media.index');
+
     // CRUD entities
     Route::apiResource('projects', ProjectController::class);
     Route::apiResource('education', EducationController::class)->parameters(['education' => 'education']);
+    Route::apiResource('experience', ExperienceController::class)->parameters(['experience' => 'experience']);
+    Route::apiResource('filters', FilterController::class);
 });

@@ -7,6 +7,7 @@ use App\Models\AboutContent;
 use App\Models\Analytics;
 use App\Models\ContactInfo;
 use App\Models\HeroContent;
+use App\Models\Media;
 use App\Models\SiteSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -42,6 +43,7 @@ class CmsController extends Controller
             'skills.*' => ['string', 'max:255'],
             'disciplines' => ['nullable', 'array'],
             'disciplines.*' => ['string', 'max:255'],
+            'media_id' => ['nullable', 'integer', 'exists:media,id'],
         ]);
 
         $hero = HeroContent::first() ?? new HeroContent();
@@ -97,6 +99,30 @@ class CmsController extends Controller
         $contact->fill($validated)->save();
 
         return response()->json($contact);
+    }
+
+    /* ---------------------------------------------------------------------
+     | Media library (read-only)
+     * ------------------------------------------------------------------- */
+
+    /**
+     * List the media library so callers can discover the media_id to attach to
+     * a hero or project image. Read-only — uploading new files isn't supported
+     * over the API/MCP. Includes the resolved public url.
+     */
+    public function media(): JsonResponse
+    {
+        $media = Media::latest()->get()->map(fn (Media $m) => [
+            'id' => $m->id,
+            'url' => $m->url,
+            'original_name' => $m->original_name,
+            'alt' => $m->alt,
+            'title' => $m->title,
+            'width' => $m->width,
+            'height' => $m->height,
+        ]);
+
+        return response()->json($media);
     }
 
     /* ---------------------------------------------------------------------

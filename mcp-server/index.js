@@ -89,13 +89,14 @@ server.registerTool(
   "update_hero",
   {
     title: "Update hero",
-    description: "Update the hero section. headline is required; other fields are optional.",
+    description: "Update the hero section. headline is required; other fields are optional. media_id sets the background image (see get_media).",
     inputSchema: {
       headline: z.string(),
       subheadline: z.string().optional(),
       tagline: z.string().optional(),
       skills: z.array(z.string()).optional(),
       disciplines: z.array(z.string()).optional(),
+      media_id: z.number().int().nullable().optional(),
     },
   },
   (args) => run(() => cms("/hero", { method: "PUT", body: defined(args) }))
@@ -124,11 +125,36 @@ server.registerTool(
   (args) => run(() => cms("/about", { method: "PUT", body: defined(args) }))
 );
 
+/* ----------------------------------------------------------------- Media --- */
+
+server.registerTool(
+  "get_media",
+  {
+    title: "Get media library",
+    description: "List the media library (read-only). Use a returned id as media_id when setting a hero or project image.",
+    inputSchema: {},
+  },
+  () => run(() => cms("/media"))
+);
+
 /* ------------------------------------------------------------- Projects --- */
+
+// Shared field schema for create/update project (image + filters included).
+const projectFields = {
+  title: z.string(),
+  description: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  url: z.string().url().optional(),
+  media_id: z.number().int().nullable().optional(),
+  type: z.string().optional(),
+  body: z.string().optional(),
+  sort_order: z.number().int().optional(),
+  filter_ids: z.array(z.number().int()).optional(),
+};
 
 server.registerTool(
   "get_projects",
-  { title: "Get projects", description: "List all portfolio projects.", inputSchema: {} },
+  { title: "Get projects", description: "List all portfolio projects (with their linked filters).", inputSchema: {} },
   () => run(() => cms("/projects"))
 );
 
@@ -136,13 +162,9 @@ server.registerTool(
   "create_project",
   {
     title: "Create project",
-    description: "Create a portfolio project. title is required; an image (media_id) is optional.",
-    inputSchema: {
-      title: z.string(),
-      description: z.string().optional(),
-      tags: z.array(z.string()).optional(),
-      url: z.string().url().optional(),
-    },
+    description:
+      "Create a portfolio project. title is required. media_id sets the image (see get_media); filter_ids links filter tags (see get_filters); type/body/sort_order are optional.",
+    inputSchema: projectFields,
   },
   (args) => run(() => cms("/projects", { method: "POST", body: defined(args) }))
 );
@@ -151,14 +173,9 @@ server.registerTool(
   "update_project",
   {
     title: "Update project",
-    description: "Update a project by id. title is required by the API; pass the other fields you want to change.",
-    inputSchema: {
-      id: z.number().int(),
-      title: z.string(),
-      description: z.string().optional(),
-      tags: z.array(z.string()).optional(),
-      url: z.string().url().optional(),
-    },
+    description:
+      "Update a project by id. title is required by the API; pass any other fields to change. filter_ids replaces the linked filters; omit it to leave them untouched.",
+    inputSchema: { id: z.number().int(), ...projectFields },
   },
   ({ id, ...fields }) => run(() => cms(`/projects/${id}`, { method: "PUT", body: defined(fields) }))
 );
@@ -177,16 +194,19 @@ server.registerTool(
   () => run(() => cms("/education"))
 );
 
+const educationFields = {
+  institution: z.string(),
+  degree: z.string().optional(),
+  period: z.string().optional(),
+  sort_order: z.number().int().optional(),
+};
+
 server.registerTool(
   "create_education",
   {
     title: "Create education",
-    description: "Create an education entry. institution is required.",
-    inputSchema: {
-      institution: z.string(),
-      degree: z.string().optional(),
-      period: z.string().optional(),
-    },
+    description: "Create an education entry. institution is required. sort_order controls ordering (lower = first).",
+    inputSchema: educationFields,
   },
   (args) => run(() => cms("/education", { method: "POST", body: defined(args) }))
 );
@@ -196,12 +216,7 @@ server.registerTool(
   {
     title: "Update education",
     description: "Update an education entry by id. institution is required by the API.",
-    inputSchema: {
-      id: z.number().int(),
-      institution: z.string(),
-      degree: z.string().optional(),
-      period: z.string().optional(),
-    },
+    inputSchema: { id: z.number().int(), ...educationFields },
   },
   ({ id, ...fields }) => run(() => cms(`/education/${id}`, { method: "PUT", body: defined(fields) }))
 );
@@ -210,6 +225,81 @@ server.registerTool(
   "delete_education",
   { title: "Delete education", description: "Delete an education entry by id.", inputSchema: { id: z.number().int() } },
   ({ id }) => run(() => cms(`/education/${id}`, { method: "DELETE" }))
+);
+
+/* ----------------------------------------------------------- Experience --- */
+
+const experienceFields = {
+  company: z.string(),
+  role: z.string().optional(),
+  period: z.string().optional(),
+  sort_order: z.number().int().optional(),
+};
+
+server.registerTool(
+  "get_experience",
+  { title: "Get experience", description: "List all work-experience entries.", inputSchema: {} },
+  () => run(() => cms("/experience"))
+);
+
+server.registerTool(
+  "create_experience",
+  {
+    title: "Create experience",
+    description: "Create a work-experience entry. company is required. sort_order controls ordering (lower = first).",
+    inputSchema: experienceFields,
+  },
+  (args) => run(() => cms("/experience", { method: "POST", body: defined(args) }))
+);
+
+server.registerTool(
+  "update_experience",
+  {
+    title: "Update experience",
+    description: "Update a work-experience entry by id. company is required by the API.",
+    inputSchema: { id: z.number().int(), ...experienceFields },
+  },
+  ({ id, ...fields }) => run(() => cms(`/experience/${id}`, { method: "PUT", body: defined(fields) }))
+);
+
+server.registerTool(
+  "delete_experience",
+  { title: "Delete experience", description: "Delete a work-experience entry by id.", inputSchema: { id: z.number().int() } },
+  ({ id }) => run(() => cms(`/experience/${id}`, { method: "DELETE" }))
+);
+
+/* --------------------------------------------------------------- Filters --- */
+
+server.registerTool(
+  "get_filters",
+  { title: "Get filters", description: "List the project filters (with project counts). Use an id as filter_ids on a project.", inputSchema: {} },
+  () => run(() => cms("/filters"))
+);
+
+server.registerTool(
+  "create_filter",
+  {
+    title: "Create filter",
+    description: "Create a project filter. name is required; the slug is derived from it and must be unique.",
+    inputSchema: { name: z.string(), sort_order: z.number().int().optional() },
+  },
+  (args) => run(() => cms("/filters", { method: "POST", body: defined(args) }))
+);
+
+server.registerTool(
+  "update_filter",
+  {
+    title: "Update filter",
+    description: "Update a project filter by id. name is required by the API; the slug is re-derived from it.",
+    inputSchema: { id: z.number().int(), name: z.string(), sort_order: z.number().int().optional() },
+  },
+  ({ id, ...fields }) => run(() => cms(`/filters/${id}`, { method: "PUT", body: defined(fields) }))
+);
+
+server.registerTool(
+  "delete_filter",
+  { title: "Delete filter", description: "Delete a project filter by id (its project links are removed; projects stay).", inputSchema: { id: z.number().int() } },
+  ({ id }) => run(() => cms(`/filters/${id}`, { method: "DELETE" }))
 );
 
 /* -------------------------------------------------------------- Contact --- */

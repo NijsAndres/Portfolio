@@ -3,27 +3,27 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Education;
+use App\Models\Experience;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Internal JSON API for education CRUD (Step 12), consumed by the MCP server.
- * Guarded by the cms.token middleware in routes/api.php. Mirrors the field
- * rules in Admin\EducationController.
+ * Internal JSON API for work-experience CRUD (Step 12), consumed by the MCP
+ * server. Guarded by the cms.token middleware in routes/api.php. Mirrors the
+ * field rules in Admin\ExperienceController.
  */
-class EducationController extends Controller
+class ExperienceController extends Controller
 {
     public function index(): JsonResponse
     {
         return response()->json(
-            Education::orderBy('sort_order')->orderBy('id')->get()
+            Experience::orderBy('sort_order')->orderBy('id')->get()
         );
     }
 
-    public function show(Education $education): JsonResponse
+    public function show(Experience $experience): JsonResponse
     {
-        return response()->json($education);
+        return response()->json($experience);
     }
 
     public function store(Request $request): JsonResponse
@@ -36,21 +36,21 @@ class EducationController extends Controller
             $data['sort_order'] = $this->nextSortOrder();
         }
 
-        $education = Education::create($data);
+        $experience = Experience::create($data);
 
-        return response()->json($education, 201);
+        return response()->json($experience, 201);
     }
 
-    public function update(Request $request, Education $education): JsonResponse
+    public function update(Request $request, Experience $experience): JsonResponse
     {
-        $education->update($this->validateData($request));
+        $experience->update($this->validateData($request));
 
-        return response()->json($education);
+        return response()->json($experience);
     }
 
-    public function destroy(Education $education): JsonResponse
+    public function destroy(Experience $experience): JsonResponse
     {
-        $education->delete();
+        $experience->delete();
 
         return response()->json(['deleted' => true]);
     }
@@ -58,8 +58,8 @@ class EducationController extends Controller
     private function validateData(Request $request): array
     {
         $validated = $request->validate([
-            'institution' => ['required', 'string', 'max:255'],
-            'degree' => ['nullable', 'string', 'max:255'],
+            'company' => ['required', 'string', 'max:255'],
+            'role' => ['nullable', 'string', 'max:255'],
             'period' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer'],
         ]);
@@ -70,7 +70,7 @@ class EducationController extends Controller
     /** Lowest unused sort_order, so a new entry slots in at the front. */
     private function nextSortOrder(): int
     {
-        $used = Education::pluck('sort_order')->all();
+        $used = Experience::pluck('sort_order')->all();
         $next = 0;
         while (in_array($next, $used, true)) {
             $next++;

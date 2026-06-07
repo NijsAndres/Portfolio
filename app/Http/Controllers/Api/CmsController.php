@@ -102,37 +102,126 @@ class CmsController extends Controller
     }
 
     /* ---------------------------------------------------------------------
-     | Media library (read-only)
+     | Media library
      * ------------------------------------------------------------------- */
 
     /**
      * List the media library so callers can discover the media_id to attach to
-     * a hero or project image. Read-only — uploading new files isn't supported
-     * over the API/MCP. Includes the resolved public url.
+     * a hero or project image, and read/edit the metadata. Uploading new files
+     * isn't supported over the API/MCP (only the admin can upload); the
+     * file-intrinsic fields (path, size, dimensions, mime) are read-only.
      */
     public function media(): JsonResponse
     {
-        $media = Media::latest()->get()->map(fn (Media $m) => [
+        $media = Media::latest()->get()->map(fn (Media $m) => $this->mediaPayload($m));
+
+        return response()->json($media);
+    }
+
+    /**
+     * Upload a new image into the library. Mirrors Admin\MediaController's
+     * store/storeFile: validate the image, store it on the public disk and
+     * record its metadata (dimensions, mime, size). Optional alt/title/caption/
+     * description can be set in the same call.
+     */
+    public function storeMedia(Request $request): JsonResponse
+    {
+        $request->validate([
+            'file' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:8192'],
+            'alt' => ['nullable', 'string', 'max:255'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'caption' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        $file = $request->file('file');
+        $dimensions = @getimagesize($file->getRealPath());
+
+        $media = Media::create([
+            'path' => $file->store('media', 'public'),
+            'original_name' => $file->getClientOriginalName(),
+            'mime_type' => $file->getClientMimeType(),
+            'size' => $file->getSize(),
+            'width' => $dimensions[0] ?? null,
+            'height' => $dimensions[1] ?? null,
+            'alt' => $request->input('alt'),
+            'title' => $request->input('title'),
+            'caption' => $request->input('caption'),
+            'description' => $request->input('description'),
+        ]);
+
+        return response()->json($this->mediaPayload($media), 201);
+    }
+
+    /**
+     * Update a media item's editable metadata (alt, title, caption,
+     * description). Mirrors Admin\MediaController's rules. The file itself and
+     * its intrinsic fields cannot be changed here.
+     */
+    public function updateMedia(Request $request, Media $media): JsonResponse
+    {
+        $validated = $request->validate([
+            'alt' => ['nullable', 'string', 'max:255'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'caption' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        $media->update($validated);
+
+        return response()->json($this->mediaPayload($media));
+    }
+
+    /**
+     * Delete a media item and its underlying file. Mirrors
+     * Admin\MediaController::destroy: the file is removed only when it lives on
+     * the public disk (imported legacy public/assets paths are left alone), and
+     * the media_id FK is nullOnDelete, so any project/hero reference clears.
+     */
+    public function destroyMedia(Media $media): JsonResponse
+    {
+        if ($media->path && Storage::disk('public')->exists($media->path)) {
+            Storage::disk('public')->delete($media->path);
+        }
+
+        $media->delete();
+
+        return response()->json(['deleted' => true]);
+    }
+
+    /** Shared JSON shape for a media item (editable metadata + resolved url). */
+    private function mediaPayload(Media $m): array
+    {
+        return [
             'id' => $m->id,
             'url' => $m->url,
             'original_name' => $m->original_name,
-            'alt' => $m->alt,
-            'title' => $m->title,
             'width' => $m->width,
             'height' => $m->height,
-        ]);
-
-        return response()->json($media);
+            'alt' => $m->alt,
+            'title' => $m->title,
+            'caption' => $m->caption,
+            'description' => $m->description,
+        ];
     }
 
     /* ---------------------------------------------------------------------
      | CV upload
      * ------------------------------------------------------------------- */
 
+    /** Read the current CV path + resolved public URL (null when none is set). */
+    public function showCv(): JsonResponse
+    {
+        return response()->json([
+            'cv_path' => SiteSetting::get('cv_path'),
+            'url' => SiteSetting::cvUrl(),
+        ]);
+    }
+
     /**
      * Accept a new CV PDF and store it on the public disk, mirroring
-     * AdminController::uploadCv. Note the MCP server does not expose this (file
-     * upload over stdio isn't practical); it exists for completeness/future use.
+     * AdminController::uploadCv. The MCP server's upload_cv tool posts the file
+     * here (path/url/base64 → multipart), the same way upload_media does.
      */
     public function uploadCv(Request $request): JsonResponse
     {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Experience;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Internal JSON API for work-experience CRUD (Step 12), consumed by the MCP
@@ -53,6 +54,26 @@ class ExperienceController extends Controller
         $experience->delete();
 
         return response()->json(['deleted' => true]);
+    }
+
+    /**
+     * Persist a new order. Accepts an array of experience IDs in the desired
+     * order and rewrites each row's sort_order to its index (mirrors admin).
+     */
+    public function reorder(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'exists:experience,id'],
+        ]);
+
+        DB::transaction(function () use ($validated) {
+            foreach ($validated['order'] as $position => $id) {
+                Experience::where('id', $id)->update(['sort_order' => $position]);
+            }
+        });
+
+        return response()->json(['status' => 'ok']);
     }
 
     private function validateData(Request $request): array

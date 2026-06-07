@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Internal JSON API for project CRUD (Step 12), consumed by the MCP server.
@@ -60,6 +61,26 @@ class ProjectController extends Controller
         $project->delete();
 
         return response()->json(['deleted' => true]);
+    }
+
+    /**
+     * Persist a new order. Accepts an array of project IDs in the desired order
+     * and rewrites each row's sort_order to its index (mirrors admin).
+     */
+    public function reorder(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'exists:projects,id'],
+        ]);
+
+        DB::transaction(function () use ($validated) {
+            foreach ($validated['order'] as $position => $id) {
+                Project::where('id', $id)->update(['sort_order' => $position]);
+            }
+        });
+
+        return response()->json(['status' => 'ok']);
     }
 
     private function validateData(Request $request): array

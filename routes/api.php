@@ -26,18 +26,30 @@ Route::prefix('cms')->middleware('cms.token')->name('cms.')->group(function () {
     Route::get('contact', [CmsController::class, 'showContact'])->name('contact.show');
     Route::put('contact', [CmsController::class, 'updateContact'])->name('contact.update');
 
-    // CV upload (not exposed by the MCP server; kept for completeness).
+    // CV — read the current file + upload/replace it.
+    Route::get('cv', [CmsController::class, 'showCv'])->name('cv.show');
     Route::post('cv', [CmsController::class, 'uploadCv'])->name('cv.update');
 
     // Analytics
     Route::get('analytics/summary', [CmsController::class, 'analyticsSummary'])->name('analytics.summary');
 
-    // Media library (read-only) — discover the media_id for hero/project images.
+    // Media library — list (discover media_id for images), upload, edit metadata, delete.
     Route::get('media', [CmsController::class, 'media'])->name('media.index');
+    Route::post('media', [CmsController::class, 'storeMedia'])->name('media.store');
+    Route::put('media/{media}', [CmsController::class, 'updateMedia'])->name('media.update');
+    Route::delete('media/{media}', [CmsController::class, 'destroyMedia'])->name('media.destroy');
 
-    // CRUD entities
+    // CRUD entities. Reorder routes are registered before each apiResource so
+    // POST <entity>/reorder isn't shadowed by the resource's routes.
+    Route::post('projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
     Route::apiResource('projects', ProjectController::class);
+
+    Route::post('education/reorder', [EducationController::class, 'reorder'])->name('education.reorder');
     Route::apiResource('education', EducationController::class)->parameters(['education' => 'education']);
+
+    Route::post('experience/reorder', [ExperienceController::class, 'reorder'])->name('experience.reorder');
     Route::apiResource('experience', ExperienceController::class)->parameters(['experience' => 'experience']);
+
+    Route::post('filters/reorder', [FilterController::class, 'reorder'])->name('filters.reorder');
     Route::apiResource('filters', FilterController::class);
 });

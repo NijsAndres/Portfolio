@@ -11,6 +11,7 @@
  *   CMS_API_TOKEN  the Bearer token (must match Laravel's CMS_API_TOKEN)
  */
 import path from "node:path";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
 import { z } from "zod";
@@ -75,6 +76,58 @@ function defined(obj) {
   return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
 }
 
+const EXT_BY_MIME = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "image/gif": ".gif",
+  "application/pdf": ".pdf",
+};
+const MIME_BY_EXT = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+  ".gif": "image/gif",
+  ".pdf": "application/pdf",
+};
+
+/**
+ * Resolve a file to upload from exactly one of: a local file path, a remote
+ * url, or raw/base64 (optionally a data: URI). Returns { buffer, filename, mime }.
+ * defaultMime is used for a bare base64 string with no data: prefix.
+ */
+async function resolveUpload({ path: filePath, url, base64, filename, defaultMime = "image/png" }) {
+  if (filePath) {
+    const buffer = await readFile(filePath);
+    const name = filename || path.basename(filePath);
+    return { buffer, filename: name, mime: MIME_BY_EXT[path.extname(name).toLowerCase()] || "application/octet-stream" };
+  }
+  if (url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+    const mime = (res.headers.get("content-type") || "application/octet-stream").split(";")[0];
+    const buffer = Buffer.from(await res.arrayBuffer());
+    let name = filename || path.basename(new URL(url).pathname) || "upload";
+    if (!path.extname(name)) name += EXT_BY_MIME[mime] || "";
+    return { buffer, filename: name, mime };
+  }
+  if (base64) {
+    let data = base64;
+    let mime = defaultMime;
+    const m = base64.match(/^data:([a-z]+\/[a-z0-9.+-]+);base64,(.*)$/i);
+    if (m) {
+      mime = m[1];
+      data = m[2];
+    }
+    const buffer = Buffer.from(data, "base64");
+    let name = filename || "upload";
+    if (!path.extname(name)) name += EXT_BY_MIME[mime] || "";
+    return { buffer, filename: name, mime };
+  }
+  throw new Error("Provide one of: path (local file), url, or base64.");
+}
+
 const server = new McpServer({ name: "portfolio-cms", version: "1.0.0" });
 
 /* ----------------------------------------------------------------- Hero --- */
@@ -131,10 +184,112 @@ server.registerTool(
   "get_media",
   {
     title: "Get media library",
-    description: "List the media library (read-only). Use a returned id as media_id when setting a hero or project image.",
+    description: "List the media library with each item's editable metadata. Use a returned id as media_id when setting a hero or project image.",
     inputSchema: {},
   },
   () => run(() => cms("/media"))
+);
+
+server.registerTool(
+  "update_media",
+  {
+    title: "Update media metadata",
+    description:
+      "Edit a media item's metadata by id (alt, title, caption, description). The file itself, its dimensions and size can't be changed here, and new files must be uploaded in the admin.",
+    inputSchema: {
+      id: z.number().int(),
+      alt: z.string().nullable().optional(),
+      title: z.string().nullable().optional(),
+      caption: z.string().nullable().optional(),
+      description: z.string().nullable().optional(),
+    },
+  },
+  ({ id, ...fields }) => run(() => cms(`/media/${id}`, { method: "PUT", body: defined(fields) }))
+);
+
+server.registerTool(
+  "upload_media",
+  {
+    title: "Upload a new image",
+    description:
+      "Upload a NEW image into the media library. Provide exactly one source: path (a local file on this machine), url (a remote image), or base64 (raw or a data: URI). Optionally set alt/title/caption/description. Returns the new media item (use its id as media_id on a project/hero). Allowed types: jpg, png, webp, gif (max 8 MB).",
+    inputSchema: {
+      path: z.string().optional(),
+      url: z.string().url().optional(),
+      base64: z.string().optional(),
+      filename: z.string().optional(),
+      alt: z.string().optional(),
+      title: z.string().optional(),
+      caption: z.string().optional(),
+      description: z.string().optional(),
+    },
+  },
+  async ({ path: p, url, base64, filename, alt, title, caption, description }) => {
+    try {
+      const { buffer, filename: name, mime } = await resolveUpload({ path: p, url, base64, filename });
+
+      // Multipart upload — built with the global FormData/Blob (Node 18+). Don't
+      // set Content-Type by hand; fetch adds the multipart boundary itself.
+      const form = new FormData();
+      form.append("file", new Blob([buffer], { type: mime }), name);
+      for (const [k, v] of Object.entries({ alt, title, caption, description })) {
+        if (v !== undefined) form.append(k, v);
+      }
+
+      const res = await fetch(`${CMS_API_URL}/media`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${CMS_API_TOKEN}`, Accept: "application/json" },
+        body: form,
+      });
+
+      const text = await res.text();
+      if (!res.ok) throw new Error(`Upload failed (${res.status}): ${text}`);
+      return ok(JSON.parse(text));
+    } catch (err) {
+      return { content: [{ type: "text", text: String(err.message ?? err) }], isError: true };
+    }
+  }
+);
+
+server.registerTool(
+  "view_media",
+  {
+    title: "View a media image",
+    description:
+      "Fetch a media item by id and return the actual image so it can be viewed directly (no download needed). Use get_media first to find the id.",
+    inputSchema: { id: z.number().int() },
+  },
+  async ({ id }) => {
+    try {
+      // Look the item up to resolve its public URL (the file itself is public,
+      // so it's fetched without the API token).
+      const list = await cms("/media");
+      const item = Array.isArray(list) ? list.find((m) => m.id === id) : null;
+      if (!item) throw new Error(`No media with id ${id}.`);
+      if (!item.url) throw new Error(`Media ${id} has no resolvable URL.`);
+
+      const res = await fetch(item.url);
+      if (!res.ok) throw new Error(`Failed to fetch image (${res.status}) from ${item.url}`);
+
+      const mimeType = res.headers.get("content-type") || "image/webp";
+      const data = Buffer.from(await res.arrayBuffer()).toString("base64");
+
+      return { content: [{ type: "image", data, mimeType }] };
+    } catch (err) {
+      return { content: [{ type: "text", text: String(err.message ?? err) }], isError: true };
+    }
+  }
+);
+
+server.registerTool(
+  "delete_media",
+  {
+    title: "Delete a media item",
+    description:
+      "Permanently delete a media item by id: its file is removed and it is unlinked from any project/hero that used it (their image falls back to none). Use get_media first to find the id.",
+    inputSchema: { id: z.number().int() },
+  },
+  ({ id }) => run(() => cms(`/media/${id}`, { method: "DELETE" }))
 );
 
 /* ------------------------------------------------------------- Projects --- */
@@ -186,6 +341,16 @@ server.registerTool(
   ({ id }) => run(() => cms(`/projects/${id}`, { method: "DELETE" }))
 );
 
+server.registerTool(
+  "reorder_projects",
+  {
+    title: "Reorder projects",
+    description: "Set the display order of projects. Pass ALL project ids in the desired order (lower index = shown first). Use get_projects for the ids.",
+    inputSchema: { order: z.array(z.number().int()) },
+  },
+  ({ order }) => run(() => cms("/projects/reorder", { method: "POST", body: { order } }))
+);
+
 /* ------------------------------------------------------------ Education --- */
 
 server.registerTool(
@@ -225,6 +390,16 @@ server.registerTool(
   "delete_education",
   { title: "Delete education", description: "Delete an education entry by id.", inputSchema: { id: z.number().int() } },
   ({ id }) => run(() => cms(`/education/${id}`, { method: "DELETE" }))
+);
+
+server.registerTool(
+  "reorder_education",
+  {
+    title: "Reorder education",
+    description: "Set the display order of education entries. Pass ALL education ids in the desired order (lower index = shown first). Use get_education for the ids.",
+    inputSchema: { order: z.array(z.number().int()) },
+  },
+  ({ order }) => run(() => cms("/education/reorder", { method: "POST", body: { order } }))
 );
 
 /* ----------------------------------------------------------- Experience --- */
@@ -268,6 +443,16 @@ server.registerTool(
   ({ id }) => run(() => cms(`/experience/${id}`, { method: "DELETE" }))
 );
 
+server.registerTool(
+  "reorder_experience",
+  {
+    title: "Reorder experience",
+    description: "Set the display order of work-experience entries. Pass ALL experience ids in the desired order (lower index = shown first). Use get_experience for the ids.",
+    inputSchema: { order: z.array(z.number().int()) },
+  },
+  ({ order }) => run(() => cms("/experience/reorder", { method: "POST", body: { order } }))
+);
+
 /* --------------------------------------------------------------- Filters --- */
 
 server.registerTool(
@@ -302,6 +487,16 @@ server.registerTool(
   ({ id }) => run(() => cms(`/filters/${id}`, { method: "DELETE" }))
 );
 
+server.registerTool(
+  "reorder_filters",
+  {
+    title: "Reorder filters",
+    description: "Set the display order of the project filter buttons. Pass ALL filter ids in the desired order (lower index = shown first). Use get_filters for the ids.",
+    inputSchema: { order: z.array(z.number().int()) },
+  },
+  ({ order }) => run(() => cms("/filters/reorder", { method: "POST", body: { order } }))
+);
+
 /* -------------------------------------------------------------- Contact --- */
 
 server.registerTool(
@@ -324,6 +519,56 @@ server.registerTool(
     },
   },
   (args) => run(() => cms("/contact", { method: "PUT", body: defined(args) }))
+);
+
+/* ------------------------------------------------------------------- CV --- */
+
+server.registerTool(
+  "get_cv",
+  { title: "Get CV", description: "Read the current CV: its stored path and the public download URL (null when none is set).", inputSchema: {} },
+  () => run(() => cms("/cv"))
+);
+
+server.registerTool(
+  "upload_cv",
+  {
+    title: "Upload / replace the CV",
+    description:
+      "Upload a new CV PDF, replacing the current one. Provide exactly one source: path (a local file on this machine), url (a remote PDF), or base64 (raw or a data: URI). Must be a PDF (max 10 MB).",
+    inputSchema: {
+      path: z.string().optional(),
+      url: z.string().url().optional(),
+      base64: z.string().optional(),
+      filename: z.string().optional(),
+    },
+  },
+  async ({ path: p, url, base64, filename }) => {
+    try {
+      const { buffer, filename: name, mime } = await resolveUpload({
+        path: p,
+        url,
+        base64,
+        filename,
+        defaultMime: "application/pdf",
+      });
+
+      // Multipart upload under the field name `cv` (mirrors the admin form).
+      const form = new FormData();
+      form.append("cv", new Blob([buffer], { type: mime }), name);
+
+      const res = await fetch(`${CMS_API_URL}/cv`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${CMS_API_TOKEN}`, Accept: "application/json" },
+        body: form,
+      });
+
+      const text = await res.text();
+      if (!res.ok) throw new Error(`Upload failed (${res.status}): ${text}`);
+      return ok(JSON.parse(text));
+    } catch (err) {
+      return { content: [{ type: "text", text: String(err.message ?? err) }], isError: true };
+    }
+  }
 );
 
 /* ------------------------------------------------------------ Analytics --- */

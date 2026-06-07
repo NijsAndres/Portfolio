@@ -42,6 +42,13 @@
 
             <div>
                 <label for="intro_text" class="form-label">Intro text</label>
+                <div class="mb-2 flex items-center gap-3">
+                    <button type="button" data-bold-target="intro_text_editor"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-ink/15 font-bold text-ink/70 hover:bg-ink/5 hover:text-ink transition-colors"
+                            title="Bold (⌘/Ctrl+B)" aria-label="Toggle bold">B</button>
+                </div>
+                <div id="intro_text_editor" data-rich-field="intro_text" contenteditable="true"
+                     class="form-input hidden border px-3 py-2 min-h-24 leading-relaxed focus:outline-none"></div>
                 <textarea id="intro_text" name="intro_text" rows="4"
                           class="form-input">{{ old('intro_text', $contact->intro_text) }}</textarea>
             </div>

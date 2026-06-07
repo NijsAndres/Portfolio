@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ResolvesStorageUrl;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class SiteSetting extends Model
 {
+    use ResolvesStorageUrl;
+
     protected $table = 'site_settings';
 
     // Simple key/value table — no timestamp columns.
@@ -47,16 +49,6 @@ class SiteSetting extends Model
      */
     public static function cvUrl(): ?string
     {
-        $path = static::get('cv_path');
-
-        if (! $path) {
-            return null;
-        }
-
-        if (Storage::disk('public')->exists($path)) {
-            return Storage::disk('public')->url($path);
-        }
-
-        return asset('assets/'.$path);
+        return (new static)->resolveStorageUrl(static::get('cv_path'));
     }
 }

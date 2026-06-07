@@ -1,20 +1,35 @@
 const TYPE_LABELS = { school: "School", concept: "Concept", internship: "Internship" };
 
+// How many projects to reveal per "Load more" click.
+const PAGE_SIZE = 6;
+let currentFilter = "all";
+let visibleCount = PAGE_SIZE;
+
 // #region ***  DOM references                           ***********
 // #endregion
 
 // #region ***  Callback-Visualisation - show___         ***********
 
-// Cards are rendered server-side by Blade. Filtering just toggles their
-// visibility based on the space-separated filter slugs in data-filters.
-const showProjects = (filter) => {
+// Cards are rendered server-side by Blade. Rendering toggles their visibility
+// based on the active filter (data-filters slugs) and caps how many matching
+// cards are shown to `visibleCount` — the rest wait behind "Load more".
+const renderProjects = () => {
   const cards = document.querySelectorAll(".js-project-card");
+  let matched = 0;
   for (let card of cards) {
     const slugs = (card.dataset.filters || "").split(" ").filter(Boolean);
-    const visible = filter === "all" || slugs.includes(filter);
+    const matchesFilter = currentFilter === "all" || slugs.includes(currentFilter);
+    let visible = false;
+    if (matchesFilter) {
+      visible = matched < visibleCount;
+      matched++;
+    }
     // The card sits inside a .col-lg-6 wrapper; toggle that so the grid reflows.
     card.closest(".col-lg-6").hidden = !visible;
   }
+
+  const loadMore = document.querySelector(".js-load-more");
+  if (loadMore) loadMore.hidden = matched <= visibleCount;
 };
 
 const updateActiveFilter = (selectedFilter) => {
@@ -49,11 +64,21 @@ const listenToFilters = () => {
   for (let filter of filterButtons) {
     filter.addEventListener("click", (e) => {
       e.preventDefault();
-      const selectedFilter = e.currentTarget.dataset.filter;
-      showProjects(selectedFilter);
-      updateActiveFilter(selectedFilter);
+      currentFilter = e.currentTarget.dataset.filter;
+      visibleCount = PAGE_SIZE;
+      renderProjects();
+      updateActiveFilter(currentFilter);
     });
   }
+};
+
+const listenToLoadMore = () => {
+  const loadMore = document.querySelector(".js-load-more");
+  if (!loadMore) return;
+  loadMore.addEventListener("click", () => {
+    visibleCount += PAGE_SIZE;
+    renderProjects();
+  });
 };
 
 let lastTrigger = null;
@@ -67,14 +92,16 @@ const openProjectModal = (card) => {
   dialog.querySelector(".js-modal-title").textContent = title;
 
   const typeEl = dialog.querySelector(".js-modal-type");
-  typeEl.textContent = TYPE_LABELS[type] || type;
+  typeEl.textContent = TYPE_LABELS[type] || type || "";
   typeEl.className = `c-modal__typebadge c-modal__typebadge--${type} js-modal-type`;
+  typeEl.hidden = !type;
 
-  dialog.querySelector(".js-modal-tags").innerHTML = (tags || "")
-    .split(",")
-    .filter(Boolean)
+  const tagList = (tags || "").split(",").filter(Boolean);
+  const tagsEl = dialog.querySelector(".js-modal-tags");
+  tagsEl.innerHTML = tagList
     .map((t) => `<span class="c-modal__tag">${t}</span>`)
     .join("");
+  tagsEl.hidden = tagList.length === 0;
 
   const visit = dialog.querySelector(".js-modal-visit");
   if (url) {
@@ -134,8 +161,9 @@ const listenToProjects = () => {
 
 const init = () => {
   listenToNav();
-  showProjects("all");
+  renderProjects();
   listenToFilters();
+  listenToLoadMore();
   listenToProjects();
 };
 

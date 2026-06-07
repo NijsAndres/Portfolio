@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasMediaImage;
+use App\Models\Concerns\HasSortOrder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\Storage;
 
 class Project extends Model
 {
+    use HasMediaImage, HasSortOrder;
+
     protected $table = 'projects';
 
     // projects has full created_at/updated_at columns, so default timestamps apply.
@@ -18,6 +21,7 @@ class Project extends Model
         'tags',
         'url',
         'image_path',
+        'media_id',
         'type',
         'body',
         'sort_order',
@@ -37,22 +41,9 @@ class Project extends Model
         return $this->belongsToMany(Filter::class);
     }
 
-    /**
-     * Resolve image_path to a usable URL, bridging Step 8 uploads and the
-     * legacy seeded assets. New uploads live on the public disk and resolve to
-     * /storage/...; seeded paths (e.g. 'projects/x.webp') fall back to the
-     * files shipped in public/assets/.
-     */
-    public function getImageUrlAttribute(): ?string
+    /** Default alt for the project image: the project title. */
+    protected function imageAltFallback(): string
     {
-        if (! $this->image_path) {
-            return null;
-        }
-
-        if (Storage::disk('public')->exists($this->image_path)) {
-            return Storage::disk('public')->url($this->image_path);
-        }
-
-        return asset('assets/'.$this->image_path);
+        return $this->title;
     }
 }

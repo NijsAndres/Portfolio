@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <link rel="icon" href="{{ asset('assets/asterisk.svg') }}" type="image/x-icon">
+
     <title>@yield('title', 'Admin') &middot; {{ config('app.name', 'Laravel') }} CMS</title>
 
     <!-- Fonts — Bai Jamjuree, matching the public frontend -->
@@ -22,6 +24,7 @@
         $navGroups = [
             ['title' => null, 'links' => [
                 ['route' => 'admin.dashboard', 'pattern' => ['admin.dashboard'], 'label' => 'Dashboard'],
+                ['route' => 'admin.media.index', 'pattern' => ['admin.media.*'], 'label' => 'Media'],
             ]],
             ['title' => 'Site content', 'links' => [
                 ['route' => 'admin.hero.edit',    'pattern' => ['admin.hero.*'],    'label' => 'Hero'],
@@ -36,9 +39,15 @@
         ];
     @endphp
 
-    <div class="min-h-screen flex">
-        {{-- Sidebar --}}
-        <aside class="w-60 shrink-0 bg-ink text-cream/70 flex flex-col">
+    <div class="min-h-screen flex" x-data="{ open: false }" @keydown.escape.window="open = false">
+        {{-- Backdrop — only on mobile when the drawer is open. --}}
+        <div x-show="open" x-cloak x-transition.opacity @click="open = false"
+             class="fixed inset-0 z-30 bg-ink/50 lg:hidden"></div>
+
+        {{-- Sidebar — fixed off-canvas drawer below lg, static column at lg+. --}}
+        <aside class="fixed inset-y-0 left-0 z-40 w-60 shrink-0 bg-ink text-cream/70 flex flex-col
+                      transform transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0"
+               :class="open ? 'translate-x-0' : '-translate-x-full'">
             <div class="px-6 py-5 border-b border-white/10">
                 <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 text-lg font-bold text-white">
                     <img src="{{ asset('assets/star.svg') }}" alt="" width="24" height="24" aria-hidden="true">
@@ -46,7 +55,7 @@
                 </a>
             </div>
 
-            <nav class="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
+            <nav class="flex-1 px-3 py-4 space-y-6 overflow-y-auto" @click="open = false">
                 @foreach ($navGroups as $group)
                     <div class="space-y-1">
                         @if ($group['title'])
@@ -90,18 +99,30 @@
         <div class="flex-1 flex flex-col min-w-0">
             {{-- Topbar --}}
             <header class="bg-white border-b border-ink/10">
-                <div class="px-8 py-4 flex items-center justify-between">
-                    <h1 class="text-xl font-bold text-ink">@yield('title', 'Admin')</h1>
+                <div class="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        {{-- Hamburger — opens the drawer on mobile only. --}}
+                        <button type="button" @click="open = true"
+                                class="lg:hidden -ml-1 p-2 rounded-lg text-ink/70 hover:bg-ink/5 hover:text-ink transition-colors"
+                                aria-label="Open menu">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                                <line x1="3" y1="6" x2="21" y2="6"/>
+                                <line x1="3" y1="12" x2="21" y2="12"/>
+                                <line x1="3" y1="18" x2="21" y2="18"/>
+                            </svg>
+                        </button>
+                        <h1 class="text-lg sm:text-xl font-bold text-ink truncate">@yield('title', 'Admin')</h1>
+                    </div>
 
                     <a href="{{ route('home') }}" target="_blank"
-                       class="text-sm font-semibold text-ink/60 hover:text-brand-700 transition-colors">
+                       class="shrink-0 text-sm font-semibold text-ink/60 hover:text-brand-700 transition-colors">
                         View live site &rarr;
                     </a>
                 </div>
             </header>
 
             {{-- Content --}}
-            <main class="flex-1 p-8">
+            <main class="flex-1 p-4 sm:p-6 lg:p-8">
                 @if (session('success'))
                     <div class="alert-success">
                         {{ session('success') }}

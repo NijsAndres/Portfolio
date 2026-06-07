@@ -14,6 +14,7 @@
         </div>
 
         <div class="card overflow-hidden">
+            <div class="table-scroll">
             <table class="data-table">
                 <thead>
                     <tr>
@@ -35,6 +36,10 @@
                             <td>{{ $project->updated_at?->diffForHumans() ?? '—' }}</td>
                             <td class="js-row-actions">
                                 <div class="flex items-center justify-end gap-4">
+                                    <form method="POST" action="{{ route('admin.projects.duplicate', $project) }}">
+                                        @csrf
+                                        <button type="submit" class="font-semibold text-brand-700 hover:text-brand-800 transition-colors">Duplicate</button>
+                                    </form>
                                     <form method="POST" action="{{ route('admin.projects.destroy', $project) }}"
                                           onsubmit="return confirm('Delete this project?');">
                                         @csrf
@@ -51,6 +56,7 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
     </section>
 
@@ -66,6 +72,7 @@
         </div>
 
         <div class="card overflow-hidden">
+            <div class="table-scroll">
             <table class="data-table">
                 <thead>
                     <tr>
@@ -105,6 +112,7 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
     </section>
 @endsection

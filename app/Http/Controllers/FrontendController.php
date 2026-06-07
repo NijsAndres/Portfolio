@@ -22,10 +22,10 @@ class FrontendController extends Controller
     {
         $hero       = HeroContent::first();
         $about      = AboutContent::first();
-        $projects   = Project::with('filters')->orderBy('sort_order')->orderBy('id')->get();
-        $filters    = Filter::orderBy('sort_order')->orderBy('name')->get();
-        $education  = Education::orderBy('sort_order')->orderBy('id')->get();
-        $experience = Experience::orderBy('sort_order')->orderBy('id')->get();
+        $projects   = Project::with('filters')->ordered()->get();
+        $filters    = Filter::ordered()->get();
+        $education  = Education::ordered()->get();
+        $experience = Experience::ordered()->get();
         $contact    = ContactInfo::first();
         $cvUrl      = SiteSetting::cvUrl();
 

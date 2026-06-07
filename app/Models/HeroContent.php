@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasMediaImage;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class HeroContent extends Model
 {
+    use HasMediaImage;
+
     protected $table = 'hero_content';
 
     /**
@@ -24,6 +26,7 @@ class HeroContent extends Model
         'skills',
         'disciplines',
         'image_path',
+        'media_id',
     ];
 
     protected $casts = [
@@ -31,21 +34,9 @@ class HeroContent extends Model
         'disciplines' => 'array',
     ];
 
-    /**
-     * Resolve image_path to a usable URL, bridging Step 8 uploads and the
-     * legacy seeded asset. A new upload lives on the public disk and resolves
-     * to /storage/...; the seeded path falls back to public/assets/.
-     */
-    public function getImageUrlAttribute(): ?string
+    /** Default alt for the hero image. */
+    protected function imageAltFallback(): string
     {
-        if (! $this->image_path) {
-            return null;
-        }
-
-        if (Storage::disk('public')->exists($this->image_path)) {
-            return Storage::disk('public')->url($this->image_path);
-        }
-
-        return asset('assets/'.$this->image_path);
+        return 'Background image';
     }
 }

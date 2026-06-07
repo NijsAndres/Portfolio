@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/backtotop.js') }}" defer></script>
+    <script src="{{ asset('js/track.js') }}" defer></script>
 </head>
 
 <body>
@@ -55,14 +56,14 @@
                         @endforeach
                     </div>
                     <div class="c-hero__buttoncontainer">
-                        <a class="c-btn c-btn--primary" href="{{ $cvUrl }}" download>Download CV<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></svg></a>
-                        <a class="c-btn c-btn--social" href="{{ $contact->linkedin_url }}" target="_blank" aria-label="LinkedIn profile"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/></svg></a>
-                        <a class="c-btn c-btn--social" href="{{ $contact->github_url }}" target="_blank" aria-label="GitHub profile"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg></a>
+                        <a class="c-btn c-btn--primary" href="{{ $cvUrl }}" download data-track-event="cv_download">Download CV<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></svg></a>
+                        <a class="c-btn c-btn--social" href="{{ $contact->linkedin_url }}" target="_blank" aria-label="LinkedIn profile" data-track-event="contact_linkedin"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/></svg></a>
+                        <a class="c-btn c-btn--social" href="{{ $contact->github_url }}" target="_blank" aria-label="GitHub profile" data-track-event="contact_github"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg></a>
                     </div>
                 </div>
                 <div class="col-xl-4 offset-lg-1 col-lg-5 u-fade-in-right">
                     <div class="c-hero__imgcontainer">
-                        <img class="c-hero__img" src="{{ $hero->image_url }}" alt="Background image" width="1920" height="1920" fetchpriority="high">
+                        <img class="c-hero__img" src="{{ $hero->image_url }}" alt="{{ $hero->image_alt }}" width="1920" height="1920" fetchpriority="high">
                     </div>
                 </div>
             </div>
@@ -87,9 +88,7 @@
                         <h2>Get To Know Me.</h2>
                     </div>
                     <div class="col-lg-8">
-                        @foreach (preg_split('/\n\s*\n/', trim($about->bio_text)) as $paragraph)
-                        <p class="c-about__text">{{ trim($paragraph) }}</p>
-                        @endforeach
+                        <x-rich-text :text="$about->bio_text" class="c-about__text" />
 
                         <div class="c-about__infocontainer">
                             <div class="c-about__infoitem">
@@ -127,6 +126,7 @@
                         @foreach ($projects as $project)
                         <div class="col-lg-6">
                             <button type="button" class="c-projects__card js-project-card"
+                                data-track-event="project_click"
                                 data-project-id="{{ $project->id }}"
                                 data-filters="{{ $project->filters->pluck('slug')->implode(' ') }}"
                                 data-type="{{ $project->type }}"
@@ -135,8 +135,10 @@
                                 data-tags="{{ implode(',', $project->tags ?? []) }}"
                                 aria-haspopup="dialog" aria-controls="project-modal">
                                 <div class="c-projects__cardimgcontainer">
-                                    <img class="c-projects__cardimg" src="{{ $project->image_url }}" alt="Mockup of {{ $project->title }}" width="1920" height="1079" loading="lazy">
-                                    <span class="c-projects__badge">{{ implode(' / ', $project->tags ?? []) }}</span>
+                                    <img class="c-projects__cardimg" src="{{ $project->image_url }}" alt="{{ $project->image_alt }}" width="1920" height="1079" loading="lazy">
+                                    @if (!empty($project->tags))
+                                    <span class="c-projects__badge">{{ implode(' / ', $project->tags) }}</span>
+                                    @endif
                                 </div>
                                 <div class="c-projects__cardcontent">
                                     <p class="c-projects__cardtitle">{{ $project->title }}</p>
@@ -145,6 +147,9 @@
                             </button>
                         </div>
                         @endforeach
+                    </div>
+                    <div class="col-12 c-projects__loadmorecontainer">
+                        <button type="button" class="c-btn c-btn--primary js-load-more" hidden>Load more</button>
                     </div>
                 </div>
             </div>
@@ -199,13 +204,11 @@
                         <h2>Feel Free to Reach Out!</h2>
                     </div>
                     <div class="col-lg-8">
-                        @foreach (preg_split('/\n\s*\n/', trim($contact->intro_text)) as $paragraph)
-                        <p class="c-contact__text">{{ trim($paragraph) }}</p>
-                        @endforeach
+                        <x-rich-text :text="$contact->intro_text" class="c-contact__text" />
                         <div class="c-contact__infocontainer">
                             <div class="c-contact__infoitem">
                                 <p class="c-contact__infolabel">Mail Me</p>
-                                <a class="c-contact__link" href="mailto:{{ $contact->email }}">
+                                <a class="c-contact__link" href="mailto:{{ $contact->email }}" data-track-event="contact_email">
                                     <p class="c-contact__infotext">{{ $contact->email }}</p>
                                 </a>
                             </div>
@@ -237,9 +240,9 @@
                 <div class="col-lg-4 col-md-4 offset-lg-4 offset-md-4 col-12">
                     <p class="c-footer__title">Quick Links</p>
                     <ul class="c-footer__nav">
-                        <li class="c-footer__navitem"><a class="c-footer__navlink" href="{{ $cvUrl }}" download>Download CV</a></li>
-                        <li class="c-footer__navitem"><a class="c-footer__navlink" href="{{ $contact->linkedin_url }}" target="_blank">LinkedIn</a></li>
-                        <li class="c-footer__navitem"><a class="c-footer__navlink" href="{{ $contact->github_url }}" target="_blank">GitHub</a></li>
+                        <li class="c-footer__navitem"><a class="c-footer__navlink" href="{{ $cvUrl }}" download data-track-event="cv_download">Download CV</a></li>
+                        <li class="c-footer__navitem"><a class="c-footer__navlink" href="{{ $contact->linkedin_url }}" target="_blank" data-track-event="contact_linkedin">LinkedIn</a></li>
+                        <li class="c-footer__navitem"><a class="c-footer__navlink" href="{{ $contact->github_url }}" target="_blank" data-track-event="contact_github">GitHub</a></li>
                     </ul>
                 </div>
             </div>

@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    // Static Bearer token guarding the internal /api/cms endpoints (Step 12).
+    // Shared with the MCP server. Read via config() so it survives config:cache.
+    'cms' => [
+        'api_token' => env('CMS_API_TOKEN'),
+    ],
+
 ];

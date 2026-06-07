@@ -1,6 +1,7 @@
 # Laravel
 /.phpunit.cache
 /node_modules
+/.vite
 /public/build
 /public/hot
 /public/storage

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\ReordersEntities;
 use App\Http\Controllers\Controller;
 use App\Models\Filter;
 use App\Models\Media;
 use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Resource controller for portfolio projects.
@@ -17,37 +17,22 @@ use Illuminate\Support\Facades\DB;
  */
 class ProjectController extends Controller
 {
+    use ReordersEntities;
+
     public function index()
     {
-        $projects = Project::orderBy('sort_order')->orderBy('id')->get();
+        $projects = Project::ordered()->get();
 
         // Filters share this page (managed in a section below the projects).
-        $filters = Filter::withCount('projects')
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get();
+        $filters = Filter::withCount('projects')->ordered()->get();
 
         return view('admin.projects.index', compact('projects', 'filters'));
     }
 
-    /**
-     * Persist a new drag-and-drop order. Accepts an array of project IDs in the
-     * desired order and rewrites each row's sort_order to its index.
-     */
+    /** Persist a new drag-and-drop order (array of project ids). */
     public function reorder(Request $request)
     {
-        $validated = $request->validate([
-            'order' => ['required', 'array'],
-            'order.*' => ['integer', 'exists:projects,id'],
-        ]);
-
-        DB::transaction(function () use ($validated) {
-            foreach ($validated['order'] as $position => $id) {
-                Project::where('id', $id)->update(['sort_order' => $position]);
-            }
-        });
-
-        return response()->json(['status' => 'ok']);
+        return $this->reorderUsing($request, Project::class);
     }
 
     public function create()
@@ -134,16 +119,8 @@ class ProjectController extends Controller
             'media_id.exists' => 'The selected image is invalid.',
         ]);
 
-        // When left blank, default to the lowest unused sort_order so the
-        // project slots in at the front instead of failing the NOT NULL column.
-        if ($validated['sort_order'] === null) {
-            $used = Project::pluck('sort_order')->all();
-            $next = 0;
-            while (in_array($next, $used, true)) {
-                $next++;
-            }
-            $validated['sort_order'] = $next;
-        }
+        // When left blank, slot the project in at the front (NOT NULL column).
+        $validated['sort_order'] ??= Project::nextSortOrder();
 
         return $validated;
     }
@@ -167,6 +144,6 @@ class ProjectController extends Controller
      */
     private function filterOptions()
     {
-        return Filter::orderBy('sort_order')->orderBy('name')->get();
+        return Filter::ordered()->get();
     }
 }

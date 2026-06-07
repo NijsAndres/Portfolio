@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\ReordersEntities;
 use App\Http\Controllers\Controller;
 use App\Models\Education;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Resource controller for education entries.
@@ -15,31 +15,19 @@ use Illuminate\Support\Facades\DB;
  */
 class EducationController extends Controller
 {
+    use ReordersEntities;
+
     public function index()
     {
-        $education = Education::orderBy('sort_order')->orderBy('id')->get();
+        $education = Education::ordered()->get();
 
         return view('admin.education.index', compact('education'));
     }
 
-    /**
-     * Persist a new drag-and-drop order. Accepts an array of education IDs in
-     * the desired order and rewrites each row's sort_order to its index.
-     */
+    /** Persist a new drag-and-drop order (array of education ids). */
     public function reorder(Request $request)
     {
-        $validated = $request->validate([
-            'order' => ['required', 'array'],
-            'order.*' => ['integer', 'exists:education,id'],
-        ]);
-
-        DB::transaction(function () use ($validated) {
-            foreach ($validated['order'] as $position => $id) {
-                Education::where('id', $id)->update(['sort_order' => $position]);
-            }
-        });
-
-        return response()->json(['status' => 'ok']);
+        return $this->reorderUsing($request, Education::class);
     }
 
     public function create()
@@ -82,16 +70,8 @@ class EducationController extends Controller
             'sort_order' => ['nullable', 'integer'],
         ]);
 
-        // When left blank, default to the lowest unused sort_order so the entry
-        // slots in at the front instead of failing the NOT NULL column.
-        if ($validated['sort_order'] === null) {
-            $used = Education::pluck('sort_order')->all();
-            $next = 0;
-            while (in_array($next, $used, true)) {
-                $next++;
-            }
-            $validated['sort_order'] = $next;
-        }
+        // When left blank, slot the entry in at the front (NOT NULL column).
+        $validated['sort_order'] ??= Education::nextSortOrder();
 
         return $validated;
     }

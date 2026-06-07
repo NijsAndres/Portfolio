@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Concerns\ReordersEntities;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Internal JSON API for project CRUD (Step 12), consumed by the MCP server.
@@ -20,10 +20,12 @@ use Illuminate\Support\Facades\DB;
  */
 class ProjectController extends Controller
 {
+    use ReordersEntities;
+
     public function index(): JsonResponse
     {
         return response()->json(
-            Project::with('filters')->orderBy('sort_order')->orderBy('id')->get()
+            Project::with('filters')->ordered()->get()
         );
     }
 
@@ -38,9 +40,7 @@ class ProjectController extends Controller
 
         // On create only, default a blank sort_order to the lowest unused value
         // (NOT NULL column). On update we never touch an unspecified sort_order.
-        if (($data['sort_order'] ?? null) === null) {
-            $data['sort_order'] = $this->nextSortOrder();
-        }
+        $data['sort_order'] ??= Project::nextSortOrder();
 
         $project = Project::create($data);
         $this->syncFilters($request, $project);
@@ -63,29 +63,15 @@ class ProjectController extends Controller
         return response()->json(['deleted' => true]);
     }
 
-    /**
-     * Persist a new order. Accepts an array of project IDs in the desired order
-     * and rewrites each row's sort_order to its index (mirrors admin).
-     */
+    /** Persist a new order (array of project ids; mirrors admin). */
     public function reorder(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'order' => ['required', 'array'],
-            'order.*' => ['integer', 'exists:projects,id'],
-        ]);
-
-        DB::transaction(function () use ($validated) {
-            foreach ($validated['order'] as $position => $id) {
-                Project::where('id', $id)->update(['sort_order' => $position]);
-            }
-        });
-
-        return response()->json(['status' => 'ok']);
+        return $this->reorderUsing($request, Project::class);
     }
 
     private function validateData(Request $request): array
     {
-        $validated = $request->validate([
+        return $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
@@ -96,20 +82,6 @@ class ProjectController extends Controller
             'body' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ]);
-
-        return $validated;
-    }
-
-    /** Lowest unused sort_order, so a new project slots in at the front. */
-    private function nextSortOrder(): int
-    {
-        $used = Project::pluck('sort_order')->all();
-        $next = 0;
-        while (in_array($next, $used, true)) {
-            $next++;
-        }
-
-        return $next;
     }
 
     /**

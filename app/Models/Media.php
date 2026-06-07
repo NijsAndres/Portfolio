@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ResolvesStorageUrl;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class Media extends Model
 {
+    use ResolvesStorageUrl;
+
     protected $table = 'media';
 
     protected $fillable = [
@@ -28,23 +30,10 @@ class Media extends Model
         'height' => 'integer',
     ];
 
-    /**
-     * Resolve the stored path to a usable URL. Mirrors the two-tier logic used
-     * for project/hero images: new uploads live on the public disk and resolve
-     * to /storage/...; imported legacy paths (e.g. 'projects/banksy.webp') fall
-     * back to the files shipped in public/assets/.
-     */
+    /** Resolve the stored path to a usable URL (public disk, else public/assets/). */
     public function getUrlAttribute(): ?string
     {
-        if (! $this->path) {
-            return null;
-        }
-
-        if (Storage::disk('public')->exists($this->path)) {
-            return Storage::disk('public')->url($this->path);
-        }
-
-        return asset('assets/'.$this->path);
+        return $this->resolveStorageUrl($this->path);
     }
 
     /**

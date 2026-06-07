@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Concerns\ReordersEntities;
 use App\Http\Controllers\Controller;
 use App\Models\Filter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -18,10 +18,12 @@ use Illuminate\Validation\Rule;
  */
 class FilterController extends Controller
 {
+    use ReordersEntities;
+
     public function index(): JsonResponse
     {
         return response()->json(
-            Filter::withCount('projects')->orderBy('sort_order')->orderBy('id')->get()
+            Filter::withCount('projects')->ordered()->get()
         );
     }
 
@@ -52,24 +54,10 @@ class FilterController extends Controller
         return response()->json(['deleted' => true]);
     }
 
-    /**
-     * Persist a new order. Accepts an array of filter IDs in the desired order
-     * and rewrites each row's sort_order to its index (mirrors admin).
-     */
+    /** Persist a new order (array of filter ids; mirrors admin). */
     public function reorder(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'order' => ['required', 'array'],
-            'order.*' => ['integer', 'exists:filters,id'],
-        ]);
-
-        DB::transaction(function () use ($validated) {
-            foreach ($validated['order'] as $position => $id) {
-                Filter::where('id', $id)->update(['sort_order' => $position]);
-            }
-        });
-
-        return response()->json(['status' => 'ok']);
+        return $this->reorderUsing($request, Filter::class);
     }
 
     private function validateData(Request $request, ?Filter $filter = null): array
@@ -90,14 +78,7 @@ class FilterController extends Controller
             'slug.unique' => 'A filter with that name already exists.',
         ]);
 
-        if (($validated['sort_order'] ?? null) === null) {
-            $used = Filter::pluck('sort_order')->all();
-            $next = 0;
-            while (in_array($next, $used, true)) {
-                $next++;
-            }
-            $validated['sort_order'] = $next;
-        }
+        $validated['sort_order'] ??= Filter::nextSortOrder();
 
         return $validated;
     }

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasMediaImage;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
 class HeroContent extends Model
 {
+    use HasMediaImage;
+
     protected $table = 'hero_content';
 
     /**
@@ -33,42 +34,9 @@ class HeroContent extends Model
         'disciplines' => 'array',
     ];
 
-    /**
-     * The library image the hero points at. Preferred over the legacy image_path.
-     */
-    public function media(): BelongsTo
+    /** Default alt for the hero image. */
+    protected function imageAltFallback(): string
     {
-        return $this->belongsTo(Media::class);
-    }
-
-    /**
-     * Resolve the hero image to a usable URL. Prefers the linked media record;
-     * otherwise bridges Step 8 uploads (public disk → /storage/...) and the
-     * legacy seeded asset (falls back to public/assets/).
-     */
-    public function getImageUrlAttribute(): ?string
-    {
-        if ($this->media) {
-            return $this->media->url;
-        }
-
-        if (! $this->image_path) {
-            return null;
-        }
-
-        if (Storage::disk('public')->exists($this->image_path)) {
-            return Storage::disk('public')->url($this->image_path);
-        }
-
-        return asset('assets/'.$this->image_path);
-    }
-
-    /**
-     * Alt text for the hero image — the linked media's alt, with a sensible
-     * default so the frontend always has an alt attribute.
-     */
-    public function getImageAltAttribute(): string
-    {
-        return $this->media?->alt ?: 'Background image';
+        return 'Background image';
     }
 }

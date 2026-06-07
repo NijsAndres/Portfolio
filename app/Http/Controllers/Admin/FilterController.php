@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\ReordersEntities;
 use App\Http\Controllers\Controller;
 use App\Models\Filter;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -18,27 +18,15 @@ use Illuminate\Validation\Rule;
  */
 class FilterController extends Controller
 {
+    use ReordersEntities;
+
     // Filters no longer have a standalone index — they are listed on the
     // projects page (admin.projects.index). Create/edit/delete still live here.
 
-    /**
-     * Persist a new drag-and-drop order. Accepts an array of filter IDs in the
-     * desired order and rewrites each row's sort_order to its index.
-     */
+    /** Persist a new drag-and-drop order (array of filter ids). */
     public function reorder(Request $request)
     {
-        $validated = $request->validate([
-            'order' => ['required', 'array'],
-            'order.*' => ['integer', 'exists:filters,id'],
-        ]);
-
-        DB::transaction(function () use ($validated) {
-            foreach ($validated['order'] as $position => $id) {
-                Filter::where('id', $id)->update(['sort_order' => $position]);
-            }
-        });
-
-        return response()->json(['status' => 'ok']);
+        return $this->reorderUsing($request, Filter::class);
     }
 
     public function create()
@@ -94,16 +82,8 @@ class FilterController extends Controller
             'slug.unique' => 'A filter with that name already exists.',
         ]);
 
-        // When left blank, default to the lowest unused sort_order so the
-        // filter slots in at the front instead of failing the NOT NULL column.
-        if ($validated['sort_order'] === null) {
-            $used = Filter::pluck('sort_order')->all();
-            $next = 0;
-            while (in_array($next, $used, true)) {
-                $next++;
-            }
-            $validated['sort_order'] = $next;
-        }
+        // When left blank, slot the filter in at the front (NOT NULL column).
+        $validated['sort_order'] ??= Filter::nextSortOrder();
 
         return $validated;
     }

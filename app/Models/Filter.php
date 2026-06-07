@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSortOrder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Filter extends Model
 {
+    use HasSortOrder;
+
     protected $table = 'filters';
 
     protected $fillable = [

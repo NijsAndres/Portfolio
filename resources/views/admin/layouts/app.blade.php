@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <link rel="icon" href="{{ asset('assets/asterisk.svg') }}" type="image/x-icon">
+
     <title>@yield('title', 'Admin') &middot; {{ config('app.name', 'Laravel') }} CMS</title>
 
     <!-- Fonts — Bai Jamjuree, matching the public frontend -->

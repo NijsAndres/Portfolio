@@ -3,7 +3,7 @@
 @section('title', 'Contact Details')
 
 @section('content')
-    <form method="POST" action="{{ route('admin.contact.update') }}" class="max-w-4xl space-y-6">
+    <form method="POST" action="{{ route('admin.contact.update') }}" class="space-y-6">
         @csrf
         @method('PUT')
 

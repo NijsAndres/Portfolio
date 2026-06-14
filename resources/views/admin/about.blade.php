@@ -3,14 +3,14 @@
 @section('title', 'About Section')
 
 @section('content')
-    <form method="POST" action="{{ route('admin.about.update') }}" class="max-w-4xl space-y-6">
+    <form method="POST" action="{{ route('admin.about.update') }}" class="space-y-6">
         @csrf
         @method('PUT')
 
         <div class="card p-6 space-y-5">
             <x-admin.translatable-textarea name="bio_text" label="Bio" :model="$about" :rows="6" :rich="true" />
 
-            <div class="grid gap-x-5 gap-y-5 sm:grid-cols-2">
+            <div class="grid gap-x-5 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
                 <div>
                     <label for="born_in" class="form-label">Born in</label>
                     <input type="text" id="born_in" name="born_in"

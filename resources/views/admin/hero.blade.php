@@ -3,7 +3,7 @@
 @section('title', 'Hero Section')
 
 @section('content')
-    <form method="POST" action="{{ route('admin.hero.update') }}" enctype="multipart/form-data" class="max-w-4xl space-y-6">
+    <form method="POST" action="{{ route('admin.hero.update') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
         @method('PUT')
 

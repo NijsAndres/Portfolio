@@ -8,28 +8,9 @@
         @method('PUT')
 
         <div class="card p-6 space-y-5">
-            <div>
-                <label for="headline" class="form-label">Headline <span class="text-brand-500">*</span></label>
-                <input type="text" id="headline" name="headline" required
-                       value="{{ old('headline', $hero->headline) }}"
-                       class="form-input">
-            </div>
-
-            <div class="grid gap-x-5 gap-y-5 sm:grid-cols-2">
-                <div>
-                    <label for="subheadline" class="form-label">Subheadline</label>
-                    <input type="text" id="subheadline" name="subheadline"
-                           value="{{ old('subheadline', $hero->subheadline) }}"
-                           class="form-input">
-                </div>
-
-                <div>
-                    <label for="tagline" class="form-label">Tagline</label>
-                    <input type="text" id="tagline" name="tagline"
-                           value="{{ old('tagline', $hero->tagline) }}"
-                           class="form-input">
-                </div>
-            </div>
+            <x-admin.translatable-input name="headline" label="Headline" :model="$hero" :required="true" :max="255" />
+            <x-admin.translatable-input name="subheadline" label="Subheadline" :model="$hero" :max="255" />
+            <x-admin.translatable-input name="tagline" label="Tagline" :model="$hero" :max="255" />
 
             <div class="grid gap-x-5 gap-y-5 sm:grid-cols-2">
                 {{-- Skills repeater (skills[]) --}}

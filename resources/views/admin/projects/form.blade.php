@@ -15,18 +15,9 @@
         @endif
 
         <div class="card p-6 space-y-5">
-            <div>
-                <label for="title" class="form-label">Title <span class="text-brand-500">*</span></label>
-                <input type="text" id="title" name="title" required
-                       value="{{ old('title', $project->title) }}"
-                       class="form-input">
-            </div>
+            <x-admin.translatable-input name="title" label="Title" :model="$project" :required="true" :max="255" />
 
-            <div>
-                <label for="description" class="form-label">Description</label>
-                <textarea id="description" name="description" rows="3"
-                          class="form-input">{{ old('description', $project->description) }}</textarea>
-            </div>
+            <x-admin.translatable-textarea name="description" label="Description" :model="$project" :rows="3" />
 
             {{-- Tags repeater (tags[]) --}}
             <div x-data="{ items: @js(array_values(old('tags', $project->tags ?? []))) }">
@@ -85,11 +76,7 @@
                 @enderror
             </div>
 
-            <div>
-                <label for="body" class="form-label">Body</label>
-                <textarea id="body" name="body" rows="6"
-                          class="form-input">{{ old('body', $project->body) }}</textarea>
-            </div>
+            <x-admin.translatable-textarea name="body" label="Body" :model="$project" :rows="6" />
 
             <div>
                 <label for="sort_order" class="form-label">Sort order</label>

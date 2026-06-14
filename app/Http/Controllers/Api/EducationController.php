@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Concerns\ReordersEntities;
+use App\Http\Controllers\Concerns\SerializesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\Education;
 use Illuminate\Http\JsonResponse;
@@ -16,17 +17,18 @@ use Illuminate\Http\Request;
 class EducationController extends Controller
 {
     use ReordersEntities;
+    use SerializesTranslations;
 
     public function index(): JsonResponse
     {
         return response()->json(
-            Education::ordered()->get()
+            $this->withTranslationsMany(Education::ordered()->get())
         );
     }
 
     public function show(Education $education): JsonResponse
     {
-        return response()->json($education);
+        return response()->json($this->withTranslations($education));
     }
 
     public function store(Request $request): JsonResponse
@@ -39,14 +41,14 @@ class EducationController extends Controller
 
         $education = Education::create($data);
 
-        return response()->json($education, 201);
+        return response()->json($this->withTranslations($education), 201);
     }
 
     public function update(Request $request, Education $education): JsonResponse
     {
         $education->update($this->validateData($request));
 
-        return response()->json($education);
+        return response()->json($this->withTranslations($education));
     }
 
     public function destroy(Education $education): JsonResponse
@@ -64,11 +66,17 @@ class EducationController extends Controller
 
     private function validateData(Request $request): array
     {
-        return $request->validate([
+        $validated = $request->validate([
             'institution' => ['required', 'string', 'max:255'],
-            'degree' => ['nullable', 'string', 'max:255'],
-            'period' => ['nullable', 'string', 'max:255'],
+            'degree' => ['nullable', 'array'],
+            'degree.en' => ['nullable', 'string', 'max:255'],
+            'degree.nl' => ['nullable', 'string', 'max:255'],
+            'period' => ['nullable', 'array'],
+            'period.en' => ['nullable', 'string', 'max:255'],
+            'period.nl' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer'],
         ]);
+
+        return $validated;
     }
 }

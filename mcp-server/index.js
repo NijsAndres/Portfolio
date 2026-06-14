@@ -128,13 +128,21 @@ async function resolveUpload({ path: filePath, url, base64, filename, defaultMim
   throw new Error("Provide one of: path (local file), url, or base64.");
 }
 
+/**
+ * Translatable text field — pass both languages as { en, nl }. English is the
+ * base language and Dutch falls back to it when omitted, so the site never
+ * shows blank text. Mirrors the API's per-locale validation.
+ */
+const trReq = z.object({ en: z.string(), nl: z.string().optional() }); // English required
+const trOpt = z.object({ en: z.string().optional(), nl: z.string().optional() }).optional();
+
 const server = new McpServer({ name: "portfolio-cms", version: "1.0.0" });
 
 /* ----------------------------------------------------------------- Hero --- */
 
 server.registerTool(
   "get_hero",
-  { title: "Get hero", description: "Read the hero section (headline, subheadline, tagline, skills, disciplines).", inputSchema: {} },
+  { title: "Get hero", description: "Read the hero section. Translatable fields (headline, subheadline, tagline) come back as { en, nl }; skills/disciplines are shared across languages.", inputSchema: {} },
   () => run(() => cms("/hero"))
 );
 
@@ -142,11 +150,11 @@ server.registerTool(
   "update_hero",
   {
     title: "Update hero",
-    description: "Update the hero section. headline is required; other fields are optional. media_id sets the background image (see get_media).",
+    description: "Update the hero section. Translatable fields take both languages as { en, nl } (English required, Dutch optional → falls back to English): headline required, subheadline/tagline optional. skills/disciplines are shared across languages. media_id sets the background image (see get_media).",
     inputSchema: {
-      headline: z.string(),
-      subheadline: z.string().optional(),
-      tagline: z.string().optional(),
+      headline: trReq,
+      subheadline: trOpt,
+      tagline: trOpt,
       skills: z.array(z.string()).optional(),
       disciplines: z.array(z.string()).optional(),
       media_id: z.number().int().nullable().optional(),
@@ -159,7 +167,7 @@ server.registerTool(
 
 server.registerTool(
   "get_about",
-  { title: "Get about", description: "Read the about section (bio_text, born_in, languages, date_of_birth).", inputSchema: {} },
+  { title: "Get about", description: "Read the about section. bio_text comes back as { en, nl }; born_in/languages/date_of_birth are shared across languages.", inputSchema: {} },
   () => run(() => cms("/about"))
 );
 
@@ -167,9 +175,9 @@ server.registerTool(
   "update_about",
   {
     title: "Update about",
-    description: "Update the about section. All fields optional.",
+    description: "Update the about section. All fields optional. bio_text is translatable ({ en, nl }, Dutch falls back to English); born_in/languages/date_of_birth are shared across languages.",
     inputSchema: {
-      bio_text: z.string().optional(),
+      bio_text: trOpt,
       born_in: z.string().optional(),
       languages: z.string().optional(),
       date_of_birth: z.string().optional(),
@@ -296,20 +304,20 @@ server.registerTool(
 
 // Shared field schema for create/update project (image + filters included).
 const projectFields = {
-  title: z.string(),
-  description: z.string().optional(),
+  title: trReq,
+  description: trOpt,
   tags: z.array(z.string()).optional(),
   url: z.string().url().optional(),
   media_id: z.number().int().nullable().optional(),
   type: z.string().optional(),
-  body: z.string().optional(),
+  body: trOpt,
   sort_order: z.number().int().optional(),
   filter_ids: z.array(z.number().int()).optional(),
 };
 
 server.registerTool(
   "get_projects",
-  { title: "Get projects", description: "List all portfolio projects (with their linked filters).", inputSchema: {} },
+  { title: "Get projects", description: "List all portfolio projects (with their linked filters). Translatable fields (title, description, body) come back as { en, nl }; tags are shared across languages.", inputSchema: {} },
   () => run(() => cms("/projects"))
 );
 
@@ -318,7 +326,7 @@ server.registerTool(
   {
     title: "Create project",
     description:
-      "Create a portfolio project. title is required. media_id sets the image (see get_media); filter_ids links filter tags (see get_filters); type/body/sort_order are optional.",
+      "Create a portfolio project. Translatable fields take { en, nl } (English required, Dutch optional → falls back to English): title required, description/body optional. tags are shared across languages. media_id sets the image (see get_media); filter_ids links filter tags (see get_filters); type/sort_order optional.",
     inputSchema: projectFields,
   },
   (args) => run(() => cms("/projects", { method: "POST", body: defined(args) }))
@@ -329,7 +337,7 @@ server.registerTool(
   {
     title: "Update project",
     description:
-      "Update a project by id. title is required by the API; pass any other fields to change. filter_ids replaces the linked filters; omit it to leave them untouched.",
+      "Update a project by id. Translatable fields (title, description, body) take { en, nl }; title is required by the API. tags are shared across languages. filter_ids replaces the linked filters; omit it to leave them untouched.",
     inputSchema: { id: z.number().int(), ...projectFields },
   },
   ({ id, ...fields }) => run(() => cms(`/projects/${id}`, { method: "PUT", body: defined(fields) }))
@@ -355,14 +363,14 @@ server.registerTool(
 
 server.registerTool(
   "get_education",
-  { title: "Get education", description: "List all education entries.", inputSchema: {} },
+  { title: "Get education", description: "List all education entries. degree/period come back as { en, nl }; institution is shared across languages.", inputSchema: {} },
   () => run(() => cms("/education"))
 );
 
 const educationFields = {
   institution: z.string(),
-  degree: z.string().optional(),
-  period: z.string().optional(),
+  degree: trOpt,
+  period: trOpt,
   sort_order: z.number().int().optional(),
 };
 
@@ -370,7 +378,7 @@ server.registerTool(
   "create_education",
   {
     title: "Create education",
-    description: "Create an education entry. institution is required. sort_order controls ordering (lower = first).",
+    description: "Create an education entry. institution is required (shared across languages). degree/period are translatable: pass { en, nl } (Dutch falls back to English). sort_order controls ordering (lower = first).",
     inputSchema: educationFields,
   },
   (args) => run(() => cms("/education", { method: "POST", body: defined(args) }))
@@ -380,7 +388,7 @@ server.registerTool(
   "update_education",
   {
     title: "Update education",
-    description: "Update an education entry by id. institution is required by the API.",
+    description: "Update an education entry by id. institution is required by the API (shared). degree/period are translatable ({ en, nl }).",
     inputSchema: { id: z.number().int(), ...educationFields },
   },
   ({ id, ...fields }) => run(() => cms(`/education/${id}`, { method: "PUT", body: defined(fields) }))
@@ -406,14 +414,14 @@ server.registerTool(
 
 const experienceFields = {
   company: z.string(),
-  role: z.string().optional(),
-  period: z.string().optional(),
+  role: trOpt,
+  period: trOpt,
   sort_order: z.number().int().optional(),
 };
 
 server.registerTool(
   "get_experience",
-  { title: "Get experience", description: "List all work-experience entries.", inputSchema: {} },
+  { title: "Get experience", description: "List all work-experience entries. role/period come back as { en, nl }; company is shared across languages.", inputSchema: {} },
   () => run(() => cms("/experience"))
 );
 
@@ -421,7 +429,7 @@ server.registerTool(
   "create_experience",
   {
     title: "Create experience",
-    description: "Create a work-experience entry. company is required. sort_order controls ordering (lower = first).",
+    description: "Create a work-experience entry. company is required (shared across languages). role/period are translatable: pass { en, nl } (Dutch falls back to English). sort_order controls ordering (lower = first).",
     inputSchema: experienceFields,
   },
   (args) => run(() => cms("/experience", { method: "POST", body: defined(args) }))
@@ -431,7 +439,7 @@ server.registerTool(
   "update_experience",
   {
     title: "Update experience",
-    description: "Update a work-experience entry by id. company is required by the API.",
+    description: "Update a work-experience entry by id. company is required by the API (shared). role/period are translatable ({ en, nl }).",
     inputSchema: { id: z.number().int(), ...experienceFields },
   },
   ({ id, ...fields }) => run(() => cms(`/experience/${id}`, { method: "PUT", body: defined(fields) }))
@@ -457,7 +465,7 @@ server.registerTool(
 
 server.registerTool(
   "get_filters",
-  { title: "Get filters", description: "List the project filters (with project counts). Use an id as filter_ids on a project.", inputSchema: {} },
+  { title: "Get filters", description: "List the project filters (with project counts). name comes back as { en, nl }. Use an id as filter_ids on a project.", inputSchema: {} },
   () => run(() => cms("/filters"))
 );
 
@@ -465,8 +473,8 @@ server.registerTool(
   "create_filter",
   {
     title: "Create filter",
-    description: "Create a project filter. name is required; the slug is derived from it and must be unique.",
-    inputSchema: { name: z.string(), sort_order: z.number().int().optional() },
+    description: "Create a project filter. name takes both languages as { en, nl } (English required); the slug is derived from the English name and must be unique.",
+    inputSchema: { name: trReq, sort_order: z.number().int().optional() },
   },
   (args) => run(() => cms("/filters", { method: "POST", body: defined(args) }))
 );
@@ -475,8 +483,8 @@ server.registerTool(
   "update_filter",
   {
     title: "Update filter",
-    description: "Update a project filter by id. name is required by the API; the slug is re-derived from it.",
-    inputSchema: { id: z.number().int(), name: z.string(), sort_order: z.number().int().optional() },
+    description: "Update a project filter by id. name takes { en, nl } (English required); the slug is re-derived from the English name.",
+    inputSchema: { id: z.number().int(), name: trReq, sort_order: z.number().int().optional() },
   },
   ({ id, ...fields }) => run(() => cms(`/filters/${id}`, { method: "PUT", body: defined(fields) }))
 );
@@ -501,7 +509,7 @@ server.registerTool(
 
 server.registerTool(
   "get_contact",
-  { title: "Get contact", description: "Read the contact details (email, phone, linkedin_url, github_url, intro_text).", inputSchema: {} },
+  { title: "Get contact", description: "Read the contact details. intro_text comes back as { en, nl }; email/phone/linkedin_url/github_url are shared across languages.", inputSchema: {} },
   () => run(() => cms("/contact"))
 );
 
@@ -509,13 +517,13 @@ server.registerTool(
   "update_contact",
   {
     title: "Update contact",
-    description: "Update the contact details. All fields optional.",
+    description: "Update the contact details. All fields optional. intro_text is translatable ({ en, nl }, Dutch falls back to English); email/phone/linkedin_url/github_url are shared across languages.",
     inputSchema: {
       email: z.string().email().optional(),
       phone: z.string().optional(),
       linkedin_url: z.string().url().optional(),
       github_url: z.string().url().optional(),
-      intro_text: z.string().optional(),
+      intro_text: trOpt,
     },
   },
   (args) => run(() => cms("/contact", { method: "PUT", body: defined(args) }))

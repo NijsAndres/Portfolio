@@ -4,12 +4,16 @@ namespace App\Models;
 
 use App\Models\Concerns\ResolvesStorageUrl;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 
 class Media extends Model
 {
-    use ResolvesStorageUrl;
+    use HasTranslations, ResolvesStorageUrl;
 
     protected $table = 'media';
+
+    /** Per-locale JSON fields (spatie/laravel-translatable). */
+    public array $translatable = ['alt', 'title', 'caption', 'description'];
 
     protected $fillable = [
         'path',

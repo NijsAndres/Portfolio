@@ -1349,3 +1349,51 @@ p {
 .u-fade-in-left {
   animation: fadeInLeft 1s ease-in-out;
 }
+
+/*---------------------------------------/*
+ # LANGUAGE SWITCHER (NL / EN)
+/*---------------------------------------*/
+.c-nav__langswitch {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.c-nav__langlink {
+  font-size: 1rem;
+  font-weight: $fw-semibold;
+  color: $secondary-color;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out, color 0.3s ease-in-out;
+
+  &:hover,
+  &.is-active {
+    opacity: 1;
+    color: $primary-color;
+  }
+}
+
+.c-nav__langsep {
+  color: $secondary-color;
+  opacity: 0.4;
+}
+
+.c-nav--opened {
+  .c-nav__langswitch {
+    margin-top: 1rem;
+  }
+
+  .c-nav__langlink {
+    color: $white-color;
+    font-size: 1.5rem;
+
+    &.is-active {
+      color: $secondary-color;
+    }
+  }
+
+  .c-nav__langsep {
+    color: $white-color;
+  }
+}

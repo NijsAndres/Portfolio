@@ -38,7 +38,7 @@ class ProjectController extends Controller
     public function create()
     {
         return view('admin.projects.form', [
-            'project' => new Project(),
+            'project' => new Project,
             'filters' => $this->filterOptions(),
             'media' => Media::latest()->get(),
         ]);
@@ -105,18 +105,25 @@ class ProjectController extends Controller
     private function validateData(Request $request): array
     {
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'title' => ['required', 'array'],
+            'title.en' => ['required', 'string', 'max:255'],
+            'title.nl' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'array'],
+            'description.en' => ['nullable', 'string'],
+            'description.nl' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:255'],
             'url' => ['nullable', 'url', 'max:255'],
             'media_id' => ['required', 'integer', 'exists:media,id'],
             'type' => ['nullable', 'string', 'max:255'],
-            'body' => ['nullable', 'string'],
+            'body' => ['nullable', 'array'],
+            'body.en' => ['nullable', 'string'],
+            'body.nl' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ], [
             'media_id.required' => 'An image is required.',
             'media_id.exists' => 'The selected image is invalid.',
+            'title.en.required' => 'The English title is required.',
         ]);
 
         // When left blank, slot the project in at the front (NOT NULL column).

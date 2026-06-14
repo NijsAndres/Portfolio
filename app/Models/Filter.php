@@ -5,12 +5,19 @@ namespace App\Models;
 use App\Models\Concerns\HasSortOrder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Translatable\HasTranslations;
 
 class Filter extends Model
 {
-    use HasSortOrder;
+    use HasSortOrder, HasTranslations;
 
     protected $table = 'filters';
+
+    /**
+     * Per-locale JSON field (spatie/laravel-translatable). The slug stays a
+     * single, language-independent value derived from the English name.
+     */
+    public array $translatable = ['name'];
 
     protected $fillable = [
         'name',

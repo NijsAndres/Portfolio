@@ -21,22 +21,9 @@
                        class="form-input">
             </div>
 
-            <div class="grid gap-x-5 gap-y-5 sm:grid-cols-2">
-                <div>
-                    <label for="role" class="form-label">Role</label>
-                    <input type="text" id="role" name="role"
-                           value="{{ old('role', $experience->role) }}"
-                           class="form-input">
-                </div>
+            <x-admin.translatable-input name="role" label="Role" :model="$experience" :max="255" />
 
-                <div>
-                    <label for="period" class="form-label">Period</label>
-                    <input type="text" id="period" name="period"
-                           value="{{ old('period', $experience->period) }}"
-                           placeholder="2023 – present"
-                           class="form-input">
-                </div>
-            </div>
+            <x-admin.translatable-input name="period" label="Period" :model="$experience" :max="255" placeholder="2023 – present" />
 
             <div>
                 <label for="sort_order" class="form-label">Sort order</label>

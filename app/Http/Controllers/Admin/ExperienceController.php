@@ -32,7 +32,7 @@ class ExperienceController extends Controller
 
     public function create()
     {
-        return view('admin.experience.form', ['experience' => new Experience()]);
+        return view('admin.experience.form', ['experience' => new Experience]);
     }
 
     public function store(Request $request)
@@ -65,8 +65,12 @@ class ExperienceController extends Controller
     {
         $validated = $request->validate([
             'company' => ['required', 'string', 'max:255'],
-            'role' => ['nullable', 'string', 'max:255'],
-            'period' => ['nullable', 'string', 'max:255'],
+            'role' => ['nullable', 'array'],
+            'role.en' => ['nullable', 'string', 'max:255'],
+            'role.nl' => ['nullable', 'string', 'max:255'],
+            'period' => ['nullable', 'array'],
+            'period.en' => ['nullable', 'string', 'max:255'],
+            'period.nl' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer'],
         ]);
 

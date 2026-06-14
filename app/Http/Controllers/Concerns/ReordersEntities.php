@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Concerns;
 
+use App\Models\Concerns\HasSortOrder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -12,7 +14,7 @@ use Illuminate\Http\Request;
  */
 trait ReordersEntities
 {
-    /** @param  class-string<\App\Models\Concerns\HasSortOrder|\Illuminate\Database\Eloquent\Model>  $modelClass */
+    /** @param  class-string<HasSortOrder|Model>  $modelClass */
     protected function reorderUsing(Request $request, string $modelClass): JsonResponse
     {
         $table = (new $modelClass)->getTable();

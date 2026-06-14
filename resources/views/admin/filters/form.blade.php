@@ -15,11 +15,8 @@
 
         <div class="card p-6 space-y-5">
             <div>
-                <label for="name" class="form-label">Name <span class="text-brand-500">*</span></label>
-                <input type="text" id="name" name="name" required
-                       value="{{ old('name', $filter->name) }}"
-                       class="form-input">
-                <p class="mt-1 text-xs text-ink/40">The slug (used as the filter key) is generated automatically from the name.</p>
+                <x-admin.translatable-input name="name" label="Name" :model="$filter" :required="true" :max="50" />
+                <p class="mt-1 text-xs text-ink/40">The slug (used as the filter key) is generated automatically from the English name.</p>
             </div>
 
             <div>

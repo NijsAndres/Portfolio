@@ -118,7 +118,7 @@ class AdminController extends Controller
 
     public function editHero()
     {
-        $hero = HeroContent::first() ?? new HeroContent();
+        $hero = HeroContent::first() ?? new HeroContent;
         $media = Media::latest()->get();
 
         return view('admin.hero', compact('hero', 'media'));
@@ -127,18 +127,26 @@ class AdminController extends Controller
     public function updateHero(Request $request)
     {
         $validated = $request->validate([
-            'headline' => ['required', 'string', 'max:255'],
-            'subheadline' => ['nullable', 'string', 'max:255'],
-            'tagline' => ['nullable', 'string', 'max:255'],
+            'headline' => ['required', 'array'],
+            'headline.en' => ['required', 'string', 'max:255'],
+            'headline.nl' => ['nullable', 'string', 'max:255'],
+            'subheadline' => ['nullable', 'array'],
+            'subheadline.en' => ['nullable', 'string', 'max:255'],
+            'subheadline.nl' => ['nullable', 'string', 'max:255'],
+            'tagline' => ['nullable', 'array'],
+            'tagline.en' => ['nullable', 'string', 'max:255'],
+            'tagline.nl' => ['nullable', 'string', 'max:255'],
             'skills' => ['nullable', 'array'],
             'skills.*' => ['string', 'max:255'],
             'disciplines' => ['nullable', 'array'],
             'disciplines.*' => ['string', 'max:255'],
             'media_id' => ['nullable', 'integer', 'exists:media,id'],
+        ], [
+            'headline.en.required' => 'The English headline is required.',
         ]);
 
         // first() ?? new — the row is seeded, but this also handles a fresh DB.
-        $hero = HeroContent::first() ?? new HeroContent();
+        $hero = HeroContent::first() ?? new HeroContent;
         $hero->fill($validated)->save();
 
         return back()->with('success', 'Hero section updated.');
@@ -150,7 +158,7 @@ class AdminController extends Controller
 
     public function editAbout()
     {
-        $about = AboutContent::first() ?? new AboutContent();
+        $about = AboutContent::first() ?? new AboutContent;
 
         return view('admin.about', compact('about'));
     }
@@ -158,13 +166,15 @@ class AdminController extends Controller
     public function updateAbout(Request $request)
     {
         $validated = $request->validate([
-            'bio_text' => ['nullable', 'string'],
+            'bio_text' => ['nullable', 'array'],
+            'bio_text.en' => ['nullable', 'string'],
+            'bio_text.nl' => ['nullable', 'string'],
             'born_in' => ['nullable', 'string', 'max:255'],
             'languages' => ['nullable', 'string', 'max:255'],
             'date_of_birth' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $about = AboutContent::first() ?? new AboutContent();
+        $about = AboutContent::first() ?? new AboutContent;
         $about->fill($validated)->save();
 
         return back()->with('success', 'About section updated.');
@@ -176,7 +186,7 @@ class AdminController extends Controller
 
     public function editContact()
     {
-        $contact = ContactInfo::first() ?? new ContactInfo();
+        $contact = ContactInfo::first() ?? new ContactInfo;
 
         return view('admin.contact', compact('contact'));
     }
@@ -188,10 +198,12 @@ class AdminController extends Controller
             'phone' => ['nullable', 'string', 'max:255'],
             'linkedin_url' => ['nullable', 'url', 'max:255'],
             'github_url' => ['nullable', 'url', 'max:255'],
-            'intro_text' => ['nullable', 'string'],
+            'intro_text' => ['nullable', 'array'],
+            'intro_text.en' => ['nullable', 'string'],
+            'intro_text.nl' => ['nullable', 'string'],
         ]);
 
-        $contact = ContactInfo::first() ?? new ContactInfo();
+        $contact = ContactInfo::first() ?? new ContactInfo;
         $contact->fill($validated)->save();
 
         return back()->with('success', 'Contact details updated.');

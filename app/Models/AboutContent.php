@@ -3,10 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 
 class AboutContent extends Model
 {
+    use HasTranslations;
+
     protected $table = 'about_content';
+
+    /** Per-locale JSON fields (spatie/laravel-translatable). */
+    public array $translatable = ['bio_text'];
 
     /**
      * Only an updated_at column exists on this table. See HeroContent for the

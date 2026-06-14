@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Concerns\ReordersEntities;
+use App\Http\Controllers\Concerns\SerializesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\Experience;
 use Illuminate\Http\JsonResponse;
@@ -16,17 +17,18 @@ use Illuminate\Http\Request;
 class ExperienceController extends Controller
 {
     use ReordersEntities;
+    use SerializesTranslations;
 
     public function index(): JsonResponse
     {
         return response()->json(
-            Experience::ordered()->get()
+            $this->withTranslationsMany(Experience::ordered()->get())
         );
     }
 
     public function show(Experience $experience): JsonResponse
     {
-        return response()->json($experience);
+        return response()->json($this->withTranslations($experience));
     }
 
     public function store(Request $request): JsonResponse
@@ -39,14 +41,14 @@ class ExperienceController extends Controller
 
         $experience = Experience::create($data);
 
-        return response()->json($experience, 201);
+        return response()->json($this->withTranslations($experience), 201);
     }
 
     public function update(Request $request, Experience $experience): JsonResponse
     {
         $experience->update($this->validateData($request));
 
-        return response()->json($experience);
+        return response()->json($this->withTranslations($experience));
     }
 
     public function destroy(Experience $experience): JsonResponse
@@ -64,11 +66,17 @@ class ExperienceController extends Controller
 
     private function validateData(Request $request): array
     {
-        return $request->validate([
+        $validated = $request->validate([
             'company' => ['required', 'string', 'max:255'],
-            'role' => ['nullable', 'string', 'max:255'],
-            'period' => ['nullable', 'string', 'max:255'],
+            'role' => ['nullable', 'array'],
+            'role.en' => ['nullable', 'string', 'max:255'],
+            'role.nl' => ['nullable', 'string', 'max:255'],
+            'period' => ['nullable', 'array'],
+            'period.en' => ['nullable', 'string', 'max:255'],
+            'period.nl' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer'],
         ]);
+
+        return $validated;
     }
 }

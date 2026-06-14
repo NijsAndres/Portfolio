@@ -4,10 +4,14 @@ namespace App\Models;
 
 use App\Models\Concerns\HasSortOrder;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 
 class Education extends Model
 {
-    use HasSortOrder;
+    use HasSortOrder, HasTranslations;
+
+    /** Per-locale JSON fields (spatie/laravel-translatable). */
+    public array $translatable = ['degree', 'period'];
 
     // Laravel would pluralise "Education" to "educations"; pin the real table.
     protected $table = 'education';

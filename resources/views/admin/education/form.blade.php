@@ -21,22 +21,9 @@
                        class="form-input">
             </div>
 
-            <div class="grid gap-x-5 gap-y-5 sm:grid-cols-2">
-                <div>
-                    <label for="degree" class="form-label">Degree</label>
-                    <input type="text" id="degree" name="degree"
-                           value="{{ old('degree', $education->degree) }}"
-                           class="form-input">
-                </div>
+            <x-admin.translatable-input name="degree" label="Degree" :model="$education" :max="255" />
 
-                <div>
-                    <label for="period" class="form-label">Period</label>
-                    <input type="text" id="period" name="period"
-                           value="{{ old('period', $education->period) }}"
-                           placeholder="2021 – 2024"
-                           class="form-input">
-                </div>
-            </div>
+            <x-admin.translatable-input name="period" label="Period" :model="$education" :max="255" placeholder="2021 – 2024" />
 
             <div>
                 <label for="sort_order" class="form-label">Sort order</label>

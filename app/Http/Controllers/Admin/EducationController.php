@@ -32,7 +32,7 @@ class EducationController extends Controller
 
     public function create()
     {
-        return view('admin.education.form', ['education' => new Education()]);
+        return view('admin.education.form', ['education' => new Education]);
     }
 
     public function store(Request $request)
@@ -65,8 +65,12 @@ class EducationController extends Controller
     {
         $validated = $request->validate([
             'institution' => ['required', 'string', 'max:255'],
-            'degree' => ['nullable', 'string', 'max:255'],
-            'period' => ['nullable', 'string', 'max:255'],
+            'degree' => ['nullable', 'array'],
+            'degree.en' => ['nullable', 'string', 'max:255'],
+            'degree.nl' => ['nullable', 'string', 'max:255'],
+            'period' => ['nullable', 'array'],
+            'period.en' => ['nullable', 'string', 'max:255'],
+            'period.nl' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer'],
         ]);
 

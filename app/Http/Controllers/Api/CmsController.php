@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Concerns\SerializesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\AboutContent;
 use App\Models\Analytics;
@@ -24,21 +25,29 @@ use Illuminate\Support\Facades\Storage;
  */
 class CmsController extends Controller
 {
+    use SerializesTranslations;
+
     /* ---------------------------------------------------------------------
      | Hero
      * ------------------------------------------------------------------- */
 
     public function showHero(): JsonResponse
     {
-        return response()->json(HeroContent::first() ?? new HeroContent());
+        return response()->json($this->withTranslations(HeroContent::first() ?? new HeroContent));
     }
 
     public function updateHero(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'headline' => ['required', 'string', 'max:255'],
-            'subheadline' => ['nullable', 'string', 'max:255'],
-            'tagline' => ['nullable', 'string', 'max:255'],
+            'headline' => ['required', 'array'],
+            'headline.en' => ['required', 'string', 'max:255'],
+            'headline.nl' => ['nullable', 'string', 'max:255'],
+            'subheadline' => ['nullable', 'array'],
+            'subheadline.en' => ['nullable', 'string', 'max:255'],
+            'subheadline.nl' => ['nullable', 'string', 'max:255'],
+            'tagline' => ['nullable', 'array'],
+            'tagline.en' => ['nullable', 'string', 'max:255'],
+            'tagline.nl' => ['nullable', 'string', 'max:255'],
             'skills' => ['nullable', 'array'],
             'skills.*' => ['string', 'max:255'],
             'disciplines' => ['nullable', 'array'],
@@ -46,10 +55,10 @@ class CmsController extends Controller
             'media_id' => ['nullable', 'integer', 'exists:media,id'],
         ]);
 
-        $hero = HeroContent::first() ?? new HeroContent();
+        $hero = HeroContent::first() ?? new HeroContent;
         $hero->fill($validated)->save();
 
-        return response()->json($hero);
+        return response()->json($this->withTranslations($hero));
     }
 
     /* ---------------------------------------------------------------------
@@ -58,22 +67,24 @@ class CmsController extends Controller
 
     public function showAbout(): JsonResponse
     {
-        return response()->json(AboutContent::first() ?? new AboutContent());
+        return response()->json($this->withTranslations(AboutContent::first() ?? new AboutContent));
     }
 
     public function updateAbout(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'bio_text' => ['nullable', 'string'],
+            'bio_text' => ['nullable', 'array'],
+            'bio_text.en' => ['nullable', 'string'],
+            'bio_text.nl' => ['nullable', 'string'],
             'born_in' => ['nullable', 'string', 'max:255'],
             'languages' => ['nullable', 'string', 'max:255'],
             'date_of_birth' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $about = AboutContent::first() ?? new AboutContent();
+        $about = AboutContent::first() ?? new AboutContent;
         $about->fill($validated)->save();
 
-        return response()->json($about);
+        return response()->json($this->withTranslations($about));
     }
 
     /* ---------------------------------------------------------------------
@@ -82,7 +93,7 @@ class CmsController extends Controller
 
     public function showContact(): JsonResponse
     {
-        return response()->json(ContactInfo::first() ?? new ContactInfo());
+        return response()->json($this->withTranslations(ContactInfo::first() ?? new ContactInfo));
     }
 
     public function updateContact(Request $request): JsonResponse
@@ -92,13 +103,15 @@ class CmsController extends Controller
             'phone' => ['nullable', 'string', 'max:255'],
             'linkedin_url' => ['nullable', 'url', 'max:255'],
             'github_url' => ['nullable', 'url', 'max:255'],
-            'intro_text' => ['nullable', 'string'],
+            'intro_text' => ['nullable', 'array'],
+            'intro_text.en' => ['nullable', 'string'],
+            'intro_text.nl' => ['nullable', 'string'],
         ]);
 
-        $contact = ContactInfo::first() ?? new ContactInfo();
+        $contact = ContactInfo::first() ?? new ContactInfo;
         $contact->fill($validated)->save();
 
-        return response()->json($contact);
+        return response()->json($this->withTranslations($contact));
     }
 
     /* ---------------------------------------------------------------------

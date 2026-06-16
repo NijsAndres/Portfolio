@@ -52,13 +52,15 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 u-fade-in-left">
+                    @php
+                        $starIcon = '<img class="c-hero__title-star" src="'.e(asset('assets/star.svg')).'" alt="Star icon" width="40" height="40">';
+                        // Escape user text first, then swap the [star] token for the icon markup.
+                        $renderTitle = fn ($text) => str_replace('[star]', $starIcon, e($text));
+                    @endphp
                     <div class="c-hero__titlecontainer">
-                        <h1>{{ $hero->headline }}</h1>
-                        <div class="o-container__row">
-                            <h1>{{ $hero->subheadline }}</h1>
-                            <img class="c-hero__title-star" src="{{ asset('assets/star.svg') }}" alt="Star icon" width="40" height="40">
-                        </div>
-                        <h1>{{ $hero->tagline }}</h1>
+                        <h1>{!! $renderTitle($hero->headline) !!}</h1>
+                        <h1>{!! $renderTitle($hero->subheadline) !!}</h1>
+                        <h1>{!! $renderTitle($hero->tagline) !!}</h1>
                     </div>
                     <div class="c-hero__detailcontainer">
                         @foreach ($hero->disciplines as $index => $discipline)

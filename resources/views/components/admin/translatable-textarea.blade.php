@@ -32,7 +32,7 @@
                     <span class="text-xs font-medium uppercase tracking-wide text-ink/40">{{ $language }}</span>
                     @if ($rich)
                         <button type="button" data-bold-target="{{ $id }}_editor"
-                                class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-ink/15 font-bold text-ink/70 hover:bg-ink/5 hover:text-ink transition-colors"
+                                class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-ink/15 font-bold text-ink/70 hover:bg-ink/5 hover:text-ink transition-colors"
                                 title="Bold (⌘/Ctrl+B)" aria-label="Toggle bold">B</button>
                     @endif
                 </div>

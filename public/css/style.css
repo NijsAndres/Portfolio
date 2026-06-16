@@ -572,13 +572,12 @@ p {
   list-style: none;
   gap: 2rem;
   margin: 0;
-  padding: 0 1rem;
+  padding: 0;
   animation: scrollToRight 20s linear infinite;
 }
 @media (max-width: 768px) {
   .c-slider__wrapper {
     gap: 1rem;
-    padding: 0 0.5rem;
   }
 }
 .c-slider__item {

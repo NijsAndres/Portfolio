@@ -340,13 +340,22 @@ p {
     display: none;
 
     @media (max-width: 768px) {
-      display: block;
+      // Enlarge the tap target to the ~44px touch minimum; negative margin
+      // keeps the icon visually aligned with the container edge.
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      margin: -0.5rem;
     }
   }
 
   &__hamburger {
     font-size: 2rem;
     transition: color 0.3s ease-out;
+    // Let taps anywhere in the button (not just the painted icon strokes)
+    // reach the button — the SVG no longer swallows clicks in its gaps.
+    pointer-events: none;
 
     &--close {
       display: none;
@@ -418,6 +427,14 @@ p {
 .c-hero {
   margin: 10rem 0;
 
+  @media (max-width: 768px) {
+    margin: 5rem 0;
+  }
+
+  @media (max-width: 576px) {
+    margin: 3rem 0;
+  }
+
   &__titlecontainer {
     text-transform: uppercase;
     padding: 0;
@@ -439,6 +456,8 @@ p {
 
   &__detailcontainer {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     width: 100%;
     gap: 2rem;
     margin: 1rem 0 2rem;
@@ -484,6 +503,10 @@ p {
   h1 {
     margin: 0;
     white-space: nowrap;
+
+    @media (max-width: 768px) {
+      white-space: normal;
+    }
   }
 }
 
@@ -1105,8 +1128,10 @@ p {
   overflow: hidden;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
 
-  display: flex;
-  flex-direction: column;
+  // NB: don't set `display` here. The base rule would override the UA
+  // `dialog:not([open]) { display: none }`, leaving a closed (opacity:0) modal
+  // laid out and catching clicks over the page (e.g. the hamburger). Apply the
+  // flex layout only while open; closed falls back to the UA `display: none`.
   opacity: 0;
   transform: translateY(12px) scale(0.97);
   transition:
@@ -1116,6 +1141,8 @@ p {
     display 0.3s ease allow-discrete;
 
   &[open] {
+    display: flex;
+    flex-direction: column;
     opacity: 1;
     transform: none;
 
@@ -1388,7 +1415,7 @@ p {
     font-size: 1.5rem;
 
     &.is-active {
-      color: $secondary-color;
+      color: $white-color;
     }
   }
 

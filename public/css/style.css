@@ -357,12 +357,17 @@ p {
 }
 @media (max-width: 768px) {
   .c-nav__toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    margin: -0.5rem;
   }
 }
 .c-nav__hamburger {
   font-size: 2rem;
   transition: color 0.3s ease-out;
+  pointer-events: none;
 }
 .c-nav__hamburger--close {
   display: none;
@@ -422,6 +427,16 @@ p {
 .c-hero {
   margin: 10rem 0;
 }
+@media (max-width: 768px) {
+  .c-hero {
+    margin: 5rem 0;
+  }
+}
+@media (max-width: 576px) {
+  .c-hero {
+    margin: 3rem 0;
+  }
+}
 .c-hero__titlecontainer {
   text-transform: uppercase;
   padding: 0;
@@ -442,6 +457,8 @@ p {
 }
 .c-hero__detailcontainer {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   width: 100%;
   gap: 2rem;
   margin: 1rem 0 2rem;
@@ -485,6 +502,11 @@ p {
 .c-hero h1 {
   margin: 0;
   white-space: nowrap;
+}
+@media (max-width: 768px) {
+  .c-hero h1 {
+    white-space: normal;
+  }
 }
 
 .c-btn {
@@ -1049,13 +1071,13 @@ p {
   max-height: 90vh;
   overflow: hidden;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
   opacity: 0;
   transform: translateY(12px) scale(0.97);
   transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), overlay 0.3s ease allow-discrete, display 0.3s ease allow-discrete;
 }
 .c-modal[open] {
+  display: flex;
+  flex-direction: column;
   opacity: 1;
   transform: none;
 }
@@ -1306,7 +1328,7 @@ p {
   font-size: 1.5rem;
 }
 .c-nav--opened .c-nav__langlink.is-active {
-  color: #161513;
+  color: #ffffff;
 }
 .c-nav--opened .c-nav__langsep {
   color: #ffffff;

@@ -27,7 +27,8 @@ class FrontendController extends Controller
         $education = Education::ordered()->get();
         $experience = Experience::ordered()->get();
         $contact = ContactInfo::first();
-        $cvUrl = SiteSetting::cvUrl();
+        // CV for the active locale (SetLocale ran already); Dutch falls back to English.
+        $cvUrl = SiteSetting::cvUrl(app()->getLocale());
 
         return view('index', compact(
             'hero',

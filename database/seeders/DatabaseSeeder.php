@@ -249,8 +249,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // --- Site settings -----------------------------------------------
+        // English CV ships seeded; the Dutch CV is left unset so it falls back
+        // to English until one is uploaded (see SiteSetting::cvUrl).
         DB::table('site_settings')->updateOrInsert(
-            ['key' => 'cv_path'],
+            ['key' => 'cv_path_en'],
             ['value' => 'AndresNijs-CV-2025.pdf'],
         );
 

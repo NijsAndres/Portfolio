@@ -222,35 +222,52 @@ class CmsController extends Controller
      | CV upload
      * ------------------------------------------------------------------- */
 
-    /** Read the current CV path + resolved public URL (null when none is set). */
+    /**
+     * Read the current CV for each locale (en/nl). `cv_path` is the file stored
+     * for that locale (null when none); `url` is the resolved public URL with
+     * English fallback, so the Dutch `url` mirrors English until a Dutch CV is
+     * uploaded.
+     */
     public function showCv(): JsonResponse
     {
-        return response()->json([
-            'cv_path' => SiteSetting::get('cv_path'),
-            'url' => SiteSetting::cvUrl(),
-        ]);
+        return response()->json($this->cvPayload());
     }
 
     /**
-     * Accept a new CV PDF and store it on the public disk, mirroring
-     * AdminController::uploadCv. The MCP server's upload_cv tool posts the file
-     * here (path/url/base64 → multipart), the same way upload_media does.
+     * Accept a new CV PDF for a locale (en/nl, default en) and store it on the
+     * public disk, mirroring AdminController::uploadCv. The MCP server's
+     * upload_cv tool posts the file here (path/url/base64 → multipart), the same
+     * way upload_media does.
      */
     public function uploadCv(Request $request): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'cv' => ['required', 'file', 'mimes:pdf', 'max:10240'],
+            'locale' => ['nullable', 'string', 'in:en,nl'],
         ]);
 
-        $previous = SiteSetting::get('cv_path');
+        $key = 'cv_path_'.($validated['locale'] ?? 'en');
+
+        $previous = SiteSetting::get($key);
         if ($previous && Storage::disk('public')->exists($previous)) {
             Storage::disk('public')->delete($previous);
         }
 
         $path = $request->file('cv')->store('cv', 'public');
-        SiteSetting::set('cv_path', $path);
+        SiteSetting::set($key, $path);
 
-        return response()->json(['cv_path' => $path, 'url' => SiteSetting::cvUrl()]);
+        return response()->json($this->cvPayload());
+    }
+
+    /** Both-locales CV shape: raw stored path + resolved url (EN fallback). */
+    private function cvPayload(): array
+    {
+        return collect(['en', 'nl'])
+            ->mapWithKeys(fn (string $locale) => [$locale => [
+                'cv_path' => SiteSetting::get("cv_path_{$locale}"),
+                'url' => SiteSetting::cvUrl($locale),
+            ]])
+            ->all();
     }
 
     /* ---------------------------------------------------------------------

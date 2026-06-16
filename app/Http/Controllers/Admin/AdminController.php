@@ -214,25 +214,29 @@ class AdminController extends Controller
      * ------------------------------------------------------------------- */
 
     /**
-     * Accept a new CV PDF, store it on the public disk and record its relative
-     * path in site_settings under cv_path. The previous file is removed when it
-     * lives in storage; legacy public/assets references are left untouched.
+     * Accept a new CV PDF for a locale (en/nl), store it on the public disk and
+     * record its relative path under cv_path_{locale}. The previous file is
+     * removed when it lives in storage; legacy public/assets references are left
+     * untouched.
      */
     public function uploadCv(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'cv' => ['required', 'file', 'mimes:pdf', 'max:10240'], // max 10 MB
+            'locale' => ['required', 'string', 'in:en,nl'],
         ]);
 
+        $key = "cv_path_{$validated['locale']}";
+
         // Delete the previous CV only when it was a stored upload.
-        $previous = SiteSetting::get('cv_path');
+        $previous = SiteSetting::get($key);
         if ($previous && Storage::disk('public')->exists($previous)) {
             Storage::disk('public')->delete($previous);
         }
 
         $path = $request->file('cv')->store('cv', 'public');
-        SiteSetting::set('cv_path', $path);
+        SiteSetting::set($key, $path);
 
-        return back()->with('success', 'CV updated.');
+        return back()->with('success', strtoupper($validated['locale']).' CV updated.');
     }
 }

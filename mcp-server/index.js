@@ -533,24 +533,25 @@ server.registerTool(
 
 server.registerTool(
   "get_cv",
-  { title: "Get CV", description: "Read the current CV: its stored path and the public download URL (null when none is set).", inputSchema: {} },
+  { title: "Get CV", description: "Read the current CV for each language (en/nl). Returns { en: { cv_path, url }, nl: { cv_path, url } }: cv_path is the file stored for that language (null when none); url is the public download URL with English fallback, so the Dutch url mirrors English until a Dutch CV is uploaded.", inputSchema: {} },
   () => run(() => cms("/cv"))
 );
 
 server.registerTool(
   "upload_cv",
   {
-    title: "Upload / replace the CV",
+    title: "Upload / replace a CV",
     description:
-      "Upload a new CV PDF, replacing the current one. Provide exactly one source: path (a local file on this machine), url (a remote PDF), or base64 (raw or a data: URI). Must be a PDF (max 10 MB).",
+      "Upload a new CV PDF for a language, replacing the current one for that language. locale is 'en' or 'nl' (default 'en'); the Dutch site falls back to the English CV when no Dutch one is set. Provide exactly one source: path (a local file on this machine), url (a remote PDF), or base64 (raw or a data: URI). Must be a PDF (max 10 MB).",
     inputSchema: {
       path: z.string().optional(),
       url: z.string().url().optional(),
       base64: z.string().optional(),
       filename: z.string().optional(),
+      locale: z.enum(["en", "nl"]).optional(),
     },
   },
-  async ({ path: p, url, base64, filename }) => {
+  async ({ path: p, url, base64, filename, locale }) => {
     try {
       const { buffer, filename: name, mime } = await resolveUpload({
         path: p,
@@ -563,6 +564,7 @@ server.registerTool(
       // Multipart upload under the field name `cv` (mirrors the admin form).
       const form = new FormData();
       form.append("cv", new Blob([buffer], { type: mime }), name);
+      if (locale !== undefined) form.append("locale", locale);
 
       const res = await fetch(`${CMS_API_URL}/cv`, {
         method: "POST",

@@ -1281,7 +1281,7 @@ p {
 }
 
 .c-nav__langlink {
-  font-size: 1rem;
+  font-size: 14px;
   font-weight: 600;
   color: #161513;
   text-decoration: none;
@@ -1291,7 +1291,7 @@ p {
 .c-nav__langlink:hover,
 .c-nav__langlink.is-active {
   opacity: 1;
-  color: #e94e35;
+  color: #161513;
 }
 
 .c-nav__langsep {

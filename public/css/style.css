@@ -357,12 +357,17 @@ p {
 }
 @media (max-width: 768px) {
   .c-nav__toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    margin: -0.5rem;
   }
 }
 .c-nav__hamburger {
   font-size: 2rem;
   transition: color 0.3s ease-out;
+  pointer-events: none;
 }
 .c-nav__hamburger--close {
   display: none;
@@ -422,6 +427,16 @@ p {
 .c-hero {
   margin: 10rem 0;
 }
+@media (max-width: 768px) {
+  .c-hero {
+    margin: 5rem 0;
+  }
+}
+@media (max-width: 576px) {
+  .c-hero {
+    margin: 3rem 0;
+  }
+}
 .c-hero__titlecontainer {
   text-transform: uppercase;
   padding: 0;
@@ -430,18 +445,20 @@ p {
 }
 .c-hero__title-star {
   display: inline-block;
-  height: 100%;
+  height: 0.9em;
+  width: auto;
   max-width: 100%;
-  vertical-align: auto;
+  vertical-align: middle;
 }
 @media (max-width: 576px) {
   .c-hero__title-star {
-    width: 1.75rem;
-    height: 1.75rem;
+    height: 0.9em;
   }
 }
 .c-hero__detailcontainer {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   width: 100%;
   gap: 2rem;
   margin: 1rem 0 2rem;
@@ -485,6 +502,11 @@ p {
 .c-hero h1 {
   margin: 0;
   white-space: nowrap;
+}
+@media (max-width: 768px) {
+  .c-hero h1 {
+    white-space: normal;
+  }
 }
 
 .c-btn {
@@ -572,13 +594,12 @@ p {
   list-style: none;
   gap: 2rem;
   margin: 0;
-  padding: 0 1rem;
+  padding: 0;
   animation: scrollToRight 20s linear infinite;
 }
 @media (max-width: 768px) {
   .c-slider__wrapper {
     gap: 1rem;
-    padding: 0 0.5rem;
   }
 }
 .c-slider__item {
@@ -659,6 +680,10 @@ p {
   margin: 15rem 0 10rem;
   scroll-margin-top: 2rem;
 }
+.c-projects .js-projects {
+  margin-right: 0;
+  margin-left: 0;
+}
 .c-projects__title {
   text-align: center;
   margin-top: 2rem;
@@ -672,6 +697,11 @@ p {
 }
 .c-projects__filtercontainer {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
   margin-bottom: 3rem;
   padding: 0.25rem;
   border-radius: 0.5rem;
@@ -748,6 +778,9 @@ p {
   font-weight: 700;
   margin-bottom: 0.5rem;
   transition: all 0.3s ease-in-out;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 @media (max-width: 768px) {
   .c-projects__cardtitle {
@@ -757,6 +790,10 @@ p {
 .c-projects__cardtext {
   transition: all 0.3s ease-in-out;
   margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .c-projects__cardimgcontainer {
   position: relative;
@@ -772,6 +809,7 @@ p {
 .c-projects__cardcontent {
   padding: 1.5rem 1rem;
   height: 8rem;
+  overflow: hidden;
 }
 .c-projects__badge {
   position: absolute;
@@ -1050,13 +1088,13 @@ p {
   max-height: 90vh;
   overflow: hidden;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
   opacity: 0;
   transform: translateY(12px) scale(0.97);
   transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), overlay 0.3s ease allow-discrete, display 0.3s ease allow-discrete;
 }
 .c-modal[open] {
+  display: flex;
+  flex-direction: column;
   opacity: 1;
   transform: none;
 }
@@ -1269,4 +1307,46 @@ p {
 
 .u-fade-in-left {
   animation: fadeInLeft 1s ease-in-out;
+}
+
+/*---------------------------------------/*
+ # LANGUAGE SWITCHER (NL / EN)
+/*---------------------------------------*/
+.c-nav__langswitch {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.c-nav__langlink {
+  font-size: 14px;
+  font-weight: 600;
+  color: #161513;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+.c-nav__langlink:hover,
+.c-nav__langlink.is-active {
+  opacity: 1;
+  color: #161513;
+}
+
+.c-nav__langsep {
+  color: #161513;
+  opacity: 0.4;
+}
+
+.c-nav--opened .c-nav__langswitch {
+  margin-top: 1rem;
+}
+.c-nav--opened .c-nav__langlink {
+  color: #ffffff;
+  font-size: 1.5rem;
+}
+.c-nav--opened .c-nav__langlink.is-active {
+  color: #ffffff;
+}
+.c-nav--opened .c-nav__langsep {
+  color: #ffffff;
 }

@@ -42,13 +42,26 @@ class SiteSetting extends Model
     }
 
     /**
-     * Resolve the stored cv_path to a usable URL, bridging Step 8 uploads and
-     * the legacy seeded file. A new upload lives on the public disk and
-     * resolves to /storage/...; the seeded filename falls back to
-     * public/assets/. Returns null when no CV is set.
+     * Stored CV path for a locale, with English fallback. CVs live under the
+     * per-locale keys cv_path_en / cv_path_nl; a missing Dutch CV falls back to
+     * the English one, mirroring the rest of the multi-language content.
+     * Returns null when neither is set.
      */
-    public static function cvUrl(): ?string
+    public static function cvPath(string $locale): ?string
     {
-        return (new static)->resolveStorageUrl(static::get('cv_path'));
+        return static::get("cv_path_{$locale}") ?: static::get('cv_path_en');
+    }
+
+    /**
+     * Resolve the CV for $locale (default: the active app locale) to a usable
+     * URL, bridging Step 8 uploads and the legacy seeded file. A new upload
+     * lives on the public disk and resolves to /storage/...; the seeded filename
+     * falls back to public/assets/. Returns null when no CV is set.
+     */
+    public static function cvUrl(?string $locale = null): ?string
+    {
+        $locale ??= app()->getLocale();
+
+        return (new static)->resolveStorageUrl(static::cvPath($locale));
     }
 }

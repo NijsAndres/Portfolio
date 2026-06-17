@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Concerns\ReordersEntities;
+use App\Http\Controllers\Concerns\SerializesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\Filter;
 use Illuminate\Http\JsonResponse;
@@ -19,31 +20,32 @@ use Illuminate\Validation\Rule;
 class FilterController extends Controller
 {
     use ReordersEntities;
+    use SerializesTranslations;
 
     public function index(): JsonResponse
     {
         return response()->json(
-            Filter::withCount('projects')->ordered()->get()
+            $this->withTranslationsMany(Filter::withCount('projects')->ordered()->get())
         );
     }
 
     public function show(Filter $filter): JsonResponse
     {
-        return response()->json($filter);
+        return response()->json($this->withTranslations($filter));
     }
 
     public function store(Request $request): JsonResponse
     {
         $filter = Filter::create($this->validateData($request));
 
-        return response()->json($filter, 201);
+        return response()->json($this->withTranslations($filter), 201);
     }
 
     public function update(Request $request, Filter $filter): JsonResponse
     {
         $filter->update($this->validateData($request, $filter));
 
-        return response()->json($filter);
+        return response()->json($this->withTranslations($filter));
     }
 
     public function destroy(Filter $filter): JsonResponse
@@ -62,11 +64,13 @@ class FilterController extends Controller
 
     private function validateData(Request $request, ?Filter $filter = null): array
     {
-        // Derive the slug from the name and enforce uniqueness (mirrors admin).
-        $request->merge(['slug' => Str::slug((string) $request->input('name'))]);
+        // Derive the slug from the English name and enforce uniqueness (mirrors admin).
+        $request->merge(['slug' => Str::slug((string) $request->input('name.en'))]);
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:50'],
+            'name' => ['required', 'array'],
+            'name.en' => ['required', 'string', 'max:50'],
+            'name.nl' => ['nullable', 'string', 'max:50'],
             'slug' => [
                 'required',
                 'string',

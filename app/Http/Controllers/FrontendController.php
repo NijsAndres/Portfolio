@@ -20,14 +20,15 @@ class FrontendController extends Controller
 {
     public function index()
     {
-        $hero       = HeroContent::first();
-        $about      = AboutContent::first();
-        $projects   = Project::with('filters')->ordered()->get();
-        $filters    = Filter::ordered()->get();
-        $education  = Education::ordered()->get();
+        $hero = HeroContent::first();
+        $about = AboutContent::first();
+        $projects = Project::with('filters')->ordered()->get();
+        $filters = Filter::ordered()->get();
+        $education = Education::ordered()->get();
         $experience = Experience::ordered()->get();
-        $contact    = ContactInfo::first();
-        $cvUrl      = SiteSetting::cvUrl();
+        $contact = ContactInfo::first();
+        // CV for the active locale (SetLocale ran already); Dutch falls back to English.
+        $cvUrl = SiteSetting::cvUrl(app()->getLocale());
 
         return view('index', compact(
             'hero',

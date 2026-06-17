@@ -31,7 +31,7 @@ class FilterController extends Controller
 
     public function create()
     {
-        return view('admin.filters.form', ['filter' => new Filter()]);
+        return view('admin.filters.form', ['filter' => new Filter]);
     }
 
     public function store(Request $request)
@@ -67,10 +67,12 @@ class FilterController extends Controller
      */
     private function validateData(Request $request, ?Filter $filter = null): array
     {
-        $request->merge(['slug' => Str::slug((string) $request->input('name'))]);
+        $request->merge(['slug' => Str::slug((string) $request->input('name.en'))]);
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:50'],
+            'name' => ['required', 'array'],
+            'name.en' => ['required', 'string', 'max:50'],
+            'name.nl' => ['nullable', 'string', 'max:50'],
             'slug' => [
                 'required',
                 'string',
@@ -80,6 +82,7 @@ class FilterController extends Controller
             'sort_order' => ['nullable', 'integer'],
         ], [
             'slug.unique' => 'A filter with that name already exists.',
+            'name.en.required' => 'The English filter name is required.',
         ]);
 
         // When left blank, slot the filter in at the front (NOT NULL column).

@@ -118,7 +118,7 @@ class AdminController extends Controller
 
     public function editHero()
     {
-        $hero = HeroContent::first() ?? new HeroContent();
+        $hero = HeroContent::first() ?? new HeroContent;
         $media = Media::latest()->get();
 
         return view('admin.hero', compact('hero', 'media'));
@@ -127,18 +127,26 @@ class AdminController extends Controller
     public function updateHero(Request $request)
     {
         $validated = $request->validate([
-            'headline' => ['required', 'string', 'max:255'],
-            'subheadline' => ['nullable', 'string', 'max:255'],
-            'tagline' => ['nullable', 'string', 'max:255'],
+            'headline' => ['required', 'array'],
+            'headline.en' => ['required', 'string', 'max:255'],
+            'headline.nl' => ['nullable', 'string', 'max:255'],
+            'subheadline' => ['nullable', 'array'],
+            'subheadline.en' => ['nullable', 'string', 'max:255'],
+            'subheadline.nl' => ['nullable', 'string', 'max:255'],
+            'tagline' => ['nullable', 'array'],
+            'tagline.en' => ['nullable', 'string', 'max:255'],
+            'tagline.nl' => ['nullable', 'string', 'max:255'],
             'skills' => ['nullable', 'array'],
             'skills.*' => ['string', 'max:255'],
             'disciplines' => ['nullable', 'array'],
             'disciplines.*' => ['string', 'max:255'],
             'media_id' => ['nullable', 'integer', 'exists:media,id'],
+        ], [
+            'headline.en.required' => 'The English headline is required.',
         ]);
 
         // first() ?? new — the row is seeded, but this also handles a fresh DB.
-        $hero = HeroContent::first() ?? new HeroContent();
+        $hero = HeroContent::first() ?? new HeroContent;
         $hero->fill($validated)->save();
 
         return back()->with('success', 'Hero section updated.');
@@ -150,7 +158,7 @@ class AdminController extends Controller
 
     public function editAbout()
     {
-        $about = AboutContent::first() ?? new AboutContent();
+        $about = AboutContent::first() ?? new AboutContent;
 
         return view('admin.about', compact('about'));
     }
@@ -158,13 +166,15 @@ class AdminController extends Controller
     public function updateAbout(Request $request)
     {
         $validated = $request->validate([
-            'bio_text' => ['nullable', 'string'],
+            'bio_text' => ['nullable', 'array'],
+            'bio_text.en' => ['nullable', 'string'],
+            'bio_text.nl' => ['nullable', 'string'],
             'born_in' => ['nullable', 'string', 'max:255'],
             'languages' => ['nullable', 'string', 'max:255'],
             'date_of_birth' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $about = AboutContent::first() ?? new AboutContent();
+        $about = AboutContent::first() ?? new AboutContent;
         $about->fill($validated)->save();
 
         return back()->with('success', 'About section updated.');
@@ -176,7 +186,7 @@ class AdminController extends Controller
 
     public function editContact()
     {
-        $contact = ContactInfo::first() ?? new ContactInfo();
+        $contact = ContactInfo::first() ?? new ContactInfo;
 
         return view('admin.contact', compact('contact'));
     }
@@ -188,10 +198,12 @@ class AdminController extends Controller
             'phone' => ['nullable', 'string', 'max:255'],
             'linkedin_url' => ['nullable', 'url', 'max:255'],
             'github_url' => ['nullable', 'url', 'max:255'],
-            'intro_text' => ['nullable', 'string'],
+            'intro_text' => ['nullable', 'array'],
+            'intro_text.en' => ['nullable', 'string'],
+            'intro_text.nl' => ['nullable', 'string'],
         ]);
 
-        $contact = ContactInfo::first() ?? new ContactInfo();
+        $contact = ContactInfo::first() ?? new ContactInfo;
         $contact->fill($validated)->save();
 
         return back()->with('success', 'Contact details updated.');
@@ -202,25 +214,29 @@ class AdminController extends Controller
      * ------------------------------------------------------------------- */
 
     /**
-     * Accept a new CV PDF, store it on the public disk and record its relative
-     * path in site_settings under cv_path. The previous file is removed when it
-     * lives in storage; legacy public/assets references are left untouched.
+     * Accept a new CV PDF for a locale (en/nl), store it on the public disk and
+     * record its relative path under cv_path_{locale}. The previous file is
+     * removed when it lives in storage; legacy public/assets references are left
+     * untouched.
      */
     public function uploadCv(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'cv' => ['required', 'file', 'mimes:pdf', 'max:10240'], // max 10 MB
+            'locale' => ['required', 'string', 'in:en,nl'],
         ]);
 
+        $key = "cv_path_{$validated['locale']}";
+
         // Delete the previous CV only when it was a stored upload.
-        $previous = SiteSetting::get('cv_path');
+        $previous = SiteSetting::get($key);
         if ($previous && Storage::disk('public')->exists($previous)) {
             Storage::disk('public')->delete($previous);
         }
 
         $path = $request->file('cv')->store('cv', 'public');
-        SiteSetting::set('cv_path', $path);
+        SiteSetting::set($key, $path);
 
-        return back()->with('success', 'CV updated.');
+        return back()->with('success', strtoupper($validated['locale']).' CV updated.');
     }
 }

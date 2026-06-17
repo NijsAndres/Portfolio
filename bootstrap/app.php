@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\VerifyCmsApiToken;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,7 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: ['track']);
 
         // Bearer-token guard for the internal /api/cms endpoints (Step 12, MCP).
-        $middleware->alias(['cms.token' => VerifyCmsApiToken::class]);
+        // setlocale: picks NL/EN for the public frontend (see routes/web.php).
+        $middleware->alias([
+            'cms.token' => VerifyCmsApiToken::class,
+            'setlocale' => SetLocale::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

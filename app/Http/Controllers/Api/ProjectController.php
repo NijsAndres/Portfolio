@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Concerns\ReordersEntities;
+use App\Http\Controllers\Concerns\SerializesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
@@ -21,17 +22,18 @@ use Illuminate\Http\Request;
 class ProjectController extends Controller
 {
     use ReordersEntities;
+    use SerializesTranslations;
 
     public function index(): JsonResponse
     {
         return response()->json(
-            Project::with('filters')->ordered()->get()
+            $this->withTranslationsMany(Project::with('filters')->ordered()->get())
         );
     }
 
     public function show(Project $project): JsonResponse
     {
-        return response()->json($project->load('filters'));
+        return response()->json($this->withTranslations($project->load('filters')));
     }
 
     public function store(Request $request): JsonResponse
@@ -45,7 +47,7 @@ class ProjectController extends Controller
         $project = Project::create($data);
         $this->syncFilters($request, $project);
 
-        return response()->json($project->load('filters'), 201);
+        return response()->json($this->withTranslations($project->load('filters')), 201);
     }
 
     public function update(Request $request, Project $project): JsonResponse
@@ -53,7 +55,7 @@ class ProjectController extends Controller
         $project->update($this->validateData($request));
         $this->syncFilters($request, $project);
 
-        return response()->json($project->load('filters'));
+        return response()->json($this->withTranslations($project->load('filters')));
     }
 
     public function destroy(Project $project): JsonResponse
@@ -71,17 +73,25 @@ class ProjectController extends Controller
 
     private function validateData(Request $request): array
     {
-        return $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+        $validated = $request->validate([
+            'title' => ['required', 'array'],
+            'title.en' => ['required', 'string', 'max:255'],
+            'title.nl' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'array'],
+            'description.en' => ['nullable', 'string'],
+            'description.nl' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:255'],
             'url' => ['nullable', 'url', 'max:255'],
             'media_id' => ['nullable', 'integer', 'exists:media,id'],
             'type' => ['nullable', 'string', 'max:255'],
-            'body' => ['nullable', 'string'],
+            'body' => ['nullable', 'array'],
+            'body.en' => ['nullable', 'string'],
+            'body.nl' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ]);
+
+        return $validated;
     }
 
     /**

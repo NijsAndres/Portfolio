@@ -1,5 +1,3 @@
-const TYPE_LABELS = { school: "School", concept: "Concept", internship: "Internship" };
-
 // How many projects to reveal per "Load more" click.
 const PAGE_SIZE = 6;
 let currentFilter = "all";
@@ -87,12 +85,14 @@ const openProjectModal = (card) => {
   const dialog = document.querySelector("#project-modal");
   if (!card || !dialog) return;
 
-  const { projectId, type, title, url, tags } = card.dataset;
+  const { projectId, type, typeLabel, title, url, tags } = card.dataset;
 
   dialog.querySelector(".js-modal-title").textContent = title;
 
   const typeEl = dialog.querySelector(".js-modal-type");
-  typeEl.textContent = TYPE_LABELS[type] || type || "";
+  // typeLabel is the locale-aware badge text (rendered server-side from the
+  // site.project_type.* lang keys); `type` stays the stable CSS-modifier key.
+  typeEl.textContent = typeLabel || type || "";
   typeEl.className = `c-modal__typebadge c-modal__typebadge--${type} js-modal-type`;
   typeEl.hidden = !type;
 

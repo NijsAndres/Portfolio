@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Concerns\SerializesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\AboutContent;
 use App\Models\Analytics;
@@ -24,21 +25,29 @@ use Illuminate\Support\Facades\Storage;
  */
 class CmsController extends Controller
 {
+    use SerializesTranslations;
+
     /* ---------------------------------------------------------------------
      | Hero
      * ------------------------------------------------------------------- */
 
     public function showHero(): JsonResponse
     {
-        return response()->json(HeroContent::first() ?? new HeroContent());
+        return response()->json($this->withTranslations(HeroContent::first() ?? new HeroContent));
     }
 
     public function updateHero(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'headline' => ['required', 'string', 'max:255'],
-            'subheadline' => ['nullable', 'string', 'max:255'],
-            'tagline' => ['nullable', 'string', 'max:255'],
+            'headline' => ['required', 'array'],
+            'headline.en' => ['required', 'string', 'max:255'],
+            'headline.nl' => ['nullable', 'string', 'max:255'],
+            'subheadline' => ['nullable', 'array'],
+            'subheadline.en' => ['nullable', 'string', 'max:255'],
+            'subheadline.nl' => ['nullable', 'string', 'max:255'],
+            'tagline' => ['nullable', 'array'],
+            'tagline.en' => ['nullable', 'string', 'max:255'],
+            'tagline.nl' => ['nullable', 'string', 'max:255'],
             'skills' => ['nullable', 'array'],
             'skills.*' => ['string', 'max:255'],
             'disciplines' => ['nullable', 'array'],
@@ -46,10 +55,10 @@ class CmsController extends Controller
             'media_id' => ['nullable', 'integer', 'exists:media,id'],
         ]);
 
-        $hero = HeroContent::first() ?? new HeroContent();
+        $hero = HeroContent::first() ?? new HeroContent;
         $hero->fill($validated)->save();
 
-        return response()->json($hero);
+        return response()->json($this->withTranslations($hero));
     }
 
     /* ---------------------------------------------------------------------
@@ -58,22 +67,24 @@ class CmsController extends Controller
 
     public function showAbout(): JsonResponse
     {
-        return response()->json(AboutContent::first() ?? new AboutContent());
+        return response()->json($this->withTranslations(AboutContent::first() ?? new AboutContent));
     }
 
     public function updateAbout(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'bio_text' => ['nullable', 'string'],
+            'bio_text' => ['nullable', 'array'],
+            'bio_text.en' => ['nullable', 'string'],
+            'bio_text.nl' => ['nullable', 'string'],
             'born_in' => ['nullable', 'string', 'max:255'],
             'languages' => ['nullable', 'string', 'max:255'],
             'date_of_birth' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $about = AboutContent::first() ?? new AboutContent();
+        $about = AboutContent::first() ?? new AboutContent;
         $about->fill($validated)->save();
 
-        return response()->json($about);
+        return response()->json($this->withTranslations($about));
     }
 
     /* ---------------------------------------------------------------------
@@ -82,7 +93,7 @@ class CmsController extends Controller
 
     public function showContact(): JsonResponse
     {
-        return response()->json(ContactInfo::first() ?? new ContactInfo());
+        return response()->json($this->withTranslations(ContactInfo::first() ?? new ContactInfo));
     }
 
     public function updateContact(Request $request): JsonResponse
@@ -92,13 +103,15 @@ class CmsController extends Controller
             'phone' => ['nullable', 'string', 'max:255'],
             'linkedin_url' => ['nullable', 'url', 'max:255'],
             'github_url' => ['nullable', 'url', 'max:255'],
-            'intro_text' => ['nullable', 'string'],
+            'intro_text' => ['nullable', 'array'],
+            'intro_text.en' => ['nullable', 'string'],
+            'intro_text.nl' => ['nullable', 'string'],
         ]);
 
-        $contact = ContactInfo::first() ?? new ContactInfo();
+        $contact = ContactInfo::first() ?? new ContactInfo;
         $contact->fill($validated)->save();
 
-        return response()->json($contact);
+        return response()->json($this->withTranslations($contact));
     }
 
     /* ---------------------------------------------------------------------
@@ -209,35 +222,52 @@ class CmsController extends Controller
      | CV upload
      * ------------------------------------------------------------------- */
 
-    /** Read the current CV path + resolved public URL (null when none is set). */
+    /**
+     * Read the current CV for each locale (en/nl). `cv_path` is the file stored
+     * for that locale (null when none); `url` is the resolved public URL with
+     * English fallback, so the Dutch `url` mirrors English until a Dutch CV is
+     * uploaded.
+     */
     public function showCv(): JsonResponse
     {
-        return response()->json([
-            'cv_path' => SiteSetting::get('cv_path'),
-            'url' => SiteSetting::cvUrl(),
-        ]);
+        return response()->json($this->cvPayload());
     }
 
     /**
-     * Accept a new CV PDF and store it on the public disk, mirroring
-     * AdminController::uploadCv. The MCP server's upload_cv tool posts the file
-     * here (path/url/base64 → multipart), the same way upload_media does.
+     * Accept a new CV PDF for a locale (en/nl, default en) and store it on the
+     * public disk, mirroring AdminController::uploadCv. The MCP server's
+     * upload_cv tool posts the file here (path/url/base64 → multipart), the same
+     * way upload_media does.
      */
     public function uploadCv(Request $request): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'cv' => ['required', 'file', 'mimes:pdf', 'max:10240'],
+            'locale' => ['nullable', 'string', 'in:en,nl'],
         ]);
 
-        $previous = SiteSetting::get('cv_path');
+        $key = 'cv_path_'.($validated['locale'] ?? 'en');
+
+        $previous = SiteSetting::get($key);
         if ($previous && Storage::disk('public')->exists($previous)) {
             Storage::disk('public')->delete($previous);
         }
 
         $path = $request->file('cv')->store('cv', 'public');
-        SiteSetting::set('cv_path', $path);
+        SiteSetting::set($key, $path);
 
-        return response()->json(['cv_path' => $path, 'url' => SiteSetting::cvUrl()]);
+        return response()->json($this->cvPayload());
+    }
+
+    /** Both-locales CV shape: raw stored path + resolved url (EN fallback). */
+    private function cvPayload(): array
+    {
+        return collect(['en', 'nl'])
+            ->mapWithKeys(fn (string $locale) => [$locale => [
+                'cv_path' => SiteSetting::get("cv_path_{$locale}"),
+                'url' => SiteSetting::cvUrl($locale),
+            ]])
+            ->all();
     }
 
     /* ---------------------------------------------------------------------

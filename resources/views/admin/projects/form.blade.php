@@ -8,60 +8,53 @@
     <form method="POST"
           action="{{ $exists ? route('admin.projects.update', $project) : route('admin.projects.store') }}"
           enctype="multipart/form-data"
-          class="max-w-4xl space-y-6">
+          class="space-y-6">
         @csrf
         @if ($exists)
             @method('PUT')
         @endif
 
         <div class="card p-6 space-y-5">
-            <div>
-                <label for="title" class="form-label">Title <span class="text-brand-500">*</span></label>
-                <input type="text" id="title" name="title" required
-                       value="{{ old('title', $project->title) }}"
-                       class="form-input">
-            </div>
+            <x-admin.translatable-input name="title" label="Title" :model="$project" :required="true" :max="255" />
 
-            <div>
-                <label for="description" class="form-label">Description</label>
-                <textarea id="description" name="description" rows="3"
-                          class="form-input">{{ old('description', $project->description) }}</textarea>
-            </div>
-
-            {{-- Tags repeater (tags[]) --}}
-            <div x-data="{ items: @js(array_values(old('tags', $project->tags ?? []))) }">
-                <label class="form-label">Tags</label>
-                <template x-for="(item, idx) in items" :key="idx">
-                    <div class="flex gap-2 mb-2">
-                        <input type="text" name="tags[]" x-model="items[idx]"
-                               class="form-input flex-1">
-                        <button type="button" @click="items.splice(idx, 1)"
-                                class="px-3 text-sm font-semibold text-red-600 hover:text-red-700">Remove</button>
-                    </div>
-                </template>
-                <button type="button" @click="items.push('')"
-                        class="mt-1 text-sm font-semibold text-brand-700 hover:text-brand-800">+ Add tag</button>
-            </div>
-
-            {{-- Filters (many-to-many) — separate from the free-text tags above. --}}
-            @php $selectedFilters = old('filters', $project->filters->pluck('id')->all()); @endphp
-            <div>
-                <label class="form-label">Filters</label>
-                @forelse ($filters as $filter)
-                    <label class="flex items-center gap-2 mb-1.5 text-sm text-ink/80">
-                        <input type="checkbox" name="filters[]" value="{{ $filter->id }}"
-                               @checked(in_array($filter->id, $selectedFilters))
-                               class="form-checkbox shadow-sm">
-                        {{ $filter->name }}
-                    </label>
-                @empty
-                    <p class="text-xs text-ink/40">
-                        No filters yet — <a href="{{ route('admin.filters.create') }}" class="link-accent">create one</a> to link projects.
-                    </p>
-                @endforelse
-            </div>
+            <x-admin.translatable-textarea name="description" label="Description" :model="$project" :rows="3" />
 
             <div class="grid gap-x-5 gap-y-5 sm:grid-cols-2">
+                {{-- Tags repeater (tags[]) --}}
+                <div x-data="{ items: @js(array_values(old('tags', $project->tags ?? []))) }">
+                    <label class="form-label">Tags</label>
+                    <template x-for="(item, idx) in items" :key="idx">
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" name="tags[]" x-model="items[idx]"
+                                   class="form-input flex-1">
+                            <button type="button" @click="items.splice(idx, 1)"
+                                    class="px-3 text-sm font-semibold text-red-600 hover:text-red-700">Remove</button>
+                        </div>
+                    </template>
+                    <button type="button" @click="items.push('')"
+                            class="mt-1 text-sm font-semibold text-brand-700 hover:text-brand-800">+ Add tag</button>
+                </div>
+
+                {{-- Filters (many-to-many) — separate from the free-text tags above. --}}
+                @php $selectedFilters = old('filters', $project->filters->pluck('id')->all()); @endphp
+                <div>
+                    <label class="form-label">Filters</label>
+                    @forelse ($filters as $filter)
+                        <label class="flex items-center gap-2 mb-1.5 text-sm text-ink/80">
+                            <input type="checkbox" name="filters[]" value="{{ $filter->id }}"
+                                   @checked(in_array($filter->id, $selectedFilters))
+                                   class="form-checkbox shadow-sm">
+                            {{ $filter->name }}
+                        </label>
+                    @empty
+                        <p class="text-xs text-ink/40">
+                            No filters yet — <a href="{{ route('admin.filters.create') }}" class="link-accent">create one</a> to link projects.
+                        </p>
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="grid gap-x-5 gap-y-5 sm:grid-cols-3">
                 <div>
                     <label for="url" class="form-label">URL</label>
                     <input type="url" id="url" name="url"
@@ -76,6 +69,13 @@
                            value="{{ old('type', $project->type) }}"
                            class="form-input">
                 </div>
+
+                <div>
+                    <label for="sort_order" class="form-label">Sort order</label>
+                    <input type="number" id="sort_order" name="sort_order"
+                           value="{{ old('sort_order', $project->sort_order) }}"
+                           class="form-input">
+                </div>
             </div>
 
             <div>
@@ -85,18 +85,7 @@
                 @enderror
             </div>
 
-            <div>
-                <label for="body" class="form-label">Body</label>
-                <textarea id="body" name="body" rows="6"
-                          class="form-input">{{ old('body', $project->body) }}</textarea>
-            </div>
-
-            <div>
-                <label for="sort_order" class="form-label">Sort order</label>
-                <input type="number" id="sort_order" name="sort_order"
-                       value="{{ old('sort_order', $project->sort_order) }}"
-                       class="form-input w-32">
-            </div>
+            <x-admin.translatable-textarea name="body" label="Body" :model="$project" :rows="6" />
         </div>
 
         <div class="flex justify-between items-center">

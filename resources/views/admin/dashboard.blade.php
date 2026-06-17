@@ -3,7 +3,12 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    @php $cvPath = \App\Models\SiteSetting::get('cv_path'); @endphp
+    @php
+        $cvPaths = [
+            'en' => \App\Models\SiteSetting::get('cv_path_en'),
+            'nl' => \App\Models\SiteSetting::get('cv_path_nl'),
+        ];
+    @endphp
 
     {{-- Stat cards --}}
     <div class="grid grid-cols-3 gap-3 sm:gap-6 mb-8">
@@ -116,23 +121,30 @@
         <div class="card-header">
             <h2 class="card-title">CV / Résumé</h2>
         </div>
-        <div class="p-6">
-            <p class="text-sm text-ink/60 mb-4">
-                Current file:
-                @if ($cvPath)
-                    <span class="font-semibold text-ink">{{ $cvPath }}</span>
-                @else
-                    <span class="text-ink/40">none uploaded yet</span>
-                @endif
-            </p>
+        <div class="p-6 space-y-6">
+            @foreach (['en' => 'English', 'nl' => 'Dutch'] as $locale => $label)
+                <div>
+                    <p class="text-sm text-ink/60 mb-3">
+                        <span class="font-semibold text-ink">{{ $label }} CV</span> &mdash; current file:
+                        @if ($cvPaths[$locale])
+                            <span class="font-semibold text-ink">{{ $cvPaths[$locale] }}</span>
+                        @elseif ($locale === 'nl' && $cvPaths['en'])
+                            <span class="text-ink/40">none &mdash; falls back to the English CV</span>
+                        @else
+                            <span class="text-ink/40">none uploaded yet</span>
+                        @endif
+                    </p>
 
-            <form method="POST" action="{{ route('admin.cv.update') }}" enctype="multipart/form-data" class="flex flex-col sm:flex-row sm:items-center gap-4">
-                @csrf
-                <input type="file" name="cv" accept=".pdf"
-                       class="block w-full text-sm text-ink/70 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100" />
-                <button type="submit" class="btn-primary w-full sm:w-auto">Upload CV</button>
-            </form>
-            <p class="mt-3 text-xs text-ink/40">PDF only, max 10&nbsp;MB. File storage is wired up in Step 8.</p>
+                    <form method="POST" action="{{ route('admin.cv.update') }}" enctype="multipart/form-data" class="flex flex-col sm:flex-row sm:items-center gap-4">
+                        @csrf
+                        <input type="hidden" name="locale" value="{{ $locale }}" />
+                        <input type="file" name="cv" accept=".pdf"
+                               class="block w-full text-sm text-ink/70 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100" />
+                        <button type="submit" class="btn-primary w-full sm:w-auto">Upload</button>
+                    </form>
+                </div>
+            @endforeach
+            <p class="text-xs text-ink/40">PDF only, max 10&nbsp;MB each. The Dutch site serves the Dutch CV when set, otherwise the English one.</p>
         </div>
     </div>
 @endsection

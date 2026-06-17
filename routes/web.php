@@ -11,7 +11,17 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TrackController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [FrontendController::class, 'index'])->name('home');
+// Public frontend, available in English (/) and Dutch (/nl). The setlocale
+// middleware reads each route's `locale` default; /en is an alias for /.
+Route::redirect('/en', '/');
+Route::get('/', [FrontendController::class, 'index'])
+    ->defaults('locale', 'en')
+    ->middleware('setlocale')
+    ->name('home');
+Route::get('/nl', [FrontendController::class, 'index'])
+    ->defaults('locale', 'nl')
+    ->middleware('setlocale')
+    ->name('home.nl');
 
 // Public analytics endpoint (Step 11). No auth; rate limited and CSRF-exempt
 // (bootstrap/app.php) so the frontend's sendBeacon/fetch calls can reach it.

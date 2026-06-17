@@ -6,12 +6,16 @@ use App\Models\Concerns\HasMediaImage;
 use App\Models\Concerns\HasSortOrder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Translatable\HasTranslations;
 
 class Project extends Model
 {
-    use HasMediaImage, HasSortOrder;
+    use HasMediaImage, HasSortOrder, HasTranslations;
 
     protected $table = 'projects';
+
+    /** Per-locale JSON fields (spatie/laravel-translatable). */
+    public array $translatable = ['title', 'description', 'body'];
 
     // projects has full created_at/updated_at columns, so default timestamps apply.
 

@@ -340,13 +340,22 @@ p {
     display: none;
 
     @media (max-width: 768px) {
-      display: block;
+      // Enlarge the tap target to the ~44px touch minimum; negative margin
+      // keeps the icon visually aligned with the container edge.
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      margin: -0.5rem;
     }
   }
 
   &__hamburger {
     font-size: 2rem;
     transition: color 0.3s ease-out;
+    // Let taps anywhere in the button (not just the painted icon strokes)
+    // reach the button — the SVG no longer swallows clicks in its gaps.
+    pointer-events: none;
 
     &--close {
       display: none;
@@ -418,6 +427,14 @@ p {
 .c-hero {
   margin: 10rem 0;
 
+  @media (max-width: 768px) {
+    margin: 5rem 0;
+  }
+
+  @media (max-width: 576px) {
+    margin: 3rem 0;
+  }
+
   &__titlecontainer {
     text-transform: uppercase;
     padding: 0;
@@ -427,18 +444,20 @@ p {
 
   &__title-star {
     display: inline-block;
-    height: 100%;
+    height: 0.9em;
+    width: auto;
     max-width: 100%;
-    vertical-align: auto;
+    vertical-align: middle;
 
     @media (max-width: 576px) {
-      width: 1.75rem;
-      height: 1.75rem;
+      height: 0.9em;
     }
   }
 
   &__detailcontainer {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     width: 100%;
     gap: 2rem;
     margin: 1rem 0 2rem;
@@ -484,6 +503,10 @@ p {
   h1 {
     margin: 0;
     white-space: nowrap;
+
+    @media (max-width: 768px) {
+      white-space: normal;
+    }
   }
 }
 
@@ -578,13 +601,12 @@ p {
     list-style: none;
     gap: 2rem;
     margin: 0;
-    padding: 0 1rem;
+    padding: 0;
 
     animation: scrollToRight 20s linear infinite;
 
     @media (max-width: 768px) {
       gap: 1rem;
-      padding: 0 0.5rem;
     }
   }
 
@@ -668,6 +690,15 @@ p {
   margin: 15rem 0 10rem;
   scroll-margin-top: 2rem;
 
+  // The card grid is a `.row` nested inside the section's `.row`, so it already
+  // receives gutter padding from `.row > *`. Cancel its own negative margins so
+  // the cards align with the title instead of drifting left (most visible in a
+  // single column).
+  .js-projects {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
   &__title {
     text-align: center;
     margin-top: 2rem;
@@ -683,6 +714,13 @@ p {
 
   &__filtercontainer {
     display: flex;
+    // Wrap onto multiple rows and stay centred instead of overflowing the
+    // screen once there are more filters than fit on one line (mobile).
+    flex-wrap: wrap;
+    justify-content: center;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
     margin-bottom: 3rem;
     padding: 0.25rem;
     border-radius: 0.5rem;
@@ -771,6 +809,10 @@ p {
     font-weight: 700;
     margin-bottom: 0.5rem;
     transition: all 0.3s ease-in-out;
+    // Keep the title to a single line so it can't push the description out.
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     @media (max-width: 768px) {
       font-size: 1.25rem;
@@ -780,6 +822,11 @@ p {
   &__cardtext {
     transition: all 0.3s ease-in-out;
     margin: 0;
+    // Clamp the description to the space left in the fixed-height card.
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   &__cardimgcontainer {
@@ -798,6 +845,8 @@ p {
   &__cardcontent {
     padding: 1.5rem 1rem;
     height: 8rem;
+    // Same fixed height, but clip anything that would otherwise spill out.
+    overflow: hidden;
   }
 
   &__badge {
@@ -1106,8 +1155,10 @@ p {
   overflow: hidden;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
 
-  display: flex;
-  flex-direction: column;
+  // NB: don't set `display` here. The base rule would override the UA
+  // `dialog:not([open]) { display: none }`, leaving a closed (opacity:0) modal
+  // laid out and catching clicks over the page (e.g. the hamburger). Apply the
+  // flex layout only while open; closed falls back to the UA `display: none`.
   opacity: 0;
   transform: translateY(12px) scale(0.97);
   transition:
@@ -1117,6 +1168,8 @@ p {
     display 0.3s ease allow-discrete;
 
   &[open] {
+    display: flex;
+    flex-direction: column;
     opacity: 1;
     transform: none;
 
@@ -1348,4 +1401,52 @@ p {
 
 .u-fade-in-left {
   animation: fadeInLeft 1s ease-in-out;
+}
+
+/*---------------------------------------/*
+ # LANGUAGE SWITCHER (NL / EN)
+/*---------------------------------------*/
+.c-nav__langswitch {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.c-nav__langlink {
+  font-size: 14px;
+  font-weight: $fw-semibold;
+  color: $secondary-color;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out, color 0.3s ease-in-out;
+
+  &:hover,
+  &.is-active {
+    opacity: 1;
+    color: $secondary-color;
+  }
+}
+
+.c-nav__langsep {
+  color: $secondary-color;
+  opacity: 0.4;
+}
+
+.c-nav--opened {
+  .c-nav__langswitch {
+    margin-top: 1rem;
+  }
+
+  .c-nav__langlink {
+    color: $white-color;
+    font-size: 1.5rem;
+
+    &.is-active {
+      color: $white-color;
+    }
+  }
+
+  .c-nav__langsep {
+    color: $white-color;
+  }
 }

@@ -690,6 +690,15 @@ p {
   margin: 15rem 0 10rem;
   scroll-margin-top: 2rem;
 
+  // The card grid is a `.row` nested inside the section's `.row`, so it already
+  // receives gutter padding from `.row > *`. Cancel its own negative margins so
+  // the cards align with the title instead of drifting left (most visible in a
+  // single column).
+  .js-projects {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
   &__title {
     text-align: center;
     margin-top: 2rem;
@@ -705,6 +714,13 @@ p {
 
   &__filtercontainer {
     display: flex;
+    // Wrap onto multiple rows and stay centred instead of overflowing the
+    // screen once there are more filters than fit on one line (mobile).
+    flex-wrap: wrap;
+    justify-content: center;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
     margin-bottom: 3rem;
     padding: 0.25rem;
     border-radius: 0.5rem;
@@ -793,6 +809,10 @@ p {
     font-weight: 700;
     margin-bottom: 0.5rem;
     transition: all 0.3s ease-in-out;
+    // Keep the title to a single line so it can't push the description out.
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     @media (max-width: 768px) {
       font-size: 1.25rem;
@@ -802,6 +822,11 @@ p {
   &__cardtext {
     transition: all 0.3s ease-in-out;
     margin: 0;
+    // Clamp the description to the space left in the fixed-height card.
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   &__cardimgcontainer {
@@ -820,6 +845,8 @@ p {
   &__cardcontent {
     padding: 1.5rem 1rem;
     height: 8rem;
+    // Same fixed height, but clip anything that would otherwise spill out.
+    overflow: hidden;
   }
 
   &__badge {
